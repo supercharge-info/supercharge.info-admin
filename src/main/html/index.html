@@ -159,62 +159,6 @@
                     <td><a href="/service/supercharge/discuss?siteId=100">supercharge/discuss?siteId=100</a></td>
                     <td>For a given siteId redirect to the associated discussion URL.</td>
                 </tr>
-                <tr>
-                    <td>Submit A Change</td>
-                    <td><a href="/service/supercharge/changeProposal/submit">supercharge/changeProposal/submit</a></td>
-                    <td>
-                        Submit a proposed change to the database. Changes are reviewed before taking effect.
-
-                        POST JSON in the following format:
-                        <div class="code">{
-                            "id" : 100,
-                            "locationId" : "buckeyesupercharger",
-                            "name" : "Buckeye, AZ",
-                            "status" : "PERMIT",
-                            "address" : {
-                            "street" : "416 S Watson RD",
-                            "city" : "Buckeye",
-                            "state" : "AZ",
-                            "zip" : "85326",
-                            "country" : "USA"
-                            },
-                            "gps" : {
-                            "latitude" : 33.443011,
-                            "longitude" : -112.556876
-                            },
-                            "dateOpened" : "2014-12-25",
-                            "stallCount" : 12,
-                            "hours" : "M-F 9:00 - 17:00",
-                            "elevationMeters" : 1200,
-                            "urlDiscuss" :
-                            "http://www.teslamotorsclub.com/showthread.php/25317-Supercharger-Buckeye-AZ",
-                            "changeDescription" : "This is a change of everything."
-                            }
-                        </div>
-                        Where the only required field is <span style="font-weight: bold">id</span> which is the
-                        supercharge.info internal id for a site.
-
-                        The following POST is a valid proposal for changing the elevation of the Buckeye AZ
-                        supercharger.
-                        <div class="code">{
-                            "id":100, "elevationMeters": 483
-                            }
-                        </div>
-                        The changeDescription field can be used to include a reason for the change.
-                        <div class="code">{
-                            "id":100,
-                            "elevationMeters": 483,
-                            "changeDescription": "I noticed the elevation for Buckeye AZ was off by 100 meters."
-                            }
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>List Change Submissions</td>
-                    <td><a href="/service/supercharge/changeProposal/list">supercharge/changeProposal/list</a></td>
-                    <td>
-                        List of change proposals that have been submitted but not yet accepted.
-                    </td>
             </table>
 
         </div>

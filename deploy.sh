@@ -21,7 +21,7 @@ else
     exit;
 fi
 
-BUILD_DIR='dist'
+BUILD_DIR='build'
 DIR_STAGE=${DIR_DEPLOY}_`date +'%Y_%m_%d_%H_%M_%S'`
 
 echo "##########################################################";

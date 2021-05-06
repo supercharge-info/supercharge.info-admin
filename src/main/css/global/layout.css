@@ -1,0 +1,64 @@
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Html/Body
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+* {
+    padding: 0;
+    margin: 0;
+}
+
+html {
+    height: 100%;
+}
+
+body {
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    height: 100%;
+}
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Layout
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+.page {
+    display: none;
+}
+
+body > .container {
+    padding: 60px 15px 0;
+}
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+General purpose view table.
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
+table.view-table {
+    border-collapse: collapse;
+}
+
+table.view-table th {
+    padding: 2px 10px 2px 10px;
+    background-color: #28a4c9;
+    color: white;
+    border-right: 1px solid white;
+}
+
+table.view-table td {
+    border: 1px solid #dbdbdb;
+    padding: 2px 10px 2px 10px;
+}
+
+table.view-table tr.fail-row td {
+    background-color: lightcoral;
+}
+
+table.view-table caption {
+    font-weight: bold;
+}
+
+table.view-table td.error {
+    background-color: #E9967A;
+}
+
+table.view-table td.fixed {
+    font-family: monospace,"Courier New";
+}

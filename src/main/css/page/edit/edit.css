@@ -1,0 +1,9 @@
+
+/* ----------------------------------------------*/
+
+table.edit-table {
+    border-collapse: collapse;
+}
+table.edit-table td {
+    padding: 2px 2px 2px 2px;
+}

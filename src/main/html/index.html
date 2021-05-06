@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Supercharger Admin</title>
+    <!-- CSS -->
+    <link href="main.css" rel="stylesheet" type="text/css" media="all"/>
+    <!-- Javascript -->
+    <script src="bundle.js"></script>
+    <script src="//maps.googleapis.com/maps/api/js?key=AIzaSyB43_4OTJDH7REegECW9B6rmfuXPOTT1R4"></script>
+</head>
+<body>
+
+
+<!-- Fixed navbar -->
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+        </div>
+        <div class="collapse navbar-collapse">
+            <ul id="navbar-menu-item-list" class="nav navbar-nav">
+                <li><a id="page-link-login" href="#login">Login</a></li>
+                <li><a id="page-link-api" href="#api">API</a></li>
+                <li><a id="page-link-comparison" href="#comparison">Comparison</a></li>
+                <li><a id="page-link-validation" href="#validation">Validation</a></li>
+                <li><a id="page-link-edit" href="#edit">Site Edit</a></li>
+                <li><a id="page-link-changeLog" href="#changeLog">Change Log</a></li>
+                <li><a id="page-link-feature" href="#feature">Features</a></li>
+                <li><a id="page-link-system" href="#system">System</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+<!-- Begin page content -->
+<div class="container-fluid" style="padding-top: 70px">
+
+
+    <div id="page-login" class="page">
+
+
+        <div id="login-not-authed-container" style="display: none">
+            <div id="login-error-box">
+            </div>
+
+            <div style="border:0 solid green; width:300px">
+                <fieldset>
+                    <form action="./" method="post" class="form-control-static">
+
+                        <label for="name" class="sr-only">Username</label>
+                        <input type="text" size="30" name="name" id="name" class="form-control" placeholder="Username"
+                               autofocus/>
+
+                        <label for="word" class="sr-only">Password</label>
+                        <input type="password" size="30" name="word" id="word" class="form-control"
+                               placeholder="Password"
+                               required/>
+
+                        <button type="submit" id="login-button" name="login"
+                                class="btn btn-default btn-primary btn-block">Login
+                        </button>
+
+                    </form>
+                </fieldset>
+            </div>
+        </div>
+
+        <div id="login-authed-container" style="display: none">
+            <div id="login-message-box">
+                Success
+                <br/>
+                <a id="login-logout-trigger" href="">Logout</a>
+            </div>
+
+            <br/>
+            <table id="login-attempts-table" class="view-table" style="display: none">
+                <caption>Login History</caption>
+                <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Result</th>
+                    <th>IP</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+
+
+        <div style="margin-top: 5em; width: 30%; font-weight: lighter">
+            <table class="table table-condensed">
+                <tr>
+                    <th>server version</th>
+                    <td id="build-version-container"></td>
+                </tr>
+                <tr>
+                    <th>server build date</th>
+                    <td id="build-timestamp-container"></td>
+                </tr>
+                <tr>
+                    <th>admin ui version</th>
+                    <td id="admin-ui-version-container"></td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+
+    <!-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+    PAGE: API
+    = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = -->
+    <div id="page-api" class="page" style="display: none">
+
+
+        <div class="container">
+
+            <table class="table table-striped table-hover table-condensed">
+                <tr>
+                    <th>Service</th>
+                    <th>URL</th>
+                    <th>Description</th>
+                </tr>
+                <tr>
+                    <td>Superchargers</td>
+                    <td><a href="/service/supercharge/allSites">supercharge/allSites</a></td>
+                    <td>List all supercharger sites.</td>
+                </tr>
+                <tr>
+                    <td>Changes</td>
+                    <td><a href="/service/supercharge/allChanges">supercharge/allChanges</a></td>
+                    <td>List all changes.</td>
+                </tr>
+                <tr>
+                    <td>Countries</td>
+                    <td><a href="/service/supercharge/country">supercharge/country</a></td>
+                    <td>List countries.</td>
+                </tr>
+                <tr>
+                    <td>Regions</td>
+                    <td><a href="/service/supercharge/region">supercharge/region</a></td>
+                    <td>List regions.</td>
+                </tr>
+                <tr>
+                    <td>DB Info</td>
+                    <td><a href="/service/supercharge/databaseInfo">supercharge/databaseInfo</a></td>
+                    <td>Indicates when the database was last modified.</td>
+                </tr>
+                <tr>
+                    <td>Discussion Thread Redirect</td>
+                    <td><a href="/service/supercharge/discuss?siteId=100">supercharge/discuss?siteId=100</a></td>
+                    <td>For a given siteId redirect to the associated discussion URL.</td>
+                </tr>
+                <tr>
+                    <td>Submit A Change</td>
+                    <td><a href="/service/supercharge/changeProposal/submit">supercharge/changeProposal/submit</a></td>
+                    <td>
+                        Submit a proposed change to the database. Changes are reviewed before taking effect.
+
+                        POST JSON in the following format:
+                        <div class="code">{
+                            "id" : 100,
+                            "locationId" : "buckeyesupercharger",
+                            "name" : "Buckeye, AZ",
+                            "status" : "PERMIT",
+                            "address" : {
+                            "street" : "416 S Watson RD",
+                            "city" : "Buckeye",
+                            "state" : "AZ",
+                            "zip" : "85326",
+                            "country" : "USA"
+                            },
+                            "gps" : {
+                            "latitude" : 33.443011,
+                            "longitude" : -112.556876
+                            },
+                            "dateOpened" : "2014-12-25",
+                            "stallCount" : 12,
+                            "hours" : "M-F 9:00 - 17:00",
+                            "elevationMeters" : 1200,
+                            "urlDiscuss" :
+                            "http://www.teslamotorsclub.com/showthread.php/25317-Supercharger-Buckeye-AZ",
+                            "changeDescription" : "This is a change of everything."
+                            }
+                        </div>
+                        Where the only required field is <span style="font-weight: bold">id</span> which is the
+                        supercharge.info internal id for a site.
+
+                        The following POST is a valid proposal for changing the elevation of the Buckeye AZ
+                        supercharger.
+                        <div class="code">{
+                            "id":100, "elevationMeters": 483
+                            }
+                        </div>
+                        The changeDescription field can be used to include a reason for the change.
+                        <div class="code">{
+                            "id":100,
+                            "elevationMeters": 483,
+                            "changeDescription": "I noticed the elevation for Buckeye AZ was off by 100 meters."
+                            }
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>List Change Submissions</td>
+                    <td><a href="/service/supercharge/changeProposal/list">supercharge/changeProposal/list</a></td>
+                    <td>
+                        List of change proposals that have been submitted but not yet accepted.
+                    </td>
+            </table>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+    PAGE: Comparison
+    = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = -->
+    <div id="page-comparison" class="page" style="display: none">
+        <a href="/service/supercharge/validation/tesla-source" target="_blank">Tesla Json Source</a>
+        <br/>
+        <div id="validation-web-scrape-report"></div>
+    </div>
+
+    <!-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+    PAGE: Validation
+    = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = -->
+    <div id="page-validation" class="page" style="display: none">
+        <table id="validation-table" class="view-table">
+            <caption>Database Validations</caption>
+            <thead>
+            <tr>
+                <th>Category</th>
+                <th>Description</th>
+                <th>Pass</th>
+                <th>SQL</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+
+    <!-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+    PAGE: Edit
+    = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = -->
+    <div id="page-edit" class="page" style="display: none">
+
+
+        <form id="site-edit-form" action="" method="post">
+
+            <table>
+                <tr>
+                    <td>
+                        <table class="edit-table">
+                            <tbody>
+                            <tr>
+                                <th>Id</th>
+                                <td>
+                                    <input name="id" size="10" readonly style="background-color: #F5F5F5"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Modified Date</th>
+                                <td><input name="dateModified" size="20" disabled="disabled"
+                                           style="background-color: #F5F5F5">
+                                    version:
+                                    <input name="version" size="3" disabled="disabled"
+                                           style="background-color: #F5F5F5">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Tesla Location Id</th>
+                                <td><input name="locationId" type="text" size="35" maxlength="300"/></td>
+                            </tr>
+                            <tr>
+                                <th>Name</th>
+                                <td><input name="name" size="40"/></td>
+                            </tr>
+                            <tr>
+                                <th>Status</th>
+                                <td>
+                                    <select name="status">
+                                        <option name="closed" value="CLOSED_PERM">CLOSED PERMANENTLY</option>
+                                        <option name="closed" value="CLOSED_TEMP">CLOSED TEMPORARILY</option>
+                                        <option name="permit" value="PERMIT" SELECTED>PERMIT</option>
+                                        <option name="construction" value="CONSTRUCTION">CONSTRUCTION</option>
+                                        <option name="open" value="OPEN">OPEN</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Open Date</th>
+                                <td><input name="dateOpened" type="date" size="40"/></td>
+                            </tr>
+                            <tr>
+                                <th>Hours</th>
+                                <td><input name="hours" size="40"/></td>
+                            </tr>
+                            <tr>
+                                <th>Counted</th>
+                                <td>
+                                    <select name="counted">
+                                        <option name="true" value="true">true</option>
+                                        <option name="false" value="false">false</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>GPS (lat,lng)</th>
+                                <td>
+                                    <input name="gps[latitude]" size="20" maxlength="35" id="latitude-input"/>,
+                                    <input name="gps[longitude]" size="20" maxlength="35"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Elevation (m)</th>
+                                <td>
+                                    <input name="elevationMeters" size="9" maxlength="9"/> &nbsp;
+                                    <button id="elevation-lookup-button">auto lookup</button>
+                                    &nbsp;&nbsp;
+                                    <a href="http://www.gpsvisualizer.com/elevation" target="_blank">gpsvisualizer</a>
+                                    &nbsp;
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>URL Discuss</th>
+                                <td><input name="urlDiscuss" type="url" size="50" maxlength="400"/></td>
+                            </tr>
+                            <tr>
+                                <th>Stall Count</th>
+                                <td><input name="stallCount" size="4"/></td>
+                            </tr>
+
+                            </tbody>
+                        </table>
+                    </td>
+                    <td style="vertical-align: top">
+                        <table class="edit-table">
+                            <tbody>
+                            <tr>
+                                <th>Street</th>
+                                <td><input name="address[street]" size="40"/></td>
+                            </tr>
+                            <tr>
+                                <th>City</th>
+                                <td><input name="address[city]" size="40"/></td>
+                            </tr>
+                            <tr>
+                                <th>State</th>
+                                <td><input name="address[state]" size="40"/></td>
+                            </tr>
+                            <tr>
+                                <th>Zip</th>
+                                <td><input name="address[zip]" size="40"/></td>
+                            </tr>
+                            <tr>
+                                <th>Country</th>
+                                <td>
+                                    <select id="address-country-select" name="address[countryId]">
+                                        <option value="">-- Country --</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th></th>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <th>Power (kW)</th>
+                                <td>
+                                    <input name="powerKiloWatt" type="text" size="5" maxlength="3"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Solar Canopy</th>
+                                <td>
+                                    <select name="solarCanopy">
+                                        <option name="false" value="false">false</option>
+                                        <option name="true" value="true">true</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Battery/Storage</th>
+                                <td>
+                                    <select name="battery">
+                                        <option name="false" value="false">false</option>
+                                        <option name="true" value="true">true</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Editor Notes</th>
+                                <td>
+                                    <textarea rows="3" cols="50" maxlength="925" name="developerNotes"></textarea>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                    </td>
+                </tr>
+            </table>
+
+
+            <div id="edit-site-message-div"></div>
+
+            <button id="edit-site-save-button" type="submit" style="padding: 4px 10px 4px 10px; font-weight: bold"
+                    title="save changes">
+                Save
+            </button>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+            <button id="edit-site-reset-button" type="reset" style="padding: 4px 10px 4px 10px"
+                    title="clear all fields in this form">Reset Form
+            </button>
+
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <button id="edit-site-copy-button" type="button" style="padding: 4px 10px 4px 10px"
+                    title="copy all fields to new, un-saved, site">Clone Site
+            </button>
+
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <button id="edit-site-history-button" type="submit" style="padding: 4px 10px 4px 10px"
+                    title="view detailed change history">
+                View Change History
+            </button>
+
+        </form>
+
+        <table id="edit-change-detail-table" class="table table-condensed table-hover table-bordered"
+               style="margin-top: 1em">
+            <thead></thead>
+            <tbody></tbody>
+        </table>
+
+        <div id="edit-sites-list-table-wrapper"
+             style="margin-top: 20px; overflow-x: visible; overflow-y: scroll; height: 550px; width: 100%">
+            <table id="edit-sites-list-table" class="table table-condensed table-hover table-bordered">
+                <thead></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+    </div>
+
+
+    <!-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+    PAGE: Change Log
+    = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = -->
+    <div id="page-changeLog" class="page" style="display: none">
+        <table id="change-log-list-table" class="table table-condensed table-hover table-bordered">
+            <thead></thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+
+    <!-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+    PAGE: Feature
+    = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = -->
+    <div id="page-feature" class="page" style="display: none">
+        <form id="feature-form">
+            <table>
+                <tr>
+                    <td><label>ID</label></td>
+                    <td><input name="id" readonly style="background-color: #F5F5F5"></td>
+                </tr>
+                <tr>
+                    <td><label>Modified Date</label></td>
+                    <td><input name="modifiedDate" disabled style="background-color: #F5F5F5"></td>
+                </tr>
+                <tr>
+                    <td><label>Date Added</label></td>
+                    <td><input name="addedDate" type="date"></td>
+                </tr>
+                <tr>
+                    <td><label>Title</label></td>
+                    <td><input name="title" type="text"></td>
+                </tr>
+                <tr>
+                    <td><label>Description</label></td>
+                    <td><textarea name="description" rows="10" cols="80"></textarea></td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <button class="btn" id="feature-save-button">Save</button>
+                        &nbsp;&nbsp;|&nbsp;&nbsp;
+                        <button class="btn" type="reset" style="padding: 4px 10px 4px 10px"
+                                title="clear all fields in this form">Reset Form
+                        </button>
+                    </td>
+                </tr>
+            </table>
+        </form>
+        <br/><br/>
+        <div id="feature-edit-message-box"></div>
+        <br/><br/>
+        <table id="feature-table" class="table table-condensed table-hover table-bordered">
+            <thead></thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <!-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
+    PAGE: System
+    = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = -->
+    <div id="page-system" class="page" style="display: none">
+        <table id="system-properties-table" class="table table-condensed table-hover table-bordered">
+            <caption>System Properties</caption>
+            <thead></thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+
+</div>
+
+</body>
+</html>

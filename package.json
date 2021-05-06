@@ -38,7 +38,7 @@
     "webpack-dev-server": "3.11.2"
   },
   "dependencies": {
-    "bootstrap": "3.3.7",
+    "bootstrap": "3.4.1",
     "core-js": "3.11.3",
     "jquery": "3.6.0",
     "jquery-serializejson": "3.2.1",

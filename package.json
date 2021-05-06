@@ -15,7 +15,7 @@
         "@babel/preset-env",
         {
           "useBuiltIns": "usage",
-          "corejs": "3.11.1"
+          "corejs": "3.11.3"
         }
       ]
     ]
@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "bootstrap": "3.3.7",
-    "core-js": "3.11.1",
+    "core-js": "3.11.3",
     "jquery": "3.3.1",
     "jquery-serializejson": "2.9.0",
     "xss-filters": "^1.2.7"

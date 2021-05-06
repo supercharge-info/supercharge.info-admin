@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "NODE_ENV=production webpack --mode=production",
-    "start": "NODE_ENV=development webpack serve"
+    "start": "NODE_ENV=development webpack serve",
+    "release": "npm version --message 'RELEASE: %s' patch && git push origin master && git push origin --tags"
   },
   "author": "",
   "license": "ISC",

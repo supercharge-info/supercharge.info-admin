@@ -67,7 +67,7 @@ module.exports = {
         compress: false,
         port: 9292,
         noInfo: false,
-        https: true,
+        https: false,
         proxy: [
             {
                 context: ['/service'],

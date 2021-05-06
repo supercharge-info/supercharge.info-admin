@@ -40,7 +40,7 @@
     "bootstrap": "3.3.7",
     "core-js": "3.11.3",
     "jquery": "3.6.0",
-    "jquery-serializejson": "2.9.0",
+    "jquery-serializejson": "3.2.1",
     "xss-filters": "^1.2.7"
   }
 }

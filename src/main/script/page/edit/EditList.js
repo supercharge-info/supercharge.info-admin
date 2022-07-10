@@ -69,7 +69,7 @@ export default class EditList {
         const marinAndPadding = 150;
         const bodyHeight = $("body").height();
         const formHeight = this.siteEditForm.height();
-        const diff = bodyHeight - formHeight - marinAndPadding;
+        const diff = Math.max(bodyHeight - formHeight - marinAndPadding, 200);
         this.siteListTable.closest("div").css('height', diff);
     }
 

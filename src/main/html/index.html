@@ -203,184 +203,178 @@
 
         <form id="site-edit-form" action="" method="post">
 
-            <table>
-                <tr>
-                    <td>
-                        <table class="edit-table">
-                            <tbody>
-                            <tr>
-                                <th>Id</th>
-                                <td>
-                                    <input name="id" size="10" readonly style="background-color: #F5F5F5"/>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>Modified Date</th>
-                                <td><input name="dateModified" size="20" disabled="disabled"
-                                           style="background-color: #F5F5F5">
-                                    version:
-                                    <input name="version" size="3" disabled="disabled"
-                                           style="background-color: #F5F5F5">
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>Tesla Location Id</th>
-                                <td><input name="locationId" type="text" size="35" maxlength="300"/></td>
-                            </tr>
-                            <tr>
-                                <th>Name</th>
-                                <td><input name="name" size="40"/></td>
-                            </tr>
-                            <tr>
-                                <th>Status</th>
-                                <td>
-                                    <select name="status">
-                                        <option name="closed" value="CLOSED_PERM">CLOSED PERMANENTLY</option>
-                                        <option name="closed" value="CLOSED_TEMP">CLOSED TEMPORARILY</option>
-                                        <option name="permit" value="PERMIT" SELECTED>PERMIT</option>
-                                        <option name="construction" value="CONSTRUCTION">CONSTRUCTION</option>
-                                        <option name="open" value="OPEN">OPEN</option>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>Open Date</th>
-                                <td><input name="dateOpened" type="date" size="40"/></td>
-                            </tr>
-                            <tr>
-                                <th>Hours</th>
-                                <td><input name="hours" size="40"/></td>
-                            </tr>
-                            <tr>
-                                <th>Counted</th>
-                                <td>
-                                    <select name="counted">
-                                        <option name="true" value="true">true</option>
-                                        <option name="false" value="false">false</option>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>GPS (lat,lng)</th>
-                                <td>
-                                    <input name="gps[latitude]" size="20" maxlength="35" id="latitude-input"/>,
-                                    <input name="gps[longitude]" size="20" maxlength="35"/>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>Elevation (m)</th>
-                                <td>
-                                    <input name="elevationMeters" size="9" maxlength="9"/> &nbsp;
-                                    <button id="elevation-lookup-button">auto lookup</button>
-                                    &nbsp;&nbsp;
-                                    <a href="http://www.gpsvisualizer.com/elevation" target="_blank">gpsvisualizer</a>
-                                    &nbsp;
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>URL Discuss</th>
-                                <td><input name="urlDiscuss" type="url" size="50" maxlength="400"/></td>
-                            </tr>
-                            <tr>
-                                <th>Stall Count</th>
-                                <td><input name="stallCount" size="4"/></td>
-                            </tr>
+            <div class="col-lg-4 col-md-6 col-sm-12">
+                <table class="edit-table">
+                    <tbody>
+                    <tr>
+                        <th>Id</th>
+                        <td>
+                            <input name="id" size="10" readonly style="background-color: #F5F5F5"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Modified Date</th>
+                        <td><input name="dateModified" size="20" disabled="disabled"
+                                   style="background-color: #F5F5F5">
+                            version:
+                            <input name="version" size="3" disabled="disabled"
+                                   style="background-color: #F5F5F5">
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Tesla Location Id</th>
+                        <td><input name="locationId" type="text" size="35" maxlength="300"/></td>
+                    </tr>
+                    <tr>
+                        <th>Name</th>
+                        <td><input name="name" size="40"/></td>
+                    </tr>
+                    <tr>
+                        <th>Status</th>
+                        <td>
+                            <select name="status">
+                                <option name="closed" value="CLOSED_PERM">CLOSED PERMANENTLY</option>
+                                <option name="closed" value="CLOSED_TEMP">CLOSED TEMPORARILY</option>
+                                <option name="permit" value="PERMIT" SELECTED>PERMIT</option>
+                                <option name="construction" value="CONSTRUCTION">CONSTRUCTION</option>
+                                <option name="open" value="OPEN">OPEN</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Open Date</th>
+                        <td><input name="dateOpened" type="date" size="40"/></td>
+                    </tr>
+                    <tr>
+                        <th>Hours</th>
+                        <td><input name="hours" size="40"/></td>
+                    </tr>
+                    <tr>
+                        <th>Counted</th>
+                        <td>
+                            <select name="counted">
+                                <option name="true" value="true">true</option>
+                                <option name="false" value="false">false</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>GPS (lat,lng)</th>
+                        <td>
+                            <input name="gps[latitude]" size="20" maxlength="35" id="latitude-input"/>
+                            <strong>,</strong>
+                            <input name="gps[longitude]" size="20" maxlength="35"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Elevation (m)</th>
+                        <td>
+                            <input name="elevationMeters" size="9" maxlength="9"/> &nbsp;
+                            <button id="elevation-lookup-button">auto lookup</button>
+                            &nbsp;&nbsp;
+                            <a href="http://www.gpsvisualizer.com/elevation" target="_blank">gpsvisualizer</a>
+                            &nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>URL Discuss</th>
+                        <td><input name="urlDiscuss" type="url" size="50" maxlength="400"/></td>
+                    </tr>
+                    <tr>
+                        <th>Stall Count</th>
+                        <td><input name="stallCount" size="4"/></td>
+                    </tr>
 
-                            </tbody>
-                        </table>
-                    </td>
-                    <td style="vertical-align: top">
-                        <table class="edit-table">
-                            <tbody>
-                            <tr>
-                                <th>Street</th>
-                                <td><input name="address[street]" size="40"/></td>
-                            </tr>
-                            <tr>
-                                <th>City</th>
-                                <td><input name="address[city]" size="40"/></td>
-                            </tr>
-                            <tr>
-                                <th>State</th>
-                                <td><input name="address[state]" size="40"/></td>
-                            </tr>
-                            <tr>
-                                <th>Zip</th>
-                                <td><input name="address[zip]" size="40"/></td>
-                            </tr>
-                            <tr>
-                                <th>Country</th>
-                                <td>
-                                    <select id="address-country-select" name="address[countryId]">
-                                        <option value="">-- Country --</option>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th></th>
-                                <td>&nbsp;</td>
-                            </tr>
-                            <tr>
-                                <th>Power (kW)</th>
-                                <td>
-                                    <input name="powerKiloWatt" type="text" size="5" maxlength="3"/>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>Solar Canopy</th>
-                                <td>
-                                    <select name="solarCanopy">
-                                        <option name="false" value="false">false</option>
-                                        <option name="true" value="true">true</option>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>Battery/Storage</th>
-                                <td>
-                                    <select name="battery">
-                                        <option name="false" value="false">false</option>
-                                        <option name="true" value="true">true</option>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>Editor Notes</th>
-                                <td>
-                                    <textarea rows="3" cols="50" maxlength="925" name="developerNotes"></textarea>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
+                    </tbody>
+                </table>
+            </div>
 
-                    </td>
-                </tr>
-            </table>
+            <div class="col-lg-4 col-md-6 col-sm-12">
+                <table class="edit-table">
+                    <tbody>
+                    <tr>
+                        <th>Street</th>
+                        <td><input name="address[street]" size="40"/></td>
+                    </tr>
+                    <tr>
+                        <th>City</th>
+                        <td><input name="address[city]" size="40"/></td>
+                    </tr>
+                    <tr>
+                        <th>State</th>
+                        <td><input name="address[state]" size="40"/></td>
+                    </tr>
+                    <tr>
+                        <th>Zip</th>
+                        <td><input name="address[zip]" size="40"/></td>
+                    </tr>
+                    <tr>
+                        <th>Country</th>
+                        <td>
+                            <select id="address-country-select" name="address[countryId]">
+                                <option value="">-- Country --</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th></th>
+                        <td>&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <th>Power (kW)</th>
+                        <td>
+                            <input name="powerKiloWatt" type="text" size="5" maxlength="3"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Solar Canopy</th>
+                        <td>
+                            <select name="solarCanopy">
+                                <option name="false" value="false">false</option>
+                                <option name="true" value="true">true</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Battery/Storage</th>
+                        <td>
+                            <select name="battery">
+                                <option name="false" value="false">false</option>
+                                <option name="true" value="true">true</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Editor Notes</th>
+                        <td>
+                            <textarea rows="3" cols="50" maxlength="925" name="developerNotes"></textarea>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
 
-
-            <div id="edit-site-message-div"></div>
-
-            <button id="edit-site-save-button" type="submit" style="padding: 4px 10px 4px 10px; font-weight: bold"
-                    title="save changes">
-                Save
-            </button>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
-            <button id="edit-site-reset-button" type="reset" style="padding: 4px 10px 4px 10px"
-                    title="clear all fields in this form">Reset Form
-            </button>
-
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <button id="edit-site-copy-button" type="button" style="padding: 4px 10px 4px 10px"
-                    title="copy all fields to new, un-saved, site">Clone Site
-            </button>
-
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <button id="edit-site-history-button" type="submit" style="padding: 4px 10px 4px 10px"
-                    title="view detailed change history">
-                View Change History
-            </button>
+            <div class="col-xs-12">
+                <div id="edit-site-message-div"></div>
+                <button id="edit-site-save-button" type="submit" style="padding: 4px 10px 4px 10px; font-weight: bold"
+                        title="save changes">
+                    Save
+                </button>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <button id="edit-site-reset-button" type="reset" style="padding: 4px 10px 4px 10px"
+                        title="clear all fields in this form">Reset Form
+                </button>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <button id="edit-site-copy-button" type="button" style="padding: 4px 10px 4px 10px"
+                        title="copy all fields to new, un-saved, site">Clone Site
+                </button>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <button id="edit-site-history-button" type="submit" style="padding: 4px 10px 4px 10px"
+                        title="view detailed change history">
+                    View Change History
+                </button>
+            </div>
 
         </form>
 
@@ -391,7 +385,7 @@
         </table>
 
         <div id="edit-sites-list-table-wrapper"
-             style="margin-top: 20px; overflow-x: visible; overflow-y: scroll; height: 550px; width: 100%">
+             style="margin-top: 20px; overflow-y: scroll; height: 550px; width: 100%">
             <table id="edit-sites-list-table" class="table table-condensed table-hover table-bordered">
                 <thead></thead>
                 <tbody></tbody>

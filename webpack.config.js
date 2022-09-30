@@ -1,5 +1,6 @@
 const path = require('path');
 
+const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
@@ -55,6 +56,10 @@ module.exports = {
                 conservativeCollapse: true,
                 preserveLineBreaks: true
             }
+        }),
+        new webpack.ProvidePlugin({
+            jQuery: "jquery",
+            "window.jQuery": "jquery"
         })
     ],
     //

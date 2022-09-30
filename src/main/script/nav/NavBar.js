@@ -1,4 +1,5 @@
 import $ from "jquery";
+import "bootstrap";
 import Events from "../util/Events";
 import Objects from "../util/Objects";
 import LoginPage from "../page/login/LoginPage";
@@ -38,11 +39,22 @@ NavBar.prototype.setInitialPage = function () {
 
 NavBar.prototype.initListeners = function () {
     $("#navbar-menu-item-list").find("a").click($.proxy(this.handlePageChangeClick, this));
+    $("body").click($.proxy(this.autoCloseCollapsedNavBar, this));
 };
 
 NavBar.prototype.handlePageChangeClick = function (event) {
     const eventDetail = Events.eventDetail(event);
     this.changePage(eventDetail.actionName);
+};
+
+NavBar.prototype.autoCloseCollapsedNavBar = function (event) {
+    const navbarCollapse = $(".navbar-collapse");
+    if ($(".navbar-toggle").is(":visible") && navbarCollapse.is(":visible")) {
+        const target = $(event.target);
+        if (!target.is(".dropdown-toggle") && (!target.is(".form-control") || target.closest(".navbar").length === 0)) {
+            navbarCollapse.collapse('toggle');
+        }
+    }
 };
 
 NavBar.prototype.changePage = function (newPageName) {

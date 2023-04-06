@@ -68,10 +68,8 @@ module.exports = {
     devServer: {
         // All content is served from in-memory web-packed version of source files, we should not get anything
         // from contentBase.
-        contentBase: false,
         compress: false,
         port: 9292,
-        noInfo: false,
         https: false,
         proxy: [
             {

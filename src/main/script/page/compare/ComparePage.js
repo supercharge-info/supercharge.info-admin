@@ -100,7 +100,9 @@ class ComparePage {
         form.find("input[name='address[street]']").val(address);
         form.find("input[name='address[city]']").val(city);
         form.find("input[name='address[state]']").val(state);
-        form.find("select[name='address[countryId]']").find(`option:contains(${ country })`).prop('selected', 'selected');
+        // In case country list hasn't loaded yet
+        setTimeout(() => form.find(`select[name='address[countryId]'] option:contains(${ country })`).prop('selected', 'selected')
+            , $("#address-country-select").children().length > 1 ? 0 : 500);
         form.find("select[name='otherEVs']").find(`option:contains(${ locationType.split(/,\s*/).includes("PARTY") })`).prop('selected', 'selected');
 
         $("#page-link-edit").click();

@@ -55,7 +55,10 @@ class ComparePage {
                 this.navItem.parent().removeClass('open');
             } else if (elem.is('a:not(.dropdown-toggle)')) {
                 this.navItem.parent().removeClass('open');
-                $('html').animate({ scrollLeft: 0, scrollTop: $(elem.attr('href')).offset().top - ($('.navbar-header').height() || $('.navbar').height()) + 'px' });
+                const dest = $(elem.attr('href'));
+                const navHeight = $('.navbar-header').height() || $('.navbar').height();
+                const tableHeadHeight = dest.closest('table').find('tr').first().height();
+                $('html').animate({ scrollLeft: 0, scrollTop: dest.offset().top - navHeight - tableHeadHeight + 'px' });
                 e.preventDefault();
             }
         } else if (this.navItem.is(e.target)) {
@@ -106,11 +109,11 @@ class ComparePage {
     static handleExistingSiteClick() {
         event.preventDefault();
 
+        $("#page-link-edit").click();
+
         const link = $(event.target);
         const siteId = link.text();
         EventBus.dispatch(EditEvents.site_edit_selection, siteId);
-
-        $("#page-link-edit").click();
     }
 
     static getTodayDateString() {

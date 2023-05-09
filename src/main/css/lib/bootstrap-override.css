@@ -1,3 +1,15 @@
 .navbar {
     margin-bottom: 2px;
 }
+.table-bordered th, .view-table th {
+    position: sticky;
+    top: 50px;
+}
+.table-bordered th {
+    background-color: #fff;
+    box-shadow: inset 0px -1px 0px 0px #ddd;
+    border-bottom-width: 1px !important;
+}
+#edit-sites-list-table-wrapper th {
+    top: -1px;
+}

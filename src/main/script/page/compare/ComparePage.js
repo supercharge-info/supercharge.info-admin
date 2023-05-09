@@ -1,5 +1,7 @@
 import URL from "../../URL";
 import $ from "jquery";
+import EventBus from "../../util/EventBus";
+import EditEvents from "../edit/EditEvents";
 
 
 /**
@@ -12,19 +14,58 @@ class ComparePage {
     }
 
     onPageShow() {
-        this.validationWebScrapeDiv.html("");
-        $.get(URL.val.webscrape, $.proxy(this.populateWebScrapeReport, this));
+        if (!this.validationWebScrapeDiv.html()) {
+            $.get(URL.val.webscrape, $.proxy(this.populateWebScrapeReport, this));
+        }
     };
 
     populateWebScrapeReport(reportHtml) {
         this.validationWebScrapeDiv.html(reportHtml);
 
-        this.missingSitesTable = $("#missing-local-sites-table");
+        this.missingLocalSitesTable = $("#missing-local-sites-table");
+        this.missingTeslaSitesTable = $("#missing-tesla-sites-table");
+        this.fieldMismatchesTable = $("#field-mismatches-table");
 
-        this.missingSitesTable.find("a").on('click',ComparePage.handleMissingSiteClick);
+        this.missingLocalSitesTable.find("a").on('click',ComparePage.handleMissingSiteClick);
+        this.missingTeslaSitesTable.find("a").on('click',ComparePage.handleExistingSiteClick);
+        this.fieldMismatchesTable.find("a").on('click',ComparePage.handleExistingSiteClick);
+
+        this.navItem = $('#page-link-comparison');
+        this.dropdown = $('<ul class="dropdown-menu">').insertAfter(this.navItem);
+        $('<li class="dropdown">')
+            .append($('<a href="#missing-local-sites-table" class="dropdown-toggle" data-target="#" data-toggle="dropdown">Missing Local Sites <span class="caret"></a>'))
+            .append($('<ul class="dropdown-menu">').append(this.missingLocalSitesTable.find('[id]').map((i, e) => `<li><a href="#${ e.id }">${ e.id.slice(-1) }</a></li>`).get().join('')))
+            .appendTo(this.dropdown);
+        $('<li class="dropdown">')
+            .append($('<a href="#missing-tesla-sites-table" class="dropdown-toggle" data-target="#" data-toggle="dropdown">Missing Tesla Sites <span class="caret"></a>'))
+            .append($('<ul class="dropdown-menu">').append(this.missingTeslaSitesTable.find('[id]').map((i, e) => `<li><a href="#${ e.id }">${ e.id.slice(-1) }</a></li>`).get().join('')))
+            .appendTo(this.dropdown);
+        $('<li class="dropdown">')
+            .append($('<a href="#field-mismatches-table" class="dropdown-toggle" data-target="#" data-toggle="dropdown">Field Mismatches <span class="caret"></a>'))
+            .append($('<ul class="dropdown-menu">').append(this.fieldMismatchesTable.find('[id]').map((i, e) => `<li><a href="#${ e.id }">${ e.id.slice(-1) }</a></li>`).get().join('')))
+            .appendTo(this.dropdown);
+        this.navItem.addClass('dropdown-toggle').append(' <span class="caret">');
+        $('body').click($.proxy(this.handleNavClick, this));
     };
 
+    handleNavClick(e) {
+        let elem = $(e.target);
+        if (this.navItem.parent().is('.open')) {
+            if (!this.navItem.nextAll('.dropdown-menu').has(e.target).length) {
+                this.navItem.parent().removeClass('open');
+            } else if (elem.is('a:not(.dropdown-toggle)')) {
+                this.navItem.parent().removeClass('open');
+                $('html').animate({ scrollLeft: 0, scrollTop: $(elem.attr('href')).offset().top - ($('.navbar-header').height() || $('.navbar').height()) + 'px' });
+                e.preventDefault();
+            }
+        } else if (this.navItem.is(e.target)) {
+            this.navItem.parent().addClass('open');
+        }
+    }
+
     static handleMissingSiteClick() {
+        event.preventDefault();
+
         const link = $(event.target);
         const tr = link.parents("tr");
         const title = tr.find("td").eq(0).find("a").html();
@@ -56,7 +97,18 @@ class ComparePage {
         form.find("input[name='address[street]']").val(address);
         form.find("input[name='address[city]']").val(city);
         form.find("input[name='address[state]']").val(state);
-        form.find("select[name='address[countryId]']").find("option:contains(" + country + ")").prop('selected', 'selected');
+        form.find("select[name='address[countryId]']").find(`option:contains(${ country })`).prop('selected', 'selected');
+        form.find("select[name='otherEVs']").find(`option:contains(${ locationType.split(/,\s*/).includes("PARTY") })`).prop('selected', 'selected');
+
+        $("#page-link-edit").click();
+    }
+
+    static handleExistingSiteClick() {
+        event.preventDefault();
+
+        const link = $(event.target);
+        const siteId = link.text();
+        EventBus.dispatch(EditEvents.site_edit_selection, siteId);
 
         $("#page-link-edit").click();
     }

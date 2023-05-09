@@ -17,7 +17,6 @@ import {currentUser} from "./User";
  * Constructor
  */
 const NavBar = function () {
-    this.currentPage = "login";
     this.initListeners();
 
     this.pageMap = {
@@ -30,7 +29,6 @@ const NavBar = function () {
         feature: {requiredRole: "feature", page: new FeaturePage()},
         system: {requiredRole: "admin", page: new SystemPage()}
     }
-
 };
 
 NavBar.prototype.setInitialPage = function () {
@@ -61,7 +59,7 @@ NavBar.prototype.changePage = function (newPageName) {
     const navBar = this;
 
     $.each(this.pageMap, function (pageName, pageDefinition) {
-        if (pageName === newPageName) {
+        if (pageName === newPageName && newPageName !== navBar.currentPage) {
             const roleRequired = Objects.isNotNullOrUndef(pageDefinition.requiredRole);
 
             if (roleRequired && !currentUser.isAuthenticated()) {
@@ -90,6 +88,7 @@ NavBar.prototype.hideCurrentPage = function () {
 NavBar.prototype.showCurrentPage = function () {
     $("#page-" + this.currentPage).show();
     $("#page-link-" + this.currentPage).closest("li").addClass("active");
+    $('html').scrollTop(0).scrollLeft(0);
 };
 
 export default NavBar;

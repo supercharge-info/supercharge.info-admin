@@ -4,8 +4,8 @@
   "description": "Administration pages for supercharge.info",
   "main": "index.js",
   "scripts": {
-    "build": "NODE_ENV=production webpack --mode=production",
-    "start": "NODE_ENV=development webpack serve",
+    "build": "cross-env NODE_ENV=production webpack --mode=production",
+    "start": "cross-env NODE_ENV=development webpack serve",
     "release": "npm version --message 'RELEASE: %s' patch && git push origin master && git push origin --tags"
   },
   "author": "",
@@ -28,19 +28,20 @@
     "@babel/core": "7.14.0",
     "@babel/preset-env": "7.14.1",
     "babel-loader": "8.2.2",
+    "cross-env": "^7.0.3",
     "css-loader": "5.2.4",
     "html-minifier": "4.0.0",
     "html-webpack-plugin": "5.3.1",
     "style-loader": "2.0.0",
     "url-loader": "4.1.1",
-    "webpack": "5.36.2",
-    "webpack-cli": "4.6.0",
-    "webpack-dev-server": "3.11.2"
+    "webpack": "^5.39.0",
+    "webpack-cli": "4.10.0",
+    "webpack-dev-server": "4.11.1"
   },
   "dependencies": {
     "bootstrap": "3.4.1",
     "core-js": "3.11.3",
-    "jquery": "3.6.0",
+    "jquery": "3.6.4",
     "jquery-serializejson": "3.2.1",
     "xss-filters": "^1.2.7"
   }

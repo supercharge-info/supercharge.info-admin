@@ -2,3 +2,8 @@
 table.view-table tr.tesla {
     border-bottom: 2px solid black
 }
+
+td.break-word {
+    max-width: 250px;
+    overflow-wrap: break-word;
+}

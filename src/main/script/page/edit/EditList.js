@@ -37,9 +37,9 @@ export default class EditList {
                     <th>Name</th>
                     <th>Status</th>
                     <th>Date Opened</th>
-                    <th>Counted</th>
-                    <th>Elevation (m)</th>
+                    <th>Power (kW)</th>
                     <th>Stalls</th>
+                    <th>Other EVs</th>
                     <th>Modified</th>
                 </tr>`
                 );
@@ -50,6 +50,7 @@ export default class EditList {
                 columns: [
                     {
                         data: null,
+                        searchable: false,
                         render: (d,t,r) =>
                             `<a href="#" class="site-edit-trigger" data-id="${r.id}">edit</a>
                             &nbsp;
@@ -58,11 +59,11 @@ export default class EditList {
                     { data: 'id' },
                     { data: 'name', render: xss.inHTMLData },
                     { data: 'status' },
-                    { data: 'dateOpened', defaultContent: '' },
-                    { data: 'counted' },
-                    { data: 'elevationMeters' },
-                    { data: 'stallCount' },
-                    { data: 'dateModified' },
+                    { data: 'dateOpened', defaultContent: '', searchable: false },
+                    { data: 'powerKiloWatt', searchable: false },
+                    { data: 'stallCount', searchable: false },
+                    { data: 'otherEVs', searchable: false },
+                    { data: 'dateModified', searchable: false }
                 ]
             });
         } else {

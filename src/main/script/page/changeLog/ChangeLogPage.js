@@ -46,11 +46,12 @@ export default class ChangeLogPage {
                 columns: [
                     {
                         data: null,
+                        searchable: false,
                         render: (d,t,r) =>
                             `<a href="#" class="change-log-delete-trigger" data-id="${r.id}">delete</a>`
                     },
                     { data: 'id' },
-                    { data: 'date' },
+                    { data: 'date', searchable: false },
                     { data: 'changeType' },
                     { data: 'siteName', render: xss.inHTMLData },
                     { data: 'region' },

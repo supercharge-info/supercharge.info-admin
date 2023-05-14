@@ -13,3 +13,16 @@
 #edit-sites-list-table-wrapper th {
     top: -1px;
 }
+table.dataTable.view-table thead > tr > th.sorting:after,
+table.dataTable.view-table thead > tr > th.sorting:before {
+    opacity: 0.3;
+}
+table.dataTable.view-table thead > tr > th.sorting_asc:before,
+table.dataTable.view-table thead > tr > th.sorting_desc:after,
+table.dataTable.view-table thead > tr > td.sorting_asc:before,
+table.dataTable.view-table thead > tr > td.sorting_desc:after {
+    opacity: 1;
+}
+table.dataTable thead > tr > th.sorting {
+    position: sticky;
+}

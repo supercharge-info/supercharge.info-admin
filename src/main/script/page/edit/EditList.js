@@ -4,6 +4,8 @@ import EditEvents from './EditEvents'
 import SiteDeleteAction from "./SiteDeleteAction";
 import SiteLoadAction from "./SiteLoadAction";
 import $ from "jquery";
+import 'datatables.net';
+import 'datatables.net-bs';
 import xss from 'xss-filters';
 
 export default class EditList {
@@ -22,55 +24,50 @@ export default class EditList {
     };
 
     populateEditSiteTable(sites) {
-        const tableHead = this.siteListTable.find("thead");
-        const tableBody = this.siteListTable.find("tbody");
-        tableHead.html("" +
-            `<tr>
-                <th>Action</th>
-                <th>Id</th>
-                <th>Name</th>
-                <th>Status</th>
-                <th>Date Opened</th>
-                <th>Counted</th>
-                <th>Elevation (m)</th>
-                <th>Stalls</th>
-                <th>Modified</th>
-            </tr>`
-            );
-        tableBody.html("");
-        $.each(sites, function (index, site) {
-            tableBody.append(
+        if (!this.dataTable) {
+            this.siteListTable
+                .on("click", "a.site-edit-trigger", EditList.handleEditClick)
+                .on("click", "a.site-delete-trigger", EditList.handleDeleteClick);
+
+            const tableHead = this.siteListTable.find("thead");
+            tableHead.html("" +
                 `<tr>
-                    <td>
-                        <a href='' class='site-edit-trigger' data-id='${site.id}'>edit</a>
-                        &nbsp;
-                        <a href='' class='site-delete-trigger' data-id='${site.id}'>delete</a>
-                    </td>
-                    <td>${site.id}</td>
-                    <td>${xss.inHTMLData(site.name)}</td>
-                    <td>${site.status}</td>
-                    <td>${site.dateOpened}</td>
-                    <td>${site.counted}</td>
-                    <td>${site.elevationMeters}</td>
-                    <td>${site.stallCount}</td>
-                    <td>${site.dateModified}</td>
+                    <th>Action</th>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Status</th>
+                    <th>Date Opened</th>
+                    <th>Counted</th>
+                    <th>Elevation (m)</th>
+                    <th>Stalls</th>
+                    <th>Modified</th>
                 </tr>`
-            );
-        });
-
-        $(".site-edit-trigger").on("click", $.proxy(EditList.handleEditClick, this));
-        $(".site-delete-trigger").on("click", $.proxy(EditList.handleDeleteClick, this));
-
-        this.adjustListHeight();
-    };
-
-    /** Make the list of sites occupy all remaining vertical space. */
-    adjustListHeight() {
-        const marinAndPadding = 150;
-        const bodyHeight = $("body").height();
-        const formHeight = this.siteEditForm.height();
-        const diff = Math.max(bodyHeight - formHeight - marinAndPadding, 200);
-        this.siteListTable.closest("div").css('height', diff);
+                );
+            this.dataTable = this.siteListTable.DataTable({
+                data: sites,
+                order: [[8, 'desc']],
+                lengthMenu: [5, 25, 100, 1000, 10000],
+                columns: [
+                    {
+                        data: null,
+                        render: (d,t,r) =>
+                            `<a href="#" class="site-edit-trigger" data-id="${r.id}">edit</a>
+                            &nbsp;
+                            <a href="#" class="site-delete-trigger" data-id="${r.id}">delete</a>`
+                    },
+                    { data: 'id' },
+                    { data: 'name', render: xss.inHTMLData },
+                    { data: 'status' },
+                    { data: 'dateOpened', defaultContent: '' },
+                    { data: 'counted' },
+                    { data: 'elevationMeters' },
+                    { data: 'stallCount' },
+                    { data: 'dateModified' },
+                ]
+            });
+        } else {
+            this.dataTable.clear().rows.add(sites).draw();
+        }
     }
 
     static handleEditClick(event) {
@@ -78,7 +75,7 @@ export default class EditList {
         const link = $(event.target);
         const siteId = link.data("id");
         EventBus.dispatch(EditEvents.site_edit_selection, siteId);
-    };
+    }
 
     static handleDeleteClick(event) {
         event.preventDefault();
@@ -86,7 +83,7 @@ export default class EditList {
         const siteId = link.data("id");
         const siteName = link.parents("tr").find("td").eq(2).html();
         EventBus.dispatch(EditEvents.site_delete_selection, siteId, siteName);
-    };
+    }
 
 };
 

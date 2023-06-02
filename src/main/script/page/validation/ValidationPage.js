@@ -1,6 +1,8 @@
 import URL from "../../URL";
 import $ from 'jquery'
 import xss from 'xss-filters';
+import EventBus from "../../util/EventBus";
+import EditEvents from "../edit/EditEvents";
 
 /**
  * @constructor
@@ -35,7 +37,34 @@ ValidationPage.prototype.populateTable = function (data) {
         }
     });
 
+    tableBody.find("th:contains('site_id')").each((i, elem) => {
+        let e = $(elem);
+        let index = e.index();
+        e.closest("table").find(`td:nth-child(${index+1})`).each((i, elem) => {
+            elem.innerHTML = elem.innerText.replace(/\d+/g, "<a title='click to populate edit form' href='#edit'>$&</a>");
+            $(elem).find("a").click(ValidationPage.handleSiteClick);
+        });
+    });
 
+    tableBody.find("th:contains('url_discuss')").each((i, elem) => {
+        let e = $(elem);
+        let index = e.index();
+        e.closest("table").find(`td:nth-child(${index+1})`).each((i, elem) => {
+            if (elem.innerText && elem.innerText != "null") {
+                elem.innerHTML = `<a target='_blank' href='${elem.innerText}'>${elem.innerText}</a>`;
+            }
+        });
+    });
+
+    tableBody.find("th:contains('location_id')").each((i, elem) => {
+        let e = $(elem);
+        let index = e.index();
+        e.closest("table").find(`td:nth-child(${index+1})`).each((i, elem) => {
+            if (elem.innerText && elem.innerText != "null") {
+                elem.innerHTML = `<a target='_blank' href='https://www.tesla.com/findus/location/supercharger/${elem.innerText}'>${elem.innerText}</a>`;
+            }
+        });
+    });
 };
 
 /**
@@ -71,6 +100,15 @@ ValidationPage.appendFailedRowsTable = function (tableBody, failRows) {
     );
 };
 
+ValidationPage.handleSiteClick = function() {
+    event.preventDefault();
+
+    $("#page-link-edit").click();
+
+    const link = $(event.target);
+    const siteId = link.text();
+    EventBus.dispatch(EditEvents.site_edit_selection, siteId);
+}
 
 export default ValidationPage;
 

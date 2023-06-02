@@ -59,6 +59,11 @@ table.view-table td.error {
     background-color: #E9967A;
 }
 
+table.view-table td.error a,
+table.view-table tr.fail-row a {
+    color: darkred;
+}
+
 table.view-table td.fixed {
     font-family: monospace,"Courier New";
 }

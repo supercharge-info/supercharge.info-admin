@@ -78,7 +78,7 @@ class ComparePage {
         });
         this.fieldMismatchesTable = this.fieldMismatchesTable.on('click','td:first-child a',ComparePage.handleExistingSiteClick).DataTable({ 'fnDrawCallback': ComparePage.dtRowSpanRedraw, lengthMenu: [ 10, 25, 100, 1000, 10000] });
 
-        $(this.missingLocalSitesTable.table().container()).find('.row:first > div:eq(1)').append(this.countrySelect);
+        $(this.missingLocalSitesTable.table().container()).find('.row:first > div:eq(1)').append($('<label>').text('Country:').append(this.countrySelect));
         this.countrySelect.on('change', () => { this.missingLocalSitesTable.draw(); this.missingTeslaSitesTable.draw(); this.fieldMismatchesTable.draw() });
     };
 

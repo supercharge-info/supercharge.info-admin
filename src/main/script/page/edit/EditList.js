@@ -66,8 +66,16 @@ export default class EditList {
                     { data: 'dateModified', searchable: false }
                 ]
             });
+            $(window).keydown($.proxy(this.handleFindShortcut, this));
         } else {
             this.dataTable.clear().rows.add(sites).draw();
+        }
+    }
+
+    handleFindShortcut(event) {
+        if (this.siteListTable.closest('.page').is(':visible') && String.fromCharCode(event.which) == "F" && event.ctrlKey) {
+            event.preventDefault();
+            $(this.dataTable.table().container()).find('input').focus();
         }
     }
 

@@ -80,6 +80,7 @@ class ComparePage {
 
         $(this.missingLocalSitesTable.table().container()).find('.row:first > div:eq(1)').append($('<label>').text('Country:').append(this.countrySelect));
         this.countrySelect.on('change', () => { this.missingLocalSitesTable.draw(); this.missingTeslaSitesTable.draw(); this.fieldMismatchesTable.draw() });
+        $(window).keydown($.proxy(this.handleFindShortcut, this));
     };
 
     static dtRowSpanRedraw() {
@@ -163,6 +164,30 @@ class ComparePage {
         form.find("select[name='otherEVs']").find(`option:contains(${ locationType.split(/,\s*/).includes("PARTY") })`).prop('selected', 'selected');
 
         $("#page-link-edit").click();
+    }
+
+    handleFindShortcut(event) {
+        if (this.validationWebScrapeDiv.closest('.page').is(':visible') && String.fromCharCode(event.which) == "F" && event.ctrlKey) {
+            event.preventDefault();
+
+            // Calculate positions
+            const navHeight = $('.navbar-header').height() || $('.navbar').height();
+            const position = $(window).scrollTop() + $(window).height() - 200;
+            const bottomTablePosition = $(this.fieldMismatchesTable.table().container()).offset().top;
+            const midTablePosition = $(this.missingTeslaSitesTable.table().container()).offset().top;
+            const midTableHeight = $(this.missingTeslaSitesTable.table().container()).height();
+            const topTablePosition = $(this.missingLocalSitesTable.table().container()).offset().top;
+            const topTableHeight = $(this.missingLocalSitesTable.table().container()).height();
+
+            // Determine best search box
+            if (Math.abs(position - bottomTablePosition) <= Math.abs(position - midTablePosition - midTableHeight)) {
+                $(this.fieldMismatchesTable.table().container()).find('input').focus();
+            } else if (Math.abs(position - midTablePosition) <= Math.abs(position - topTablePosition - topTableHeight)) {
+                $(this.missingTeslaSitesTable.table().container()).find('input').focus();
+            } else {
+                $(this.missingLocalSitesTable.table().container()).find('input').focus();
+            }
+        }
     }
 
     static handleExistingSiteClick() {

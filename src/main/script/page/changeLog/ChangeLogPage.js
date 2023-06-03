@@ -59,8 +59,16 @@ export default class ChangeLogPage {
                     { data: 'siteStatus' }
                 ]
             });
+            $(window).keydown($.proxy(this.handleFindShortcut, this));
         } else {
             this.dataTable.clear().rows.add(changeLogs).draw();
+        }
+    }
+
+    handleFindShortcut(event) {
+        if (this.changeLogListTable.closest('.page').is(':visible') && String.fromCharCode(event.which) == "F" && event.ctrlKey) {
+            event.preventDefault();
+            $(this.dataTable.table().container()).find('input').focus();
         }
     }
 

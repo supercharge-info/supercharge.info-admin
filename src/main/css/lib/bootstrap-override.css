@@ -39,3 +39,7 @@ div.dataTables_wrapper select.form-control {
         text-align: left;
     }
 }
+/* Draw more attention to search box (esp. when pressing Ctrl-F) */
+input[type="search"]:focus {
+    box-shadow: 0 0 10px rgb(102, 175, 223);
+}

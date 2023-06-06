@@ -11,37 +11,28 @@ import EditEvents from "../edit/EditEvents";
  */
 class ComparePage {
 
-    constructor() {
-        this.validationWebScrapeDiv = $("#validation-web-scrape-report");
+    constructor(china) {
+        this.suffix = "";
+        if (china) {
+            this.suffix = "-china";
+        } else {
+            $('#page-comparison ul.nav > li > a').click(ComparePage.handleTabChange);
+        }
+        this.validationWebScrapeDiv = $(`#validation-web-scrape${this.suffix}-report`);
     }
 
     onPageShow() {
-        if (!this.validationWebScrapeDiv.html()) {
-            $.get(URL.val.webscrape, $.proxy(this.populateWebScrapeReport, this));
+        if (this.validationWebScrapeDiv.children().length <= 1) {
+            $.get(URL.val.webscrape + this.suffix, $.proxy(this.populateWebScrapeReport, this));
         }
     };
 
     populateWebScrapeReport(reportHtml) {
         this.validationWebScrapeDiv.html(reportHtml);
 
-        this.missingLocalSitesTable = $("#missing-local-sites-table");
-        this.missingTeslaSitesTable = $("#missing-tesla-sites-table");
-        this.fieldMismatchesTable = $("#field-mismatches-table");
-
-        // Nav List
-        this.navItem = $('#page-link-comparison');
-        this.dropdown = $('<ul class="dropdown-menu">').insertAfter(this.navItem);
-        $('<li class="dropdown">')
-            .append($('<a href="#missing-local-sites-table" data-target="#">Missing Local Sites</a>'))
-            .appendTo(this.dropdown);
-        $('<li class="dropdown">')
-            .append($('<a href="#missing-tesla-sites-table" data-target="#">Missing Tesla Sites</a>'))
-            .appendTo(this.dropdown);
-        $('<li class="dropdown">')
-            .append($('<a href="#field-mismatches-table" data-target="#">Field Mismatches</a>'))
-            .appendTo(this.dropdown);
-        this.navItem.addClass('dropdown-toggle').attr('data-toggle', 'dropdown').append(' <span class="caret">');
-        this.dropdown.find('a').click(ComparePage.handleNavClick);
+        this.missingLocalSitesTable = $(`#missing-local-sites-table${this.suffix}`);
+        this.missingTeslaSitesTable = $(`#missing-tesla-sites-table${this.suffix}`);
+        this.fieldMismatchesTable = $(`#field-mismatches-table${this.suffix}`);
 
         // Country Filter
         this.countryList = {};
@@ -55,14 +46,6 @@ class ComparePage {
                     this.countryList[e.innerText] = 1;
                 }
             });
-        this.countrySelect = $('<select>').addClass('form-control input-sm').append('<option value="">All Countries</option>').append(Object.keys(this.countryList).sort().map(e => $(`<option>${e}</option>`)));
-        $.fn.dataTable.ext.search.push((s,d) => {
-            let col = s.aoColumns.find(e => e.sTitle === 'country');
-            if (col) {
-                return d[col.idx] === (this.countrySelect.val() || d[col.idx])
-            }
-            return true;
-        });
 
         // Data Tables, site links
         this.missingLocalSitesTable = this.missingLocalSitesTable.on('click','td:first-child a',ComparePage.handleMissingSiteClick).DataTable({
@@ -78,10 +61,35 @@ class ComparePage {
         });
         this.fieldMismatchesTable = this.fieldMismatchesTable.on('click','td:first-child a',ComparePage.handleExistingSiteClick).DataTable({ 'fnDrawCallback': ComparePage.dtRowSpanRedraw, lengthMenu: [ 10, 25, 100, 1000, 10000] });
 
-        $(this.missingLocalSitesTable.table().container()).find('.row:first > div:eq(1)').append($('<label>').text('Country:').append(this.countrySelect));
-        this.countrySelect.on('change', () => { this.missingLocalSitesTable.draw(); this.missingTeslaSitesTable.draw(); this.fieldMismatchesTable.draw() });
+        if (!this.suffix) {
+            this.countrySelect = $('<select>').addClass('form-control input-sm').append('<option value="">All Countries</option>').append(Object.keys(this.countryList).sort().map(e => $(`<option>${e}</option>`)));
+            $.fn.dataTable.ext.search.push((s,d) => {
+                let col = s.aoColumns.find(e => e.sTitle === 'country');
+                if (col) {
+                    return d[col.idx] === (this.countrySelect.val() || d[col.idx])
+                }
+                return true;
+            });
+            $(this.missingLocalSitesTable.table().container()).find('.row:first > div:eq(1)').append($('<label>').text('Country:').append(this.countrySelect));
+            this.countrySelect.on('change', () => { this.missingLocalSitesTable.draw(); this.missingTeslaSitesTable.draw(); this.fieldMismatchesTable.draw() });
+        }
         $(window).keydown($.proxy(this.handleFindShortcut, this));
     };
+
+    static handleTabChange(e) {
+        const elem = $(e.target);
+        if (elem.attr('href') == '#') {
+            return;
+        }
+        e.preventDefault();
+        elem.tab('show').closest('ul').nextAll().hide();
+
+        const target = $(elem.data('target')).show();
+        if (target.children().length <= 1) {
+            new ComparePage(true).onPageShow();
+        }
+        $('html').scrollTop(0).scrollLeft(0);
+    }
 
     static dtRowSpanRedraw() {
         // From: https://stackoverflow.com/a/50183806/1507941
@@ -115,13 +123,6 @@ class ComparePage {
                 }
             });
         }
-    }
-
-    static handleNavClick(e) {
-        const dest = $(e.target.hash).closest('#validation-web-scrape-report > *');
-        const navHeight = $('.navbar-header').height() || $('.navbar').height();
-        $('html').animate({ scrollLeft: 0, scrollTop: dest.offset().top - navHeight + 'px' });
-        e.preventDefault();
     }
 
     static handleMissingSiteClick() {
@@ -167,7 +168,7 @@ class ComparePage {
     }
 
     handleFindShortcut(event) {
-        if (this.validationWebScrapeDiv.closest('.page').is(':visible') && String.fromCharCode(event.which) == "F" && event.ctrlKey) {
+        if (this.validationWebScrapeDiv.is(':visible') && String.fromCharCode(event.which) == "F" && event.ctrlKey) {
             event.preventDefault();
 
             // Calculate positions

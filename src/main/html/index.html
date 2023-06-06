@@ -169,9 +169,40 @@
     PAGE: Comparison
     = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = -->
     <div id="page-comparison" class="page" style="display: none">
-        <a href="/service/supercharge/validation/tesla-source" target="_blank">Tesla Json Source</a>
-        <br/>
-        <div id="validation-web-scrape-report"></div>
+        <ul class="nav nav-pills" style="margin-bottom: 15px">
+            <li role="presentation" class="active"><a href="/service/supercharge/validation/webscrape" data-target="#validation-web-scrape-report">Worldwide</a></li>
+            <li role="presentation"><a href="/service/supercharge/validation/webscrape-china" data-target="#validation-web-scrape-china-report">China</a></li>
+            <li role="presentation" class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">Json Sources <span class="caret" /></a>
+                <ul class="dropdown-menu">
+                    <li><a href="/service/supercharge/validation/tesla-source" target="_blank">Raw Worldwide Locations</a></li>
+                    <li><a href="/service/supercharge/validation/china-source" target="_blank">Raw China Loations</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="/service/supercharge/validation/processed-source" target="_blank">Processed Worldwide Locations</a></li>
+                    <li><a href="/service/supercharge/validation/processed-china-source" target="_blank">Processed China Locations</a></li>
+                </ul>
+            </li>
+        </ul>
+        <div id="validation-web-scrape-report">
+            <div class="dataTables_processing">
+                <div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+        </div>
+        <div id="validation-web-scrape-china-report" style="display: none">
+            <div class="dataTables_processing">
+                <div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =

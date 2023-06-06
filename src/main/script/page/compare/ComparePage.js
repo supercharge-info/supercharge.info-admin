@@ -63,15 +63,10 @@ class ComparePage {
 
         if (!this.suffix) {
             this.countrySelect = $('<select>').addClass('form-control input-sm').append('<option value="">All Countries</option>').append(Object.keys(this.countryList).sort().map(e => $(`<option>${e}</option>`)));
-            $.fn.dataTable.ext.search.push((s,d) => {
-                let col = s.aoColumns.find(e => e.sTitle === 'country');
-                if (col) {
-                    return d[col.idx] === (this.countrySelect.val() || d[col.idx])
-                }
-                return true;
-            });
             $(this.missingLocalSitesTable.table().container()).find('.row:first > div:eq(1)').append($('<label>').text('Country:').append(this.countrySelect));
-            this.countrySelect.on('change', () => { this.missingLocalSitesTable.draw(); this.missingTeslaSitesTable.draw(); this.fieldMismatchesTable.draw() });
+            this.countrySelect.on('change', () => {
+                [ this.missingLocalSitesTable, this.missingTeslaSitesTable, this.fieldMismatchesTable ].forEach(t => t.column((i, d, n) => n.innerText == 'country').search(`^${this.countrySelect.val() || '.*'}$`, true, false).draw())
+            });
         }
         $(window).keydown($.proxy(this.handleFindShortcut, this));
     };

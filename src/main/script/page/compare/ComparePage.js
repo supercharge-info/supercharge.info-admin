@@ -16,14 +16,25 @@ class ComparePage {
         if (china) {
             this.suffix = "-china";
         } else {
-            $('#page-comparison ul.nav > li > a').click(ComparePage.handleTabChange);
+            $('#page-comparison ul.nav > li > a').click($.proxy(this.handleTabChange, this));
         }
         this.validationWebScrapeDiv = $(`#validation-web-scrape${this.suffix}-report`);
     }
 
     onPageShow() {
-        if (this.validationWebScrapeDiv.children().length <= 1) {
-            $.get(URL.val.webscrape + this.suffix, $.proxy(this.populateWebScrapeReport, this));
+        if (!this.validationWebScrapeDiv.is(':visible') && this.other) {
+            return this.other.onPageShow();
+        }
+        if (!this.loaded && this.validationWebScrapeDiv.children().length <= 1) {
+            this.loaded = true;
+            $.get(URL.val.webscrape + this.suffix)
+                .done($.proxy(this.populateWebScrapeReport, this))
+                .fail(e => {
+                    this.loaded = false;
+                    if(confirm('Failed to load compare page, do you want to retry?')) {
+                        this.onPageShow();
+                    }
+                });
         }
     };
 
@@ -71,19 +82,19 @@ class ComparePage {
         $(window).keydown($.proxy(this.handleFindShortcut, this));
     };
 
-    static handleTabChange(e) {
+    handleTabChange(e) {
         const elem = $(e.target);
         if (elem.attr('href') == '#') {
             return;
         }
         e.preventDefault();
-        elem.tab('show').closest('ul').nextAll().hide();
+        elem.tab('show').closest('.nav').nextAll().hide();
 
         const target = $(elem.data('target')).show();
-        if (target.children().length <= 1) {
-            new ComparePage(true).onPageShow();
+        if (!this.other) {
+            this.other = new ComparePage(true);
         }
-        $('html').scrollTop(0).scrollLeft(0);
+        this.onPageShow();
     }
 
     static dtRowSpanRedraw() {

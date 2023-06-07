@@ -60,7 +60,7 @@ table.view-table td.error {
 
 table.view-table td.error a,
 table.view-table tr.fail-row a {
-    color: darkred;
+    color: navy;
 }
 
 table.view-table td.fixed {

@@ -3,6 +3,7 @@ import URL from "../../URL";
 import EditEvents from './EditEvents'
 import SiteDeleteAction from "./SiteDeleteAction";
 import SiteLoadAction from "./SiteLoadAction";
+import {currentUser} from "../../nav/User";
 import $ from "jquery";
 import 'datatables.net';
 import 'datatables.net-bs';
@@ -54,9 +55,9 @@ export default class EditList {
                         data: null,
                         searchable: false,
                         render: (d,t,r) =>
-                            `<a href="#" class="site-edit-trigger" data-id="${r.id}">edit</a>
-                            &nbsp;
-                            <a href="#" class="site-delete-trigger" data-id="${r.id}">delete</a>`
+                            `<a href="#" class="site-edit-trigger" data-id="${r.id}">edit</a>`
+                            + (!currentUser.hasRole("admin") ? "" : " &nbsp; "
+                            + `<a href="#" class="site-delete-trigger" data-id="${r.id}">delete</a>`)
                     },
                     { data: 'id' },
                     { data: 'name', render: xss.inHTMLData },

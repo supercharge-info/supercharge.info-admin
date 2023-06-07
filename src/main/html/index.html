@@ -279,20 +279,11 @@
                         <td><input name="hours" size="40"/></td>
                     </tr>
                     <tr>
-                        <th>Counted</th>
-                        <td>
-                            <select name="counted">
-                                <option name="true" value="true">true</option>
-                                <option name="false" value="false">false</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
                         <th>GPS (lat,lng)</th>
                         <td>
-                            <input name="gps[latitude]" size="20" maxlength="35" id="latitude-input"/>
+                            <input name="gps[latitude]" size="12" maxlength="35" id="latitude-input"/>
                             <strong>,</strong>
-                            <input name="gps[longitude]" size="20" maxlength="35"/>
+                            <input name="gps[longitude]" size="12" maxlength="35" id="longitude-input"/>
                         </td>
                     </tr>
                     <tr>
@@ -312,6 +303,12 @@
                     <tr>
                         <th>Stall Count</th>
                         <td><input name="stallCount" size="4"/></td>
+                    </tr>
+                    <tr>
+                        <th>Power (kW)</th>
+                        <td>
+                            <input name="powerKiloWatt" type="text" size="5" maxlength="3"/>
+                        </td>
                     </tr>
 
                     </tbody>
@@ -350,9 +347,12 @@
                         <td>&nbsp;</td>
                     </tr>
                     <tr>
-                        <th>Power (kW)</th>
+                        <th>Counted</th>
                         <td>
-                            <input name="powerKiloWatt" type="text" size="5" maxlength="3"/>
+                            <select name="counted">
+                                <option name="true" value="true">true</option>
+                                <option name="false" value="false">false</option>
+                            </select>
                         </td>
                     </tr>
                     <tr>

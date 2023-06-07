@@ -40,13 +40,15 @@ export default class EditList {
                     <th>Power (kW)</th>
                     <th>Stalls</th>
                     <th>Other EVs</th>
+                    <th>Version</th>
                     <th>Modified</th>
+                    <th>Links</th>
                 </tr>`
                 );
             this.dataTable = this.siteListTable.DataTable({
                 data: sites,
-                order: [[8, 'desc']],
-                lengthMenu: [5, 25, 100, 1000, 10000],
+                order: [[9, 'desc']],
+                lengthMenu: [10, 25, 100, 1000, 10000],
                 columns: [
                     {
                         data: null,
@@ -63,7 +65,23 @@ export default class EditList {
                     { data: 'powerKiloWatt', searchable: false },
                     { data: 'stallCount', searchable: false },
                     { data: 'otherEVs', searchable: false },
-                    { data: 'dateModified', searchable: false }
+                    { data: 'version', searchable: false },
+                    { data: 'dateModified', searchable: false },
+                    {
+                        data: null,
+                        searchable: false,
+                        render: (d,t,r) =>
+                            `<div class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Links <span class="caret"/></a>
+                                <ul class="dropdown-menu dropdown-menu-right dropdown-menu-links">
+                                    <li><a href="https://www.google.com/maps/search/?api=1&query=${
+                                        encodeURI(`${r.address.street||''} ${r.address.city||''} ${r.address.state||''} ${r.address.zip||''} ${r.address.country||''}`)
+                                    }" target="_blank">gmap</a></li>
+                                    ${r.urlDiscuss ? `<li><a href="${r.urlDiscuss}" target="_blank">forum</a></li>` : ''}
+                                    ${r.locationId ? `<li><a href="https://www.tesla.c${r.address.country=='China' && !['Hong Kong', 'Macau'].includes(r.address.state) ? 'n' : 'om'}/findus/location/supercharger/${r.locationId}" target="_blank">tesla.c${r.address.country=='China' && !['Hong Kong', 'Macau'].includes(r.address.state) ? 'n' : 'om'}</a></li>` : ''}
+                                </ul>
+                            </div>`
+                    }
                 ]
             });
             $(window).keydown($.proxy(this.handleFindShortcut, this));

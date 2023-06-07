@@ -16,4 +16,5 @@
 @import "~bootstrap/dist/css/bootstrap.css";
 @import "~datatables.net-bs/css/dataTables.bootstrap.css";
 /* - - - - - - - - - - - - - - - - - - - - Third party override */
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,200;8..144,400;8..144,700&display=swap');
 @import "lib/bootstrap-override.css";

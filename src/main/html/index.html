@@ -169,9 +169,40 @@
     PAGE: Comparison
     = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = -->
     <div id="page-comparison" class="page" style="display: none">
-        <a href="/service/supercharge/validation/tesla-source" target="_blank">Tesla Json Source</a>
-        <br/>
-        <div id="validation-web-scrape-report"></div>
+        <ul class="nav nav-pills" style="margin-bottom: 15px">
+            <li role="presentation" class="active"><a href="/service/supercharge/validation/webscrape" data-target="#validation-web-scrape-report">Worldwide</a></li>
+            <li role="presentation"><a href="/service/supercharge/validation/webscrape-china" data-target="#validation-web-scrape-china-report">China</a></li>
+            <li role="presentation" class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">Json Sources <span class="caret" /></a>
+                <ul class="dropdown-menu">
+                    <li><a href="/service/supercharge/validation/tesla-source" target="_blank">Raw Worldwide Locations</a></li>
+                    <li><a href="/service/supercharge/validation/china-source" target="_blank">Raw China Loations</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="/service/supercharge/validation/processed-source" target="_blank">Processed Worldwide Locations</a></li>
+                    <li><a href="/service/supercharge/validation/processed-china-source" target="_blank">Processed China Locations</a></li>
+                </ul>
+            </li>
+        </ul>
+        <div id="validation-web-scrape-report">
+            <div class="dataTables_processing">
+                <div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+        </div>
+        <div id="validation-web-scrape-china-report" style="display: none">
+            <div class="dataTables_processing">
+                <div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
@@ -248,20 +279,11 @@
                         <td><input name="hours" size="40"/></td>
                     </tr>
                     <tr>
-                        <th>Counted</th>
-                        <td>
-                            <select name="counted">
-                                <option name="true" value="true">true</option>
-                                <option name="false" value="false">false</option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
                         <th>GPS (lat,lng)</th>
                         <td>
-                            <input name="gps[latitude]" size="20" maxlength="35" id="latitude-input"/>
+                            <input name="gps[latitude]" size="12" maxlength="35" id="latitude-input"/>
                             <strong>,</strong>
-                            <input name="gps[longitude]" size="20" maxlength="35"/>
+                            <input name="gps[longitude]" size="12" maxlength="35" id="longitude-input"/>
                         </td>
                     </tr>
                     <tr>
@@ -281,6 +303,12 @@
                     <tr>
                         <th>Stall Count</th>
                         <td><input name="stallCount" size="4"/></td>
+                    </tr>
+                    <tr>
+                        <th>Power (kW)</th>
+                        <td>
+                            <input name="powerKiloWatt" type="text" size="5" maxlength="3"/>
+                        </td>
                     </tr>
 
                     </tbody>
@@ -319,9 +347,12 @@
                         <td>&nbsp;</td>
                     </tr>
                     <tr>
-                        <th>Power (kW)</th>
+                        <th>Counted</th>
                         <td>
-                            <input name="powerKiloWatt" type="text" size="5" maxlength="3"/>
+                            <select name="counted">
+                                <option name="true" value="true">true</option>
+                                <option name="false" value="false">false</option>
+                            </select>
                         </td>
                     </tr>
                     <tr>
@@ -391,13 +422,10 @@
             <tbody></tbody>
         </table>
 
-        <div id="edit-sites-list-table-wrapper"
-             style="margin-top: 20px; overflow-y: scroll; height: 550px; width: 100%">
-            <table id="edit-sites-list-table" class="table table-condensed table-hover table-bordered">
-                <thead></thead>
-                <tbody></tbody>
-            </table>
-        </div>
+        <table id="edit-sites-list-table" class="table table-condensed table-hover table-bordered">
+            <thead></thead>
+            <tbody></tbody>
+        </table>
 
     </div>
 

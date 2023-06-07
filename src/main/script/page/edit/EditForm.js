@@ -17,6 +17,8 @@ export default class EditForm {
 
         this.latitudeInput = $("#latitude-input");
         this.latitudeInput.bind('paste', $.proxy(this.handleLatitudeChange, this));
+        this.longitudeInput = $("#longitude-input");
+        this.longitudeInput.bind('paste', $.proxy(this.handleLongitudeChange, this));
 
         $.getJSON(URL.data.country, $.proxy(this.populateCountryOptions, this));
 
@@ -77,11 +79,14 @@ export default class EditForm {
     };
 
     populateCountryOptions(countries) {
-        const select = $("#address-country-select");
-
-        $.each(countries, function (index, country) {
-            select.append("<option value='" + country.id + "'>" + country.name + "</option>");
-        });
+        $("#address-country-select").append(
+            countries.sort((a,b) =>
+                // Sort USA, then China, then alphabetic
+                a.name == 'USA' ? -1 : b.name == 'USA' ? 1 : a.name == 'China' ? -1 : b.name == 'China' ? 1 : a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1
+            ).map(
+                country => $("<option value='" + country.id + "'>" + country.name + "</option>")
+            )
+        );
 
     };
 
@@ -92,46 +97,86 @@ export default class EditForm {
 
     handleElevationLookupButton(event) {
         event.preventDefault();
-        const lat = this.siteEditForm.find("input[name='gps[latitude]']").val();
-        const lng = this.siteEditForm.find("input[name='gps[longitude]']").val();
-        const elevationService = new google.maps.ElevationService;
-        const elevationField = this.siteEditForm.find("input[name='elevationMeters']");
-        elevationService.getElevationForLocations({
-            'locations': [new google.maps.LatLng(lat, lng, false)]
-        }, function (results, status) {
-            if (status === 'OK') {
-                // Retrieve the first result
-                if (results[0]) {
-                    elevationField.val(Math.round(results[0].elevation));
+        const lat = this.latitudeInput.val();
+        const lng = this.longitudeInput.val();
+        if (lat && lng) {
+            const elevationService = new google.maps.ElevationService;
+            const elevationField = this.siteEditForm.find("input[name='elevationMeters']");
+            elevationService.getElevationForLocations({
+                'locations': [new google.maps.LatLng(lat, lng, false)]
+            }, function (results, status) {
+                if (status === 'OK') {
+                    // Retrieve the first result
+                    if (results[0]) {
+                        elevationField.val(Math.round(results[0].elevation));
+                    } else {
+                        elevationField.val("NONE");
+                    }
                 } else {
-                    elevationField.val("NONE");
+                    elevationField.val('Elevation service failed due to: ' + status);
                 }
-            } else {
-                elevationField.val('Elevation service failed due to: ' + status);
-            }
-        });
+            });
+        } else {
+            alert('Please enter both latitude and longitude');
+        }
     };
 
     /**
      * When "lat, lng" (or lat [space] lng) is pasted in latitude field move the lng value into the lng input
      */
     handleLatitudeChange(event) {
-        const latInput = this.siteEditForm.find("input[name='gps[latitude]']");
-        const lngInput = this.siteEditForm.find("input[name='gps[longitude]']");
+        const latInput = this.latitudeInput;
+        const lngInput = this.longitudeInput;
         /* have to do this in a timeout because we receive this even before the pasted text is avail in input */
-        setTimeout(function () {
+        setTimeout(() => {
             const pastedText = latInput.val().trim();
-            const latLngArray = pastedText.match(/^([0-9.-]+)(\s+|\s*,\s*)([0-9.-]+)$/);
+            const latLngArray = pastedText.match(/^(-?[0-9.]+)(?:\s+|\s*,\s*)(-?[0-9.]+)$/);
             if (latLngArray !== null) {
-                const newLat = latLngArray[1].trim();
-                const newLng = latLngArray[3].trim();
-                if (!isNaN(newLat) && !isNaN(newLng)) {
-                    latInput.val(newLat);
-                    lngInput.val(newLng);
+                const latArr = latLngArray[1].split('.');
+                const lngArr = latLngArray[2].split('.');
+                if (latArr.length <= 2 && lngArr.length <= 2) {
+                    const newLat = latArr[0] + (latArr.length == 2 && latArr[1] ? '.' + latArr[1].substring(0, 6) : '');
+                    const newLng = lngArr[0] + (lngArr.length == 2 && lngArr[1] ? '.' + lngArr[1].substring(0, 6) : '');
+                    if (!isNaN(newLat) && !isNaN(newLng)) {
+                        latInput.val(newLat);
+                        lngInput.val(newLng);
+                        this.elevationButton.click();
+                    }
+                }
+            } else if (pastedText.match(/^-?[0-9.]+$/)) {
+                const latArr = pastedText.split('.');
+                if (latArr.length <= 2) {
+                    const newLat = latArr[0] + (latArr.length == 2 && latArr[1] ? '.' + latArr[1].substring(0, 6) : '');
+                    if (!isNaN(newLat)) {
+                        latInput.val(newLat);
+                        if (lngInput.val()) {
+                            this.elevationButton.click();
+                        }
+                    }
                 }
             }
         }, 50);
     };
+
+    handleLongitudeChange(event) {
+        const lngInput = this.longitudeInput;
+        /* have to do this in a timeout because we receive this even before the pasted text is avail in input */
+        setTimeout(() => {
+            const pastedText = lngInput.val().trim();
+            if (pastedText.match(/^-?[0-9.]+$/)) {
+                const lngArr = pastedText.split('.');
+                if (lngArr.length <= 2) {
+                    const newLng = lngArr[0] + (lngArr.length == 2 && lngArr[1] ? '.' + lngArr[1].substring(0, 6) : '');
+                    if (!isNaN(newLng)) {
+                        lngInput.val(newLng);
+                        if (this.latitudeInput.val()) {
+                            this.elevationButton.click();
+                        }
+                    }
+                 }
+             }
+         }, 50);
+    }
 
     handleHistoryButton(event) {
         event.preventDefault();

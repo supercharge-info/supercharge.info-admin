@@ -1,5 +1,7 @@
 import URL from "../../URL";
 import $ from "jquery";
+import 'datatables.net';
+import 'datatables.net-bs';
 import EventBus from "../../util/EventBus";
 import EditEvents from "../edit/EditEvents";
 
@@ -9,60 +11,123 @@ import EditEvents from "../edit/EditEvents";
  */
 class ComparePage {
 
-    constructor() {
-        this.validationWebScrapeDiv = $("#validation-web-scrape-report");
+    constructor(china) {
+        this.suffix = "";
+        if (china) {
+            this.suffix = "-china";
+        } else {
+            $('#page-comparison ul.nav > li > a').click($.proxy(this.handleTabChange, this));
+        }
+        this.validationWebScrapeDiv = $(`#validation-web-scrape${this.suffix}-report`);
     }
 
     onPageShow() {
-        if (!this.validationWebScrapeDiv.html()) {
-            $.get(URL.val.webscrape, $.proxy(this.populateWebScrapeReport, this));
+        if (!this.validationWebScrapeDiv.is(':visible') && this.other) {
+            return this.other.onPageShow();
+        }
+        if (!this.loaded && this.validationWebScrapeDiv.children().length <= 1) {
+            this.loaded = true;
+            $.get(URL.val.webscrape + this.suffix)
+                .done($.proxy(this.populateWebScrapeReport, this))
+                .fail(e => {
+                    this.loaded = false;
+                    if(confirm('Failed to load compare page, do you want to retry?')) {
+                        this.onPageShow();
+                    }
+                });
         }
     };
 
     populateWebScrapeReport(reportHtml) {
         this.validationWebScrapeDiv.html(reportHtml);
 
-        this.missingLocalSitesTable = $("#missing-local-sites-table");
-        this.missingTeslaSitesTable = $("#missing-tesla-sites-table");
-        this.fieldMismatchesTable = $("#field-mismatches-table");
+        this.missingLocalSitesTable = $(`#missing-local-sites-table${this.suffix}`);
+        this.missingTeslaSitesTable = $(`#missing-tesla-sites-table${this.suffix}`);
+        this.fieldMismatchesTable = $(`#field-mismatches-table${this.suffix}`);
 
-        this.missingLocalSitesTable.find("a").on('click',ComparePage.handleMissingSiteClick);
-        this.missingTeslaSitesTable.find("a").on('click',ComparePage.handleExistingSiteClick);
-        this.fieldMismatchesTable.find("a").on('click',ComparePage.handleExistingSiteClick);
+        // Country Filter
+        this.countryList = {};
+        this.missingLocalSitesTable
+            .add(this.missingTeslaSitesTable).find('tbody td[rowspan] ~ td:nth-child(9)')
+            .add(this.fieldMismatchesTable.find('tbody td[rowspan] ~ td:nth-child(7)'))
+            .each((i,e) => {
+                if (e.innerText in this.countryList) {
+                    this.countryList[e.innerText]++;
+                } else {
+                    this.countryList[e.innerText] = 1;
+                }
+            });
 
-        this.navItem = $('#page-link-comparison');
-        this.dropdown = $('<ul class="dropdown-menu">').insertAfter(this.navItem);
-        $('<li class="dropdown">')
-            .append($('<a href="#missing-local-sites-table" class="dropdown-toggle" data-target="#" data-toggle="dropdown">Missing Local Sites <span class="caret"></a>'))
-            .append($('<ul class="dropdown-menu">').append(this.missingLocalSitesTable.find('[id]').map((i, e) => `<li><a href="#${ e.id }">${ e.id.slice(-1) }</a></li>`).get().join('')))
-            .appendTo(this.dropdown);
-        $('<li class="dropdown">')
-            .append($('<a href="#missing-tesla-sites-table" class="dropdown-toggle" data-target="#" data-toggle="dropdown">Missing Tesla Sites <span class="caret"></a>'))
-            .append($('<ul class="dropdown-menu">').append(this.missingTeslaSitesTable.find('[id]').map((i, e) => `<li><a href="#${ e.id }">${ e.id.slice(-1) }</a></li>`).get().join('')))
-            .appendTo(this.dropdown);
-        $('<li class="dropdown">')
-            .append($('<a href="#field-mismatches-table" class="dropdown-toggle" data-target="#" data-toggle="dropdown">Field Mismatches <span class="caret"></a>'))
-            .append($('<ul class="dropdown-menu">').append(this.fieldMismatchesTable.find('[id]').map((i, e) => `<li><a href="#${ e.id }">${ e.id.slice(-1) }</a></li>`).get().join('')))
-            .appendTo(this.dropdown);
-        this.navItem.addClass('dropdown-toggle').append(' <span class="caret">');
-        $('body').click($.proxy(this.handleNavClick, this));
+        // Data Tables, site links
+        this.missingLocalSitesTable = this.missingLocalSitesTable.on('click','td:first-child a',ComparePage.handleMissingSiteClick).DataTable({
+            lengthMenu: [ 10, 25, 100, 1000, 10000],
+            'dom': "<'row'<'col-sm-4'l><'col-sm-4'><'col-sm-4'f>>"
+                + "<'row'<'col-sm-12'tr>><'row'<'col-sm-5'i><'col-sm-7'p>>"
+        });
+        this.missingTeslaSitesTable = this.missingTeslaSitesTable.on('click','td:first-child a',ComparePage.handleExistingSiteClick).DataTable({ order: [[1, 'asc']], lengthMenu: [ 10, 25, 100, 1000, 10000] });
+        this.fieldMismatchesTable.addClass('datatable-multi-row').find('tbody tr:not(:has(td[rowspan]))').each((i,e) => {
+            let tr = $(e).prev();
+            tr.children('[rowspan]').attr('data-datatable-multi-row-rowspan','2').removeAttr('rowspan');
+            tr.children().eq(1).append($('<script type="text/template">').addClass('extra-row-content').html($(e).remove().html()));
+        });
+        this.fieldMismatchesTable = this.fieldMismatchesTable.on('click','td:first-child a',ComparePage.handleExistingSiteClick).DataTable({ order: [[2, 'asc']], 'fnDrawCallback': ComparePage.dtRowSpanRedraw, lengthMenu: [ 10, 25, 100, 1000, 10000] });
+
+        if (!this.suffix) {
+            this.countrySelect = $('<select>').addClass('form-control input-sm').append('<option value="">All Countries</option>').append(Object.keys(this.countryList).sort().map(e => $(`<option>${e}</option>`)));
+            $(this.missingLocalSitesTable.table().container()).find('.row:first > div:eq(1)').append($('<label>').text('Country:').append(this.countrySelect));
+            this.countrySelect.on('change', () => {
+                [ this.missingLocalSitesTable, this.missingTeslaSitesTable, this.fieldMismatchesTable ].forEach(t => t.column((i, d, n) => n.innerText == 'country').search(`^${this.countrySelect.val() || '.*'}$`, true, false).draw())
+            });
+        }
+        $(window).keydown($.proxy(this.handleFindShortcut, this));
     };
 
-    handleNavClick(e) {
-        let elem = $(e.target);
-        if (this.navItem.parent().is('.open')) {
-            if (!this.navItem.nextAll('.dropdown-menu').has(e.target).length) {
-                this.navItem.parent().removeClass('open');
-            } else if (elem.is('a:not(.dropdown-toggle)')) {
-                this.navItem.parent().removeClass('open');
-                const dest = $(elem.attr('href'));
-                const navHeight = $('.navbar-header').height() || $('.navbar').height();
-                const tableHeadHeight = dest.closest('table').find('tr').first().height();
-                $('html').animate({ scrollLeft: 0, scrollTop: dest.offset().top - navHeight - tableHeadHeight + 'px' });
-                e.preventDefault();
-            }
-        } else if (this.navItem.is(e.target)) {
-            this.navItem.parent().addClass('open');
+    handleTabChange(e) {
+        const elem = $(e.target);
+        if (elem.attr('href') == '#') {
+            return;
+        }
+        e.preventDefault();
+        elem.tab('show').closest('.nav').nextAll().hide();
+
+        const target = $(elem.data('target')).show();
+        if (!this.other) {
+            this.other = new ComparePage(true);
+        }
+        this.onPageShow();
+    }
+
+    static dtRowSpanRedraw() {
+        // From: https://stackoverflow.com/a/50183806/1507941
+        // Handles using a rowspan in DataTables, which is not supported otherwise
+        // Pairs rows together using one "real" row and the lower row existing in a script
+        let table = $(this);
+
+        // only apply this to specific tables
+        if (table.closest(".datatable-multi-row").length) {
+            // for each row in the table body...
+            table.find("tbody>tr").each(function() {
+                let tr = $(this);
+
+                // get the "extra row" content from the <script> tag.
+                // note, this could be any DOM object in the row.
+                let extra_row = tr.find(".extra-row-content").html();
+
+                // in case draw() fires multiple times,
+                // we only want to add new rows once.
+                if (!tr.next().hasClass('dt-added')) {
+                    tr.after(extra_row);
+                    tr.find("td").each(function() {
+                        // for each cell in the top row,
+                        // set the "rowspan" according to the data value.
+                        let td = $(this);
+                        let rowspan = parseInt(td.data("datatable-multi-row-rowspan"), 10);
+                        if (rowspan) {
+                          td.attr('rowspan', rowspan);
+                        }
+                    });
+                }
+            });
         }
     }
 
@@ -106,6 +171,30 @@ class ComparePage {
         form.find("select[name='otherEVs']").find(`option:contains(${ locationType.split(/,\s*/).includes("PARTY") })`).prop('selected', 'selected');
 
         $("#page-link-edit").click();
+    }
+
+    handleFindShortcut(event) {
+        if (this.validationWebScrapeDiv.is(':visible') && String.fromCharCode(event.which) == "F" && event.ctrlKey) {
+            event.preventDefault();
+
+            // Calculate positions
+            const navHeight = $('.navbar-header').height() || $('.navbar').height();
+            const position = $(window).scrollTop() + $(window).height() - 200;
+            const bottomTablePosition = $(this.fieldMismatchesTable.table().container()).offset().top;
+            const midTablePosition = $(this.missingTeslaSitesTable.table().container()).offset().top;
+            const midTableHeight = $(this.missingTeslaSitesTable.table().container()).height();
+            const topTablePosition = $(this.missingLocalSitesTable.table().container()).offset().top;
+            const topTableHeight = $(this.missingLocalSitesTable.table().container()).height();
+
+            // Determine best search box
+            if (Math.abs(position - bottomTablePosition) <= Math.abs(position - midTablePosition - midTableHeight)) {
+                $(this.fieldMismatchesTable.table().container()).find('input').focus();
+            } else if (Math.abs(position - midTablePosition) <= Math.abs(position - topTablePosition - topTableHeight)) {
+                $(this.missingTeslaSitesTable.table().container()).find('input').focus();
+            } else {
+                $(this.missingLocalSitesTable.table().container()).find('input').focus();
+            }
+        }
     }
 
     static handleExistingSiteClick() {

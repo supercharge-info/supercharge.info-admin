@@ -19,9 +19,6 @@ export default class ChangeDetailView {
     }
 
     renderTable(data) {
-
-        this.table.show();
-
         const tHead = this.table.find("thead");
         const tBody = this.table.find("tbody");
 
@@ -53,7 +50,6 @@ export default class ChangeDetailView {
     }
 
     clearTable() {
-        this.table.find("tbody").html("");
-        this.table.hide();
+        this.table.find("tbody, thead").html("");
     }
 }

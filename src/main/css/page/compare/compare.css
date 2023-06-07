@@ -4,6 +4,6 @@ table.view-table tr.tesla {
 }
 
 td.break-word {
-    max-width: 250px;
+    max-width: 150px;
     overflow-wrap: break-word;
 }

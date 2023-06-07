@@ -1,4 +1,6 @@
 import $ from "jquery";
+import 'datatables.net';
+import 'datatables.net-bs';
 import EventBus from "../../util/EventBus";
 import ChangeLogDeleteAction from "./ChangeLogDeleteAction";
 import URL from "../../URL";
@@ -21,39 +23,54 @@ export default class ChangeLogPage {
     };
 
     populateSystemPropsTable(changeLogs) {
-        const tableHead = this.changeLogListTable.find("thead");
-        const tableBody = this.changeLogListTable.find("tbody");
-        tableHead.html("" +
-            "<tr>" +
-            "<th>Action</th>" +
-            "<th>Id</th>" +
-            "<th>Date</th>" +
-            "<th>Change Type</th>" +
-            "<th>Site Name</th>" +
-            "<th>Site Region</th>" +
-            "<th>Site Country</th>" +
-            "<th>Site Status</th>" +
-            "</tr>" +
-            "");
-        tableBody.html("");
-        $.each(changeLogs, function (index, changeLog) {
-            tableBody.append("" +
-                `<tr>
-                <td><a href='' class='change-log-delete-trigger' data-id='${changeLog.id}'>delete</a></td>
-                <td>${changeLog.id}</td>
-                <td>${changeLog.date}</td>
-                <td>${changeLog.changeType}</td>
-                <td>${xss.inHTMLData(changeLog.siteName)}</td>
-                <td>${changeLog.region}</td>
-                <td>${changeLog.country}</td>
-                 <td>${changeLog.siteStatus}</td>
-                </tr>`
-            );
+        if (!this.dataTable) {
+            this.changeLogListTable.on("click", "a.change-log-delete-trigger", ChangeLogPage.handleDeleteClick);
 
-        });
+            const tableHead = this.changeLogListTable.find("thead");
+            tableHead.html("" +
+                "<tr>" +
+                "<th>Action</th>" +
+                "<th>Id</th>" +
+                "<th>Date</th>" +
+                "<th>Change Type</th>" +
+                "<th>Site Name</th>" +
+                "<th>Site Region</th>" +
+                "<th>Site Country</th>" +
+                "<th>Site Status</th>" +
+                "</tr>" +
+                "");
+            this.dataTable = this.changeLogListTable.DataTable({
+                data: changeLogs,
+                order: [[1, 'desc']],
+                lengthMenu: [25, 100, 1000, 20000],
+                columns: [
+                    {
+                        data: null,
+                        searchable: false,
+                        render: (d,t,r) =>
+                            `<a href="#" class="change-log-delete-trigger" data-id="${r.id}">delete</a>`
+                    },
+                    { data: 'id' },
+                    { data: 'date', searchable: false },
+                    { data: 'changeType' },
+                    { data: 'siteName', render: xss.inHTMLData },
+                    { data: 'region' },
+                    { data: 'country' },
+                    { data: 'siteStatus' }
+                ]
+            });
+            $(window).keydown($.proxy(this.handleFindShortcut, this));
+        } else {
+            this.dataTable.clear().rows.add(changeLogs).draw();
+        }
+    }
 
-        $(".change-log-delete-trigger").on("click", ChangeLogPage.handleDeleteClick);
-    };
+    handleFindShortcut(event) {
+        if (this.changeLogListTable.closest('.page').is(':visible') && String.fromCharCode(event.which) == "F" && event.ctrlKey) {
+            event.preventDefault();
+            $(this.dataTable.table().container()).find('input').focus();
+        }
+    }
 
     static handleDeleteClick(event) {
         event.preventDefault();
@@ -63,7 +80,7 @@ export default class ChangeLogPage {
             const changeLogId = link.data("id");
             EventBus.dispatch("change-log-selected-for-delete-event", changeLogId);
         }
-    };
+    }
 
 
 };

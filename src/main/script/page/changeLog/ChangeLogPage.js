@@ -66,7 +66,7 @@ export default class ChangeLogPage {
     }
 
     handleFindShortcut(event) {
-        if (this.changeLogListTable.closest('.page').is(':visible') && String.fromCharCode(event.which) == "F" && event.ctrlKey) {
+        if (this.changeLogListTable.closest('.page').is(':visible') && String.fromCharCode(event.which) == "F" && (event.metaKey || event.ctrlKey)) {
             event.preventDefault();
             $(this.dataTable.table().container()).find('input').focus();
         }

@@ -174,7 +174,7 @@ class ComparePage {
     }
 
     handleFindShortcut(event) {
-        if (this.validationWebScrapeDiv.is(':visible') && String.fromCharCode(event.which) == "F" && event.ctrlKey) {
+        if (this.validationWebScrapeDiv.is(':visible') && String.fromCharCode(event.which) == "F" && (event.metaKey || event.ctrlKey)) {
             event.preventDefault();
 
             // Calculate positions

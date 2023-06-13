@@ -68,7 +68,7 @@ class ComparePage {
         this.fieldMismatchesTable.addClass('datatable-multi-row').find('tbody tr:not(:has(td[rowspan]))').each((i,e) => {
             let tr = $(e).prev();
             tr.children('[rowspan]').attr('data-datatable-multi-row-rowspan','2').removeAttr('rowspan');
-            tr.children().eq(1).append($('<script type="text/template">').addClass('extra-row-content').html($(e).remove().html()));
+            tr.children().eq(1).append($('<script type="text/template">').addClass('extra-row-content').text($(e).remove().prop('outerHTML')));
         });
         this.fieldMismatchesTable = this.fieldMismatchesTable.on('click','td:first-child a',ComparePage.handleExistingSiteClick).DataTable({ order: [[2, 'asc']], 'fnDrawCallback': ComparePage.dtRowSpanRedraw, lengthMenu: [ 10, 25, 100, 1000, 10000] });
 

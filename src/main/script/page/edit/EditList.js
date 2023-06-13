@@ -75,6 +75,7 @@ export default class EditList {
                             `<div class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Links <span class="caret"/></a>
                                 <ul class="dropdown-menu dropdown-menu-right dropdown-menu-links">
+                                    <li><a href="/map?center=${r.gps.latitude},${r.gps.longitude}&zoom=15" target="_blank">map</a>
                                     <li><a href="https://www.google.com/maps/search/?api=1&query=${
                                         encodeURI(`${r.address.street||''} ${r.address.city||''} ${r.address.state||''} ${r.address.zip||''} ${r.address.country||''}`)
                                     }" target="_blank">gmap</a></li>

@@ -11,6 +11,8 @@
 @import "page/validation/validation.css";
 /* - - - - - - - - - - - - - - - - - - - - PAGE: Edit */
 @import "page/edit/edit.css";
+/* - - - - - - - - - - - - - - - - - - - - PAGE: Feature */
+@import "page/feature/feature.css";
 
 /* - - - - - - - - - - - - - - - - - - - - Third Party */
 @import "~bootstrap/dist/css/bootstrap.css";

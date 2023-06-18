@@ -2,6 +2,7 @@ import {currentUser} from "../../nav/User";
 import URL from "../../URL";
 import $ from "jquery";
 import Version from "./Version";
+import SiteEditsGraph from "./SiteEditsGraph";
 
 /**
  * @constructor
@@ -27,7 +28,7 @@ class LoginPage {
 
     onPageShow() {
         $.getJSON(URL.login.check, $.proxy(this.handleLoginCheckResponse, this));
-        $.getJSON(URL.login.results, $.proxy(this.handleLoginResults, this));
+        $.getJSON(URL.login.results, LoginPage.handleLoginResults);
     };
 
     handleSubmitLogin() {
@@ -67,7 +68,7 @@ class LoginPage {
         if (response !== null && response.result === "SUCCESS") {
             currentUser.setUsername(response.username);
             currentUser.setRoles(response.roles);
-            this.viewAuthed.show();
+            this.viewAuthed.css('display', 'block');
             this.viewNotAuthed.hide();
         } else {
             currentUser.setUsername(null);
@@ -77,9 +78,9 @@ class LoginPage {
         }
     };
 
-    handleLoginResults(response) {
+    static handleLoginResults(response) {
         const table = $("#login-attempts-table").show().find("tbody").html("");
-        $.each(response, function (index, attempt) {
+        $.each(response.attempts, function (index, attempt) {
             table.append("" +
                 "<tr>" +
                 "<td>" + attempt.date + "</td>" +
@@ -88,6 +89,7 @@ class LoginPage {
                 "</tr>"
             )
         })
+        SiteEditsGraph.draw(response.edits);
     };
 
     /**
@@ -95,10 +97,7 @@ class LoginPage {
      */
     handleLogout(event) {
         event.preventDefault();
-        const loginPage = this;
-        $.get(URL.login.logout).always(function () {
-            loginPage.handleLoginCheckResponse(null);
-        });
+        $.get(URL.login.logout).always(() => this.handleLoginCheckResponse(null));
     };
 
 }

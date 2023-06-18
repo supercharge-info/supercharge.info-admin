@@ -7,6 +7,8 @@ body {
 .table-bordered th, .view-table th {
     position: sticky;
     top: 50px;
+    /* To prevent relative children from appearing above: */
+    z-index: 1;
 }
 .table-bordered th {
     background-color: #fff;
@@ -42,6 +44,17 @@ div.dataTables_wrapper select.form-control {
     display: inline-block;
     margin-left: 0.5em;
     width: auto;
+}
+/* Cause dropdown of last row of last table of page to drop up instead to avoid scrolling */
+.page .dataTables_wrapper:last-child .dataTable tr:last-child .dropdown .caret {
+    border-top: 0;
+    border-bottom: 4px dashed;
+}
+
+.page .dataTables_wrapper:last-child .dataTable tr:last-child .dropdown .dropdown-menu {
+    top: auto;
+    bottom: 100%;
+    margin-bottom: 2px;
 }
 @media screen and (max-width: 767px) {
     div.dataTables_wrapper div.dataTables_length, div.dataTables_wrapper div.dataTables_filter, div.dataTables_wrapper div.dataTables_info, div.dataTables_wrapper div.dataTables_paginate {

@@ -71,28 +71,32 @@
             </div>
         </div>
 
-        <div id="login-authed-container" style="display: none">
-            <div id="login-message-box">
-                Success
+        <div id="login-authed-container" class="row" style="display: none">
+            <div class="col-md-4">
+                <div id="login-message-box">
+                    Success
+                    <br/>
+                    <a id="login-logout-trigger" href="">Logout</a>
+                </div>
+
                 <br/>
-                <a id="login-logout-trigger" href="">Logout</a>
+                <table id="login-attempts-table" class="view-table" style="display: none;">
+                    <caption>Login History</caption>
+                    <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Result</th>
+                        <th>IP</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
             </div>
 
-            <br/>
-            <table id="login-attempts-table" class="view-table" style="display: none">
-                <caption>Login History</caption>
-                <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Result</th>
-                    <th>IP</th>
-                </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
-        </div>
+            <div id="ytd-site-edits-graph" class="col-md-8"></div>
 
+        </div>
 
         <div style="margin-top: 5em; width: 30%; font-weight: lighter">
             <table class="table table-condensed">
@@ -457,18 +461,20 @@
                 </tr>
                 <tr>
                     <td><label>Date Added</label></td>
-                    <td><input name="addedDate" type="date"></td>
+                    <td><input name="addedDate" type="date" required></td>
                 </tr>
                 <tr>
                     <td><label>Title</label></td>
-                    <td><input name="title" type="text"></td>
+                    <td><input name="title" type="text" required></td>
                 </tr>
                 <tr>
                     <td><label>Description</label></td>
-                    <td><textarea name="description" rows="10" cols="80"></textarea></td>
+                    <td><textarea name="description" rows="10" cols="80" required></textarea></td>
                 </tr>
                 <tr>
                     <td colspan="2">
+                        <button class="btn" id="feature-preview-button">Preview</button>
+                        &nbsp;&nbsp;|&nbsp;&nbsp;
                         <button class="btn" id="feature-save-button">Save</button>
                         &nbsp;&nbsp;|&nbsp;&nbsp;
                         <button class="btn" type="reset" style="padding: 4px 10px 4px 10px"
@@ -499,6 +505,23 @@
     </div>
 
 
+</div>
+
+<!-- New Features -->
+<div class="modal fade" id="features-dialog" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body d-flex">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Ok</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 </body>

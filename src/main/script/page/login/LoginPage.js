@@ -2,7 +2,7 @@ import {currentUser} from "../../nav/User";
 import URL from "../../URL";
 import $ from "jquery";
 import Version from "./Version";
-import SiteEditsGraph from "./SiteEditsGraph";
+import YtdGraph from "./YtdGraph";
 
 /**
  * @constructor
@@ -68,28 +68,44 @@ class LoginPage {
         if (response !== null && response.result === "SUCCESS") {
             currentUser.setUsername(response.username);
             currentUser.setRoles(response.roles);
-            this.viewAuthed.css('display', 'block');
+            this.viewAuthed.show();
             this.viewNotAuthed.hide();
         } else {
             currentUser.setUsername(null);
             currentUser.setRoles([]);
             this.viewAuthed.hide();
             this.viewNotAuthed.show();
+            $("#editor-graphs-container").hide();
         }
     };
 
     static handleLoginResults(response) {
         const table = $("#login-attempts-table").show().find("tbody").html("");
-        $.each(response.attempts, function (index, attempt) {
-            table.append("" +
-                "<tr>" +
-                "<td>" + attempt.date + "</td>" +
-                "<td>" + attempt.result + "</td>" +
-                "<td>" + attempt.remoteIP + "</td>" +
-                "</tr>"
-            )
-        })
-        SiteEditsGraph.draw(response.edits);
+        table.append(response.attempts.map(attempt =>
+            "<tr>" +
+            "<td>" + attempt.date + "</td>" +
+            "<td>" + attempt.result + "</td>" +
+            "<td>" + attempt.remoteIP + "</td>" +
+            "</tr>"
+        ));
+        if (response.logins && Object.keys(response.logins).length != 0) {
+            YtdGraph.draw("ytd-logins-graph", "Account Logins YTD", response.logins);
+        } else {
+            $('#ytd-logins-graph').clear();
+        }
+
+        if (response.edits && Object.keys(response.edits).length != 0) {
+            $('#editor-graphs-container').show();
+            YtdGraph.draw("ytd-site-edits-graph", "Sites You've Edited YTD", response.edits);
+        } else {
+            $('#ytd-site-edits-graph').clear();
+        }
+        if (response.additions && Object.keys(response.additions).length != 0) {
+            $('#editor-graphs-container').show();
+            YtdGraph.draw("ytd-site-additions-graph", "Sites You've Added YTD", response.additions);
+        } else {
+            $('#ytd-site-additions-graph').clear();
+        }
     };
 
     /**

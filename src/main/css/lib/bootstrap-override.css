@@ -23,6 +23,7 @@ body {
 }
 table.dataTable {
     box-sizing: content-box;
+    width: 100%;
 }
 table.dataTable.view-table thead > tr > th.sorting:after,
 table.dataTable.view-table thead > tr > th.sorting:before {

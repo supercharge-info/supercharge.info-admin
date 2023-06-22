@@ -1,6 +1,19 @@
+#page-login > div {
+    margin-bottom: 3em;
+}
+
+#page-login > div ~ div {
+    margin-top: 3em;
+}
+
 #login-error-box {
     font-size: 2em;
     color: red;
+}
+
+#login-form {
+    width: 300px;
+    margin: 0 auto;
 }
 
 #login-message-box {
@@ -13,6 +26,12 @@
     margin: 0 auto;
 }
 
-#ytd-site-edits-graph {
+#ytd-logins-graph {
     margin-top: 2em;
+}
+
+#version-table {
+    font-weight: lighter;
+    margin: 0 auto;
+    width: 450px;
 }

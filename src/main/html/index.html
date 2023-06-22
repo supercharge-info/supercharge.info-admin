@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-builtAt="<%= new Date().toISOString() %>">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -45,13 +45,13 @@
     <div id="page-login" class="page">
 
 
-        <div id="login-not-authed-container" style="display: none">
-            <div id="login-error-box">
-            </div>
+        <div class="row">
+            <div id="login-not-authed-container" class="col-md-6" style="display: none">
+                <div id="login-error-box">
+                </div>
 
-            <div style="border:0 solid green; width:300px">
                 <fieldset>
-                    <form action="./" method="post" class="form-control-static">
+                    <form action="./" method="post" class="form-control-static" id="login-form">
 
                         <label for="name" class="sr-only">Username</label>
                         <input type="text" size="30" name="name" id="name" class="form-control" placeholder="Username"
@@ -69,37 +69,45 @@
                     </form>
                 </fieldset>
             </div>
-        </div>
 
-        <div id="login-authed-container" class="row" style="display: none">
-            <div class="col-md-4">
-                <div id="login-message-box">
-                    Success
+            <div id="login-authed-container" style="display: none">
+                <div class="col-md-7 col-lg-6">
+                    <div id="login-message-box">
+                        Success
+                        <br/>
+                        <a id="login-logout-trigger" href="">Logout</a>
+                    </div>
+
                     <br/>
-                    <a id="login-logout-trigger" href="">Logout</a>
+                    <table id="login-attempts-table" class="view-table" style="display: none;">
+                        <caption>Login History</caption>
+                        <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Result</th>
+                            <th>IP</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
                 </div>
 
-                <br/>
-                <table id="login-attempts-table" class="view-table" style="display: none;">
-                    <caption>Login History</caption>
-                    <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Result</th>
-                        <th>IP</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-            </div>
+                <div id="ytd-logins-graph" class="col-md-5 col-lg-6"></div>
 
-            <div id="ytd-site-edits-graph" class="col-md-8"></div>
+            </div>
+        </div>
+
+        <div id="editor-graphs-container" class="row">
+
+            <div id="ytd-site-edits-graph" class="col-md-6"></div>
+
+            <div id="ytd-site-additions-graph" class="col-md-6"></div>
 
         </div>
 
-        <div style="margin-top: 5em; width: 30%; font-weight: lighter">
-            <table class="table table-condensed">
+        <div class="row col-md-6">
+            <table class="table table-condensed" id="version-table">
                 <tr>
                     <th>server version</th>
                     <td id="build-version-container"></td>
@@ -111,6 +119,10 @@
                 <tr>
                     <th>admin ui version</th>
                     <td id="admin-ui-version-container"></td>
+                </tr>
+                <tr>
+                    <th>admin build date</th>
+                    <td id="admin-ui-timestamp-container"></td>
                 </tr>
             </table>
         </div>

@@ -61,10 +61,7 @@ export default class FeatureForm {
     handleSaveResponse(response) {
         this.messageBox.html("<ul></ul>");
         this.messageBox.attr('style', (response.result === "SUCCESS") ? 'color:green' : 'color:red');
-        const ol = this.messageBox.find("ul");
-        $.each(response.messages, function (index, value) {
-            ol.append(`<li>${value}</li>`);
-        });
+        this.messageBox.find("ul").append(response.messages.map(v => `<li>${v}</li>`));
 
         if (response.result === "SUCCESS") {
             EventBus.dispatch(FeatureEvents.feature_list_changed);
@@ -74,9 +71,10 @@ export default class FeatureForm {
 
     loadForEdit(event, featureId) {
         this.form.trigger("reset");
-        $.getJSON(URL.feature.load + "/" + featureId, function (feature) {
+        $.getJSON(URL.feature.load + "/" + featureId, (feature) => {
             console.log(JSON.stringify(feature));
             FormFiller.populateForm(this.form, feature);
+            $('html').animate({ scrollTop: 0, scrollLeft: 0 }, { complete: () => this.form.find('textarea').focus() });
         });
     }
 }

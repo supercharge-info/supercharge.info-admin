@@ -1,10 +1,10 @@
 import Highcharts from "highcharts";
 
-export default class SiteEditsGraph {
+export default class YtdGraph {
 
-    static draw(siteEdits) {
+    static draw(target, title, ytdData) {
 
-        Highcharts.chart("ytd-site-edits-graph", {
+        Highcharts.chart(target, {
             chart: {
                 zoomType: 'x',
                 type: 'spline'
@@ -16,7 +16,7 @@ export default class SiteEditsGraph {
                 enabled: false
             },
             title: {
-                text: 'Sites Edited Year-to-Date'
+                text: title
             },
             subtitle: {
                 text: null
@@ -24,6 +24,12 @@ export default class SiteEditsGraph {
             legend: {
                 borderWidth: 0,
                 enabled: true
+            },
+            plotOptions: {
+                series: {
+                    lineWidth: 1,
+                    marker: { enabled: false }
+                }
             },
             xAxis: {
                 type: 'datetime',
@@ -33,29 +39,19 @@ export default class SiteEditsGraph {
                     month: '%b %e',
                     year: '%b'
                 },
-                showLastLabel: false
+                max: Date.UTC(2020, 11, 31)
             },
             yAxis: {
-                title: {
-                    text: 'Sites Edited'
-                },
                 min: 0
             },
             tooltip: {
                 formatter: function () {
                     return '<b>' + this.series.name + ' ' + Highcharts.dateFormat('%b %e', this.x) + '</b><br/>' +
-                        "sites edited: " + this.y;
+                        "YTD Count: " + this.y;
                 }
             },
 
-            series: Object.entries(Object.entries(siteEdits).reduce((a, [d, c]) => {
-                const [year, month, day] = d.split('-');
-                if (!(year in a)) {
-                    a[year] = [];
-                }
-                a[year].push([Date.UTC(2020, month - 1, day), c]);
-                return a;
-            }, {})).map(([y, d]) => ({ name: y, data: d.sort(), lineWidth: 1 }))
+            series: Object.entries(ytdData).map(([y, d]) => ({ name: y, data: d }))
         });
 
 

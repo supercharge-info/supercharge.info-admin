@@ -19,6 +19,7 @@ class Version {
         });
 
         $("#admin-ui-version-container").html(nodePackage.version)
+        $("#admin-ui-timestamp-container").html($('html').attr('data-builtAt').replace(/T/, ' ').replace(/(\.\d+)?Z/, ' UTC'));
 
     }
 

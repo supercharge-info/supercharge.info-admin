@@ -5,8 +5,12 @@ const U = {};
 U.login = {
     "login": mvc + "/login",
     "logout": mvc + "/login/out",
-    "results": mvc + "/login/results",
     "check": mvc + "/login/check"
+};
+
+U.account = {
+    "stats": mvc + "/account/stats",
+    "edits": mvc + "/account/edits"
 };
 
 U.change = {

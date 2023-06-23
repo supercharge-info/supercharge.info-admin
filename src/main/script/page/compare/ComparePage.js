@@ -61,7 +61,7 @@ class ComparePage {
         // Data Tables, site links
         this.missingLocalSitesTable = this.missingLocalSitesTable.on('click','td:first-child a',ComparePage.handleMissingSiteClick).DataTable({
             lengthMenu: [ 10, 25, 100, 1000, 10000],
-            'dom': "<'row'<'col-sm-4'l><'col-sm-4'><'col-sm-4'f>>"
+            'dom': "<'row'<'col-sm-4'l><'col-sm-4 text-center'><'col-sm-4'f>>"
                 + "<'row'<'col-sm-12'tr>><'row'<'col-sm-5'i><'col-sm-7'p>>"
         });
         this.missingTeslaSitesTable = this.missingTeslaSitesTable.on('click','td:first-child a',ComparePage.handleExistingSiteClick).DataTable({ order: [[1, 'asc']], lengthMenu: [ 10, 25, 100, 1000, 10000] });
@@ -187,13 +187,12 @@ class ComparePage {
             const topTableHeight = $(this.missingLocalSitesTable.table().container()).height();
 
             // Determine best search box
-            if (Math.abs(position - bottomTablePosition) <= Math.abs(position - midTablePosition - midTableHeight)) {
-                $(this.fieldMismatchesTable.table().container()).find('input').focus();
-            } else if (Math.abs(position - midTablePosition) <= Math.abs(position - topTablePosition - topTableHeight)) {
-                $(this.missingTeslaSitesTable.table().container()).find('input').focus();
-            } else {
-                $(this.missingLocalSitesTable.table().container()).find('input').focus();
-            }
+            const input = Math.abs(position - bottomTablePosition) <= Math.abs(position - midTablePosition - midTableHeight)
+                ? $(this.fieldMismatchesTable.table().container()).find('input').focus()
+                : Math.abs(position - midTablePosition) <= Math.abs(position - topTablePosition - topTableHeight)
+                ? $(this.missingTeslaSitesTable.table().container()).find('input')
+                : $(this.missingLocalSitesTable.table().container()).find('input');
+            $('html').animate({ scrollTop: input.offset().top - navHeight - 10 }, { complete: () => input.focus() });
         }
     }
 

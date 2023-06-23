@@ -51,8 +51,8 @@ export default class ChangeLogPage {
                             `<a href="#" class="change-log-delete-trigger" data-id="${r.id}">delete</a>`
                     },
                     { data: 'id' },
-                    { data: 'date', searchable: false },
-                    { data: 'changeType' },
+                    { data: 'date', searchable: false, render: (d, t) => t == 'sort' ? d : new Date(d).toLocaleDateString('en-US') },
+                    { data: 'changeType', searchable: false },
                     { data: 'siteName', render: xss.inHTMLData },
                     { data: 'region' },
                     { data: 'country' },
@@ -68,7 +68,10 @@ export default class ChangeLogPage {
     handleFindShortcut(event) {
         if (this.changeLogListTable.closest('.page').is(':visible') && String.fromCharCode(event.which) == "F" && (event.metaKey || event.ctrlKey)) {
             event.preventDefault();
-            $(this.dataTable.table().container()).find('input').focus();
+
+            const navHeight = $('.navbar-header').height() || $('.navbar').height();
+            const input = $(this.dataTable.table().container()).find('input');
+            $('html').animate({ scrollTop: input.offset().top - navHeight - 10 }, { complete: () => input.focus() });
         }
     }
 

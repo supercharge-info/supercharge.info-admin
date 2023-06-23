@@ -67,7 +67,7 @@ export default class EditList {
                     { data: 'stallCount', searchable: false },
                     { data: 'otherEVs', searchable: false },
                     { data: 'version', searchable: false },
-                    { data: 'dateModified', searchable: false },
+                    { data: 'dateModified', searchable: false, render: (d, t) => t == 'sort' ? d : new Date(d).toLocaleString('en-US') },
                     {
                         data: null,
                         searchable: false,
@@ -95,7 +95,10 @@ export default class EditList {
     handleFindShortcut(event) {
         if (this.siteListTable.closest('.page').is(':visible') && String.fromCharCode(event.which) == "F" && (event.metaKey || event.ctrlKey)) {
             event.preventDefault();
-            $(this.dataTable.table().container()).find('input').focus();
+
+            const navHeight = $('.navbar-header').height() || $('.navbar').height();
+            const input = $(this.dataTable.table().container()).find('input');
+            $('html').animate({ scrollTop: input.offset().top - navHeight - 10 }, { complete: () => input.focus() });
         }
     }
 

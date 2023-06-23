@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-builtAt="<%= new Date().toISOString() %>">
+<html lang="en" data-built-at="<%= new Date().toISOString() %>">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -24,7 +24,18 @@
         </div>
         <div class="collapse navbar-collapse">
             <ul id="navbar-menu-item-list" class="nav navbar-nav">
-                <li><a id="page-link-login" href="#login">Login</a></li>
+                <li class="dropdown">
+                    <a id="login-link" class="dropdown-toggle" data-toggle="modal" data-target="#login-dialog"
+                       role="button"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> Sign In</a>
+                    <a id="username-link" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                       aria-haspopup="true" aria-expanded="false" style="display: none"></a>
+                    <ul class="dropdown-menu">
+                        <li><a class="page dropdown-item" id="page-link-account" href="#account">Account History</a></li>
+                        <li class="divider"></li>
+                        <li><a id="logout-link" class="dropdown-item" href="#">Log Out</a></li>
+                    </ul>
+
+                </li>
                 <li><a id="page-link-api" href="#api">API</a></li>
                 <li><a id="page-link-comparison" href="#comparison">Comparison</a></li>
                 <li><a id="page-link-validation" href="#validation">Validation</a></li>
@@ -42,97 +53,49 @@
 <div class="container-fluid" style="padding-top: 70px">
 
 
-    <div id="page-login" class="page">
+    <div id="page-account" class="page" style="display: none">
 
 
         <div class="row">
-            <div id="login-not-authed-container" class="col-md-6" style="display: none">
-                <div id="login-error-box">
-                </div>
-
-                <fieldset>
-                    <form action="./" method="post" class="form-control-static" id="login-form">
-
-                        <label for="name" class="sr-only">Username</label>
-                        <input type="text" size="30" name="name" id="name" class="form-control" placeholder="Username"
-                               autofocus/>
-
-                        <label for="word" class="sr-only">Password</label>
-                        <input type="password" size="30" name="word" id="word" class="form-control"
-                               placeholder="Password"
-                               required/>
-
-                        <button type="submit" id="login-button" name="login"
-                                class="btn btn-default btn-primary btn-block">Login
-                        </button>
-
-                    </form>
-                </fieldset>
+            <div class="col-md-7 col-lg-6">
+                <table id="login-attempts-table" class="view-table" style="display: none;">
+                    <caption>Login History</caption>
+                    <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Result</th>
+                        <th>IP</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
             </div>
 
-            <div id="login-authed-container" style="display: none">
-                <div class="col-md-7 col-lg-6">
-                    <div id="login-message-box">
-                        Success
-                        <br/>
-                        <a id="login-logout-trigger" href="">Logout</a>
-                    </div>
-
-                    <br/>
-                    <table id="login-attempts-table" class="view-table" style="display: none;">
-                        <caption>Login History</caption>
-                        <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Result</th>
-                            <th>IP</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div id="ytd-logins-graph" class="col-md-5 col-lg-6"></div>
-
-            </div>
+            <div id="ytd-logins-graph" class="col-md-5 col-lg-6"></div>
         </div>
 
         <div id="editor-graphs-container" class="row">
 
-            <div id="ytd-site-edits-graph" class="col-md-6"></div>
+            <div id="ytd-site-edits-graph" class="col-md-4"></div>
 
-            <div id="ytd-site-additions-graph" class="col-md-6"></div>
+            <div id="ytd-site-additions-graph" class="col-md-4"></div>
+
+            <div id="site-edits-pie" class="col-md-4"></div>
 
         </div>
 
-        <div class="row col-md-6">
-            <table class="table table-condensed" id="version-table">
-                <tr>
-                    <th>server version</th>
-                    <td id="build-version-container"></td>
-                </tr>
-                <tr>
-                    <th>server build date</th>
-                    <td id="build-timestamp-container"></td>
-                </tr>
-                <tr>
-                    <th>admin ui version</th>
-                    <td id="admin-ui-version-container"></td>
-                </tr>
-                <tr>
-                    <th>admin build date</th>
-                    <td id="admin-ui-timestamp-container"></td>
-                </tr>
-            </table>
-        </div>
+        <table id="edit-history-table" class="view-table" style="width:100%">
+            <thead></thead>
+            <tbody></tbody>
+        </table>
 
     </div>
 
     <!-- = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
     PAGE: API
     = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = -->
-    <div id="page-api" class="page" style="display: none">
+    <div id="page-api" class="page">
 
 
         <div class="container">
@@ -173,6 +136,28 @@
                     <td><a href="/service/supercharge/discuss?siteId=100">supercharge/discuss?siteId=100</a></td>
                     <td>For a given siteId redirect to the associated discussion URL.</td>
                 </tr>
+            </table>
+
+            <table class="table table-condensed" id="version-table">
+                <caption>Application Information</caption>
+                <tbody>
+                    <tr>
+                        <th>server version</th>
+                        <td id="build-version-container"></td>
+                    </tr>
+                    <tr>
+                        <th>server build date</th>
+                        <td id="build-timestamp-container"></td>
+                    </tr>
+                    <tr>
+                        <th>admin ui version</th>
+                        <td id="admin-ui-version-container"></td>
+                    </tr>
+                    <tr>
+                        <th>admin build date</th>
+                        <td id="admin-ui-timestamp-container"></td>
+                    </tr>
+                </tbody>
             </table>
 
         </div>
@@ -438,7 +423,7 @@
             <tbody></tbody>
         </table>
 
-        <table id="edit-sites-list-table" class="table table-condensed table-hover table-bordered">
+        <table id="edit-sites-list-table" class="table table-condensed table-hover table-bordered" style="width:100%">
             <thead></thead>
             <tbody></tbody>
         </table>
@@ -450,7 +435,7 @@
     PAGE: Change Log
     = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = -->
     <div id="page-changeLog" class="page" style="display: none">
-        <table id="change-log-list-table" class="table table-condensed table-hover table-bordered">
+        <table id="change-log-list-table" class="table table-condensed table-hover table-bordered" style="width:100%">
             <thead></thead>
             <tbody></tbody>
         </table>
@@ -517,6 +502,32 @@
     </div>
 
 
+</div>
+
+<!-- Login -->
+<div class="modal fade" id="login-dialog" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title strong">Login</h4>
+            </div>
+            <div class="modal-body">
+                <form method="POST" id="login-panel">
+                    <div class="form-group">
+                        <input class="form-control" type="text" id="name" placeholder="Username" required>
+                    </div>
+                    <div class="form-group">
+                        <input class="form-control" type="password" id="word" placeholder="Password" required>
+                    </div>
+                </form>
+                <div id="login-error-box" style="display:none"></div>
+            </div>
+            <div class="modal-footer">
+                <button id="login-button" form="login-panel" class="btn btn-large btn-primary btn-block">Login</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- New Features -->

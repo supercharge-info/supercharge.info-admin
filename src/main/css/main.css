@@ -1,8 +1,8 @@
 /* - - - - - - - - - - - - - - - - - - - - Navigation */
 @import "global/layout.css";
 @import "global/NavBar.css";
-/* - - - - - - - - - - - - - - - - - - - - PAGE: Login */
-@import "page/login/login.css";
+/* - - - - - - - - - - - - - - - - - - - - PAGE: Account */
+@import "page/account/account.css";
 /* - - - - - - - - - - - - - - - - - - - - PAGE: API */
 @import "page/api/api.css";
 /* - - - - - - - - - - - - - - - - - - - - PAGE: Comparison */

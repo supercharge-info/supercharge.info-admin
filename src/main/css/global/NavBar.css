@@ -5,6 +5,8 @@
     display: block;
 }
 
-#page-map {
-    padding: 0 !important;
+#login-error-box {
+    font-size: 2em;
+    color: red;
+    text-align: center;
 }

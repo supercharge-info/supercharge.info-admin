@@ -2,7 +2,9 @@ import $ from "jquery";
 import "bootstrap";
 import Events from "../util/Events";
 import Objects from "../util/Objects";
-import LoginPage from "../page/login/LoginPage";
+import URL from "../URL";
+import LoginDialog from "./LoginDialog";
+import AccountPage from "../page/account/AccountPage";
 import ApiPage from "../page/api/ApiPage";
 import ValidationPage from "../page/validation/ValidationPage";
 import ComparePage from "../page/compare/ComparePage";
@@ -18,9 +20,14 @@ import {currentUser} from "./User";
  */
 const NavBar = function () {
     this.initListeners();
+    this.login = new LoginDialog(this);
+    this.loginLink = $("#login-link");
+    this.usernameLink = $("#username-link");
+
+    $("#logout-link").click($.proxy(this.handleLogoutClick, this));
 
     this.pageMap = {
-        login: {page: new LoginPage()},
+        account: {requiredRole: "any", page: new AccountPage()},
         api: {page: new ApiPage()},
         comparison: {requiredRole: "editor", page: new ComparePage()},
         validation: {requiredRole: "editor", page: new ValidationPage()},
@@ -32,11 +39,21 @@ const NavBar = function () {
 };
 
 NavBar.prototype.setInitialPage = function () {
-    this.changePage("login");
+    this.changePage("api");
+
+    $.getJSON(URL.login.check, r => {
+        this.handleLoginCheckResponse(r);
+
+        if (currentUser.hasRole('editor')) {
+            this.changePage('edit'); 
+        } else if (currentUser.isAuthenticated()) {
+            this.changePage("account");
+        }
+    });
 };
 
 NavBar.prototype.initListeners = function () {
-    $("#navbar-menu-item-list").find("a").click($.proxy(this.handlePageChangeClick, this));
+    $("#navbar-menu-item-list").find("a[href]").click($.proxy(this.handlePageChangeClick, this));
     $("body").click($.proxy(this.autoCloseCollapsedNavBar, this));
 };
 
@@ -56,25 +73,23 @@ NavBar.prototype.autoCloseCollapsedNavBar = function (event) {
 };
 
 NavBar.prototype.changePage = function (newPageName) {
-    const navBar = this;
-
-    $.each(this.pageMap, function (pageName, pageDefinition) {
-        if (pageName === newPageName && newPageName !== navBar.currentPage) {
+    Object.entries(this.pageMap).forEach(([pageName, pageDefinition]) => {
+        if (pageName === newPageName && newPageName !== this.currentPage) {
             const roleRequired = Objects.isNotNullOrUndef(pageDefinition.requiredRole);
 
             if (roleRequired && !currentUser.isAuthenticated()) {
-                alert("Login to access page:" + newPageName);
+                this.login.show(newPageName);
                 return;
             }
-            if (roleRequired && !currentUser.hasRole(pageDefinition.requiredRole)) {
+            if (roleRequired && pageDefinition.requiredRole != 'any' && !currentUser.hasRole(pageDefinition.requiredRole)) {
                 alert("Insufficient privileges to access page:" + newPageName +
                     " need=" + pageDefinition.requiredRole +
                     " have=" + currentUser.roles);
                 return;
             }
-            navBar.hideCurrentPage();
-            navBar.currentPage = newPageName;
-            navBar.showCurrentPage();
+            this.hideCurrentPage();
+            this.currentPage = newPageName;
+            this.showCurrentPage();
             pageDefinition.page.onPageShow();
         }
     });
@@ -90,6 +105,32 @@ NavBar.prototype.showCurrentPage = function () {
     $("#page-link-" + this.currentPage).closest("li").addClass("active");
     $('html').scrollTop(0).scrollLeft(0);
 };
+
+/**
+ * Logout
+ */
+NavBar.prototype.handleLogoutClick = function(event) {
+    event.preventDefault();
+    $.get(URL.login.logout).always(() => this.handleLoginCheckResponse(null));
+};
+
+NavBar.prototype.handleLoginCheckResponse = function(response) {
+    if (response !== null && response.result === "SUCCESS") {
+        currentUser.setUsername(response.username);
+        currentUser.setRoles(response.roles);
+        this.loginLink.hide();
+        this.usernameLink.html(
+            `<span class='glyphicon glyphicon-user' aria-hidden='true'></span> ${response.username} <span class='caret'/>`
+        ).show();
+    } else {
+        currentUser.setUsername(null);
+        currentUser.setRoles([]);
+        this.usernameLink.hide();
+        this.loginLink.show();
+        this.changePage("api");
+    }
+};
+
 
 export default NavBar;
 

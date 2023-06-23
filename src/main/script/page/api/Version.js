@@ -2,13 +2,9 @@ import URL from "../../URL";
 import $ from 'jquery'
 import nodePackage from '../../../../../package.json'
 
-/**
- *
- * @constructor
- */
-class Version {
+export default class Version {
 
-    populate() {
+    static populate() {
 
         $.get(URL.version.number, function (data) {
             $("#build-version-container").append(data);
@@ -19,11 +15,9 @@ class Version {
         });
 
         $("#admin-ui-version-container").html(nodePackage.version)
-        $("#admin-ui-timestamp-container").html($('html').attr('data-builtAt').replace(/T/, ' ').replace(/(\.\d+)?Z/, ' UTC'));
+        $("#admin-ui-timestamp-container").html($('html').attr('data-built-at').replace(/T/, ' ').replace(/(\.\d+)?Z/, ' UTC'));
 
     }
 
 }
-
-export default Version;
 

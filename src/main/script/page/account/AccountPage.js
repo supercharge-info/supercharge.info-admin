@@ -95,7 +95,7 @@ export default class AccountPage {
                         { data: 'newValue' },
                         { data: 'changeDate.epochSecond', searchable: false, render: (d, t) => t == 'sort' ? d : new Date(d * 1000).toLocaleString('en-US') },
                     ],
-                    'dom': "<'row'<'col-sm-4'l><'col-sm-4 dataTables_middle dataTables_title'><'col-sm-4'f>>"
+                    dom: "<'row'<'col-sm-4'f><'col-sm-4 dataTables_middle dataTables_title'><'col-sm-4'l>>"
                         + "<'row'<'col-sm-12'tr>><'row'<'col-sm-5'i><'col-sm-7'p>>"
                 });
                 $(this.dataTable.table().container()).find('.row:first > div:eq(1)').text('Your historical edits');

@@ -61,16 +61,27 @@ class ComparePage {
         // Data Tables, site links
         this.missingLocalSitesTable = this.missingLocalSitesTable.on('click','td:first-child a',ComparePage.handleMissingSiteClick).DataTable({
             lengthMenu: [ 10, 25, 100, 1000, 10000],
-            'dom': "<'row'<'col-sm-4'l><'col-sm-4 dataTables_middle'><'col-sm-4'f>>"
+            dom: "<'row'<'col-sm-4'f><'col-sm-4 dataTables_middle'><'col-sm-4'l>>"
                 + "<'row'<'col-sm-12'tr>><'row'<'col-sm-5'i><'col-sm-7'p>>"
         });
-        this.missingTeslaSitesTable = this.missingTeslaSitesTable.on('click','td:first-child a',ComparePage.handleExistingSiteClick).DataTable({ order: [[1, 'asc']], lengthMenu: [ 10, 25, 100, 1000, 10000] });
+        this.missingTeslaSitesTable = this.missingTeslaSitesTable.on('click','td:first-child a',ComparePage.handleExistingSiteClick).DataTable({
+            order: [[1, 'asc']],
+            lengthMenu: [ 10, 25, 100, 1000, 10000],
+            dom: "<'row'<'col-sm-6'f><'col-sm-6'l>>"
+                + "<'row'<'col-sm-12'tr>><'row'<'col-sm-5'i><'col-sm-7'p>>"
+        });
         this.fieldMismatchesTable.addClass('datatable-multi-row').find('tbody tr:not(:has(td[rowspan]))').each((i,e) => {
             let tr = $(e).prev();
             tr.children('[rowspan]').attr('data-datatable-multi-row-rowspan','2').removeAttr('rowspan');
             tr.children().eq(1).append($('<script type="text/template">').addClass('extra-row-content').text($(e).remove().prop('outerHTML')));
         });
-        this.fieldMismatchesTable = this.fieldMismatchesTable.on('click','td:first-child a',ComparePage.handleExistingSiteClick).DataTable({ order: [[2, 'asc']], 'fnDrawCallback': ComparePage.dtRowSpanRedraw, lengthMenu: [ 10, 25, 100, 1000, 10000] });
+        this.fieldMismatchesTable = this.fieldMismatchesTable.on('click','td:first-child a',ComparePage.handleExistingSiteClick).DataTable({
+            order: [[2, 'asc']],
+            'fnDrawCallback': ComparePage.dtRowSpanRedraw,
+            lengthMenu: [ 10, 25, 100, 1000, 10000],
+            dom: "<'row'<'col-sm-6'f><'col-sm-6'l>>"
+                + "<'row'<'col-sm-12'tr>><'row'<'col-sm-5'i><'col-sm-7'p>>"
+        });
 
         if (!this.suffix) {
             this.countrySelect = $('<select>').addClass('form-control input-sm').append('<option value="">All Countries</option>').append(Object.keys(this.countryList).sort().map(e => $(`<option>${e}</option>`)));

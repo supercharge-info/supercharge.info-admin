@@ -43,7 +43,7 @@
     "core-js": "3.11.3",
     "datatables.net": "^1.13.4",
     "datatables.net-bs": "^1.13.4",
-    "highcharts": "^10.3.3",
+    "highcharts": "^11.1.0",
     "jquery": "3.6.4",
     "jquery-serializejson": "3.2.1",
     "xss-filters": "^1.2.7"

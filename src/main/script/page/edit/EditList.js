@@ -84,8 +84,11 @@ export default class EditList {
                                 </ul>
                             </div>`
                     }
-                ]
+                ],
+                'dom': "<'row'<'col-sm-4'l><'col-sm-4 dataTables_middle dataTables_title'><'col-sm-4'f>>"
+                    + "<'row'<'col-sm-12'tr>><'row'<'col-sm-5'i><'col-sm-7'p>>"
             });
+            $(this.dataTable.table().container()).find('.row:first > div:eq(1)').text('All Sites');
             $(window).keydown($.proxy(this.handleFindShortcut, this));
         } else {
             this.dataTable.clear().rows.add(sites).draw();

@@ -4,6 +4,9 @@ body {
 .navbar {
     margin-bottom: 2px;
 }
+.navbar-fixed-top .navbar-collapse, .navbar-fixed-bottom .navbar-collapse {
+    max-height: calc(100vh - 50px);
+}
 .table-bordered th, .view-table th {
     position: sticky;
     top: 50px;
@@ -20,6 +23,24 @@ body {
 }
 .dropdown-menu-links {
     min-width: auto;
+}
+div.dataTables_wrapper div.dataTables_title {
+    font-size: 24px;
+}
+@media screen and (min-width: 768px) {
+    div.dataTables_wrapper div.dataTables_middle {
+        text-align: center;
+    }
+}
+@media screen and (max-width: 767px) {
+    div.dataTables_wrapper div.dataTables_length,
+    div.dataTables_wrapper div.dataTables_filter,
+    div.dataTables_wrapper div.dataTables_info,
+    div.dataTables_wrapper div.dataTables_paginate {
+        float: right;
+        margin-left: 10px;
+        clear: right;
+    }
 }
 table.dataTable {
     box-sizing: content-box;

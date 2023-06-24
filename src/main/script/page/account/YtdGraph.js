@@ -7,7 +7,10 @@ export default class YtdGraph {
         Highcharts.chart(target, {
             chart: {
                 zoomType: 'x',
-                type: 'spline'
+                type: 'spline',
+                style: {
+                    fontSize: '16px'
+                }
             },
             accessibility: {
                 enabled: false

@@ -66,7 +66,7 @@ NavBar.prototype.autoCloseCollapsedNavBar = function (event) {
     const navbarCollapse = $(".navbar-collapse");
     if ($(".navbar-toggle").is(":visible") && navbarCollapse.is(":visible")) {
         const target = $(event.target);
-        if (!target.is(".dropdown-toggle") && (!target.is(".form-control") || target.closest(".navbar").length === 0)) {
+        if (!target.closest(".dropdown-toggle").length && (!target.is(".form-control") || target.closest(".navbar").length === 0)) {
             navbarCollapse.collapse('toggle');
         }
     }
@@ -120,7 +120,7 @@ NavBar.prototype.handleLoginCheckResponse = function(response) {
         currentUser.setRoles(response.roles);
         this.loginLink.hide();
         this.usernameLink.html(
-            `<span class='glyphicon glyphicon-user' aria-hidden='true'></span> ${response.username} <span class='caret'/>`
+            `<span class='glyphicon glyphicon-user' aria-hidden='true'></span> <span class="username">${response.username}</span> <span class='caret'/>`
         ).show();
     } else {
         currentUser.setUsername(null);

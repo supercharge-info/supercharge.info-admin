@@ -1,5 +1,4 @@
-import Highcharts from "highcharts";
-import Sunburst from "highcharts/modules/sunburst";
+import Highcharts from "highcharts"; import Sunburst from "highcharts/modules/sunburst";
 
 export default class SiteEditsSunburst {
 
@@ -7,24 +6,57 @@ export default class SiteEditsSunburst {
         Sunburst(Highcharts);
     }
 
+    static getChildren(item) {
+        return item.children
+            ? Object.entries(item.children)
+                .sort(([z, a], [y, b]) => b.value - a.value)
+                .reduce((a, [z, c]) => a.concat(SiteEditsSunburst.getChildren(c)), [{ id: item.id, parent: item.parent, name: item.name }])
+            : [item];
+    }
+
     draw(siteEdits) {
 
-        const data = Object.entries(siteEdits.reduce((a, c) => {
-            if (!(c.address.regionId in a)) {
-                a[c.address.regionId] = { parent: '0', name: c.address.region };
+        const data = SiteEditsSunburst.getChildren(siteEdits.reduce((a, { address: { regionId, region, countryId, country, state }}) => {
+            if (!(regionId in a.children)) {
+                a.children[regionId] = {
+                    id: String(regionId),
+                    parent: '0',
+                    name: region,
+                    value: 0,
+                    children: {}
+                };
             }
-            if (!(c.address.regionId + '.' + c.address.countryId in a)) {
-                a[c.address.regionId + '.' + c.address.countryId] = { parent: String(c.address.regionId), name: c.address.country };
+            if (!(countryId in a.children[regionId].children)) {
+                a.children[regionId].children[countryId] = {
+                    id: regionId + '.' + countryId,
+                    parent: String(regionId),
+                    name: country,
+                    value: 0,
+                    children: {}
+                };
             }
-            const key = c.address.state ? c.address.state : c.address.country;
-            if (!(c.address.regionId + '.' + c.address.countryId + '.' + key in a)) {
-                a[c.address.regionId + '.' + c.address.countryId + '.' + key] = { parent: c.address.regionId + '.' + c.address.countryId, name: key, value: 0 };
+            if (!((state || country) in a.children[regionId].children[countryId].children)) {
+                a.children[regionId].children[countryId].children[state || country] = {
+                    id: regionId + '.' + countryId + '.' + (state || country),
+                    parent: regionId + '.' + countryId,
+                    name: state || country,
+                    value: 0
+                };
             }
-            a[c.address.regionId + '.' + c.address.countryId + '.' + key].value++;
+
+            a.children[regionId].value++;
+            a.children[regionId].children[countryId].value++;
+            a.children[regionId].children[countryId].children[state || country].value++;
             return a;
-        }, { '0': { parent: '', name: 'World' }})).map(([k, v]) => ({ id: k, ...v }));
+        }, { id: '0', parent: '', name: 'World', children: {} }))
 
         Highcharts.chart("site-edits-pie", {
+            chart: {
+                type: 'sunburst',
+                style: {
+                    fontSize: '16px'
+                }
+            },
             accessibility: {
                 enabled: false
             },
@@ -32,33 +64,17 @@ export default class SiteEditsSunburst {
                 enabled: false
             },
             title: {
-                text: "Regional Edits"
+                text: "Your Regional Edits"
             },
-            colors: ['transparent', ...Highcharts.getOptions().colors],
             series: [{
-                type: 'sunburst',
                 data: data,
                 name: 'Root',
                 allowDrillToNode: true,
+                borderRadius: 3,
                 cursor: 'pointer',
-                dataLabels: {
-                    format: '{point.name}',
-                    filter: {
-                        property: 'innerArcLength',
-                        operator: '>',
-                        value: 16
-                    }
-                },
                 levels: [{
                     level: 1,
-                    levelIsConstant: false,
-                    dataLabels: {
-                        filter: {
-                            property: 'outerArcLength',
-                            operator: '>',
-                            value: 64
-                        }
-                    }
+                    color: 'transparent'
                 }, {
                     level: 2,
                     colorByPoint: true

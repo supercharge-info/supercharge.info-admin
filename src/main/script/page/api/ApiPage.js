@@ -1,11 +1,16 @@
+import Version from './Version';
+
 /**
  * @constructor
  */
-const ApiPage = function () {
-};
 
-ApiPage.prototype.onPageShow = function () {
-};
+export default class ApiPage {
 
-export default ApiPage;
+    constructor() {
+        Version.populate();
+    }
+
+    onPageShow() {
+    }
+}
 

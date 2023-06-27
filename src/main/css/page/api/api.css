@@ -3,3 +3,9 @@ div.code {
     background-color: #dff0d8;
     margin-bottom: 1em;
 }
+
+#version-table {
+    font-weight: lighter;
+    margin: 0 auto;
+    width: 450px;
+}

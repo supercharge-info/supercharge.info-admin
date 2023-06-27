@@ -76,6 +76,7 @@ export default class EditForm {
 
         /* populate form */
         FormFiller.populateForm(this.siteEditForm, site);
+        $('html').animate({ scrollTop: 0, scrollLeft: 0 });
     };
 
     populateCountryOptions(countries) {

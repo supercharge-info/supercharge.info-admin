@@ -1,0 +1,15 @@
+#page-account > div {
+    margin-bottom: 3em;
+}
+
+#page-account > div ~ div {
+    margin-top: 3em;
+}
+
+#login-attempts-table {
+    margin: 0 auto;
+}
+
+#ytd-logins-graph {
+    margin-top: 2em;
+}

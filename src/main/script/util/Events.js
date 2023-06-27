@@ -13,7 +13,7 @@ export default class Events {
     static eventDetail(event) {
         event.preventDefault();
         const link = $(event.target),
-            target = link.attr('href'),
+            target = link.attr('href') || link.parent().attr('href'),
             actionName = target.replace('#', '');
         return {link: link, actionName: actionName};
     };

@@ -67,7 +67,7 @@ export default class EditList {
                     { data: 'stallCount', searchable: false },
                     { data: 'otherEVs', searchable: false },
                     { data: 'version', searchable: false },
-                    { data: 'dateModified', searchable: false },
+                    { data: 'dateModified', searchable: false, render: (d, t) => t == 'sort' ? d : new Date(d).toLocaleString('en-US') },
                     {
                         data: null,
                         searchable: false,
@@ -84,8 +84,11 @@ export default class EditList {
                                 </ul>
                             </div>`
                     }
-                ]
+                ],
+                dom: "<'row'<'col-sm-4'f><'col-sm-4 dataTables_middle dataTables_title'><'col-sm-4'l>>"
+                    + "<'row'<'col-sm-12'tr>><'row'<'col-sm-5'i><'col-sm-7'p>>"
             });
+            $(this.dataTable.table().container()).find('.row:first > div:eq(1)').text('All Sites');
             $(window).keydown($.proxy(this.handleFindShortcut, this));
         } else {
             this.dataTable.clear().rows.add(sites).draw();
@@ -95,7 +98,10 @@ export default class EditList {
     handleFindShortcut(event) {
         if (this.siteListTable.closest('.page').is(':visible') && String.fromCharCode(event.which) == "F" && (event.metaKey || event.ctrlKey)) {
             event.preventDefault();
-            $(this.dataTable.table().container()).find('input').focus();
+
+            const navHeight = $('.navbar-header').height() || $('.navbar').height();
+            const input = $(this.dataTable.table().container()).find('input');
+            $('html').animate({ scrollTop: input.offset().top - navHeight - 10 }, { complete: () => input.focus() });
         }
     }
 

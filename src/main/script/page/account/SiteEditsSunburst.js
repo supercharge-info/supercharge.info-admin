@@ -10,19 +10,20 @@ export default class SiteEditsSunburst {
         return item.children
             ? Object.entries(item.children)
                 .sort(([z, a], [y, b]) => b.value - a.value)
-                .reduce((a, [z, c]) => a.concat(SiteEditsSunburst.getChildren(c)), [{ id: item.id, parent: item.parent, name: item.name }])
+                .reduce((a, [z, c]) => a.concat(SiteEditsSunburst.getChildren(c)), [{ id: item.id, parent: item.parent, name: item.name, color: item.color }])
             : [item];
     }
 
     draw(siteEdits) {
 
-        const data = SiteEditsSunburst.getChildren(siteEdits.reduce((a, { address: { regionId, region, countryId, country, state }}) => {
+        const data = SiteEditsSunburst.getChildren(siteEdits.reverse().reduce((a, { address: { regionId, region, countryId, country, state }}) => {
             if (!(regionId in a.children)) {
                 a.children[regionId] = {
                     id: String(regionId),
                     parent: '0',
                     name: region,
                     value: 0,
+                    color: Highcharts.getOptions().colors[Object.keys(a.children).length],
                     children: {}
                 };
             }
@@ -48,7 +49,7 @@ export default class SiteEditsSunburst {
             a.children[regionId].children[countryId].value++;
             a.children[regionId].children[countryId].children[state || country].value++;
             return a;
-        }, { id: '0', parent: '', name: 'World', children: {} }))
+        }, { id: '0', parent: '', name: 'World', color: 'transparent', children: {} }))
 
         Highcharts.chart("site-edits-pie", {
             chart: {
@@ -64,7 +65,8 @@ export default class SiteEditsSunburst {
                 enabled: false
             },
             title: {
-                text: "Your Regional Edits"
+                text: "Your Regional Edits",
+                style: { fontWeight: 'normal' }
             },
             series: [{
                 data: data,
@@ -73,13 +75,6 @@ export default class SiteEditsSunburst {
                 borderRadius: 3,
                 cursor: 'pointer',
                 levels: [{
-                    level: 1,
-                    color: 'transparent'
-                }, {
-                    level: 2,
-                    colorByPoint: true
-                },
-                {
                     level: 3,
                     colorVariation: {
                         key: 'brightness',
@@ -95,7 +90,7 @@ export default class SiteEditsSunburst {
                 }],
                 tooltip: {
                     headerFormat: '',
-                    pointFormat: "You've made <b>{point.value}</b> edits in <b>{point.name}</b>"
+                    pointFormat: "You've made <b>{point.value:.0f}</b> edits in <b>{point.name}</b>"
                 }
 
             }]

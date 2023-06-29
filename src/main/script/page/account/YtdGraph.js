@@ -19,7 +19,8 @@ export default class YtdGraph {
                 enabled: false
             },
             title: {
-                text: title
+                text: title,
+                style: { fontWeight: 'normal' }
             },
             legend: {
                 borderWidth: 0,
@@ -52,7 +53,7 @@ export default class YtdGraph {
                 }
             },
 
-            series: Object.entries(ytdData).map(([y, d]) => ({ name: y, data: d }))
+            series: Object.entries(ytdData).map(([y, d]) => ({ name: y, data: d, color: Highcharts.getOptions().colors[(y - 2016) % 10] }))
         });
 
 

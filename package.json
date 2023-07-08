@@ -17,7 +17,7 @@
         "@babel/preset-env",
         {
           "useBuiltIns": "usage",
-          "corejs": "3.11.3"
+          "corejs": "3.31.1"
         }
       ]
     ]
@@ -32,12 +32,12 @@
     "babel-loader": "^8.3.0",
     "cross-env": "^7.0.3",
     "css-loader": "^5.2.7",
+    "css-minimizer-webpack-plugin": "^5.0.1",
     "eslint": "^8.44.0",
     "eslint-webpack-plugin": "^4.0.1",
     "html-minifier": "^4.0.0",
     "html-webpack-plugin": "^5.5.3",
     "mini-css-extract-plugin": "^2.7.6",
-    "url-loader": "^4.1.1",
     "webpack": "^5.88.1",
     "webpack-cli": "^4.10.0",
     "webpack-dev-server": "^4.15.1"

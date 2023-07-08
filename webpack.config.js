@@ -3,6 +3,7 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
 
 module.exports = env => {
@@ -34,16 +35,19 @@ module.exports = env => {
         },
         module: {
             rules: [
+                //
+                // https://webpack.js.org/loaders/babel-loader/
+                //
                 {
-                    test: /\.js$/,
+                    test: /\.js$/i,
                     exclude: /node_modules/,
                     use: {
                         loader: 'babel-loader'
                     }
                 },
                 //
+                // https://webpack.js.org/plugins/mini-css-extract-plugin/
                 // https://webpack.js.org/loaders/css-loader/
-                // https://webpack.js.org/loaders/style-loader/
                 //
                 {
                     test: /\.css$/i,
@@ -53,8 +57,8 @@ module.exports = env => {
                 // This is here only so that webpack doesn't try to process font files referenced by bootstrap css.
                 //
                 {
-                    test: /(\.woff?|\.woff2?|\.ttf?|\.eot?|\.svg?$)/,
-                    loader: 'url-loader'
+                    test: /\.(woff2?|ttf|eot|svg)$/i,
+                    type: 'asset/resource'
                 }
             ]
         },
@@ -73,7 +77,12 @@ module.exports = env => {
                         name: 'vendor'
                     }
                 }
-            }
+            },
+            minimizer: [
+                // For webpack@5 use the `...` syntax to extend built-in minimizers
+                '...',
+                new CssMinimizerPlugin()
+            ]
         },
         plugins: [
             //

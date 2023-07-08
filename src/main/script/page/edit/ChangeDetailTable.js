@@ -1,8 +1,7 @@
-import $ from "jquery";
 import URL from "../../URL";
 import EventBus from "../../util/EventBus";
 import EditEvents from "./EditEvents";
-import xss from 'xss-filters';
+import { sanitize } from 'dompurify';
 
 export default class ChangeDetailView {
     constructor() {
@@ -39,13 +38,13 @@ export default class ChangeDetailView {
                 `<tr>
                     <td>${e.version}</td>
                     <td>${new Date(e.changeDate.epochSecond * 1000).toLocaleString('en-US')}</td>
-                    <td>${xss.inHTMLData(e.username)}</td>
+                    <td>${sanitize(e.username)}</td>
                     <td>${e.fieldName}</td>
-                    <td>${xss.inHTMLData(e.oldValue)}</td>
-                    <td>${xss.inHTMLData(e.newValue)}</td>
+                    <td>${sanitize(e.oldValue)}</td>
+                    <td>${sanitize(e.newValue)}</td>
                 </tr>`
             );
-        })
+        });
 
     }
 

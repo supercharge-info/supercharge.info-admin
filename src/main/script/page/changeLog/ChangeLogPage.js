@@ -1,10 +1,9 @@
-import $ from "jquery";
 import 'datatables.net';
 import 'datatables.net-bs';
 import EventBus from "../../util/EventBus";
 import ChangeLogDeleteAction from "./ChangeLogDeleteAction";
 import URL from "../../URL";
-import xss from 'xss-filters';
+import { sanitize } from 'dompurify';
 
 
 export default class ChangeLogPage {
@@ -16,11 +15,11 @@ export default class ChangeLogPage {
 
     onPageShow() {
         this.loadChangeLogList();
-    };
+    }
 
     loadChangeLogList() {
         $.getJSON(URL.change.list, $.proxy(this.populateSystemPropsTable, this));
-    };
+    }
 
     populateSystemPropsTable(changeLogs) {
         if (!this.dataTable) {
@@ -53,7 +52,7 @@ export default class ChangeLogPage {
                     { data: 'id' },
                     { data: 'date', searchable: false, render: (d, t) => t == 'sort' ? d : new Date(d).toLocaleDateString('en-US') },
                     { data: 'changeType', searchable: false },
-                    { data: 'siteName', render: xss.inHTMLData },
+                    { data: 'siteName', render: sanitize },
                     { data: 'region' },
                     { data: 'country' },
                     { data: 'siteStatus' }
@@ -82,11 +81,11 @@ export default class ChangeLogPage {
         event.preventDefault();
         const link = $(event.target);
         const siteName = link.parents("tr").find("td").eq(4).html();
-        if (confirm(`Delete change log for ${xss.inHTMLData(siteName)}?`)) {
+        if (confirm(`Delete change log for ${siteName}?`)) {
             const changeLogId = link.data("id");
             EventBus.dispatch("change-log-selected-for-delete-event", changeLogId);
         }
     }
 
 
-};
+}

@@ -17,9 +17,9 @@ export default class EditPage {
         }
 
         this.editList.loadSiteList();
-    };
+    }
 
-};
+}
 
 
 

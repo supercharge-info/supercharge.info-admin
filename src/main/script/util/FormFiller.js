@@ -1,6 +1,4 @@
 import Objects from "./Objects";
-import $ from "jquery";
-
 
 export default class FormFiller {
 
@@ -21,7 +19,7 @@ export default class FormFiller {
                 FormFiller.populateField(key, formJQueryObject, value);
             }
         });
-    };
+    }
 
     static populateField(key, form, value) {
         const control = $('[name="' + key + '"]', form);

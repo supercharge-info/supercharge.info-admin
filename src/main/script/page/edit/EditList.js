@@ -1,13 +1,12 @@
 import EventBus from "../../util/EventBus";
 import URL from "../../URL";
-import EditEvents from './EditEvents'
+import EditEvents from './EditEvents';
 import SiteDeleteAction from "./SiteDeleteAction";
 import SiteLoadAction from "./SiteLoadAction";
 import {currentUser} from "../../nav/User";
-import $ from "jquery";
 import 'datatables.net';
 import 'datatables.net-bs';
-import xss from 'xss-filters';
+import { sanitize } from 'dompurify';
 
 export default class EditList {
 
@@ -22,7 +21,7 @@ export default class EditList {
 
     loadSiteList() {
         $.getJSON(URL.site.loadAll, $.proxy(this.populateEditSiteTable, this));
-    };
+    }
 
     populateEditSiteTable(sites) {
         if (!this.dataTable) {
@@ -60,7 +59,7 @@ export default class EditList {
                             + `<a href="#" class="site-delete-trigger" data-id="${r.id}">delete</a>`)
                     },
                     { data: 'id' },
-                    { data: 'name', render: xss.inHTMLData },
+                    { data: 'name', render: sanitize },
                     { data: 'status' },
                     { data: 'dateOpened', defaultContent: '', searchable: false },
                     { data: 'powerKiloWatt', searchable: false },
@@ -120,7 +119,7 @@ export default class EditList {
         EventBus.dispatch(EditEvents.site_delete_selection, siteId, siteName);
     }
 
-};
+}
 
 
 

@@ -1,6 +1,5 @@
 import URL from "../../URL";
-import $ from 'jquery'
-import nodePackage from '../../../../../package.json'
+import nodePackage from '../../../../../package.json';
 
 export default class Version {
 
@@ -14,7 +13,7 @@ export default class Version {
             $("#build-timestamp-container").append(data);
         });
 
-        $("#admin-ui-version-container").html(nodePackage.version)
+        $("#admin-ui-version-container").html(nodePackage.version);
         $("#admin-ui-timestamp-container").html($('html').attr('data-built-at').replace(/T/, ' ').replace(/(\.\d+)?Z/, ' UTC'));
 
     }

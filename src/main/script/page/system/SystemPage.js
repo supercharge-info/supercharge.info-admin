@@ -1,5 +1,5 @@
-import $ from 'jquery'
-import URL from '../../URL'
+import { sanitize } from 'dompurify';
+import URL from '../../URL';
 
 /**
  * @constructor
@@ -25,16 +25,13 @@ SystemPage.prototype.populateSystemPropsTable = function (sysProps) {
         "<th>Value</th>" +
         "</tr>" +
         "");
-    for (let prop in sysProps) {
-        if (sysProps.hasOwnProperty(prop)) {
-            table.find("tbody").append("" +
-                "<tr>" +
-                "<td>" + prop + "</td>" +
-                "<td>" + sysProps[prop] + "</td>" +
-                "</tr>"
-            );
-        }
-    }
+    Object.entries(sysProps).forEach(([name, prop]) =>
+        table.find("tbody").append("" +
+            "<tr>" +
+            `<td>${ sanitize(name) }</td>` +
+            `<td>${ sanitize(prop) }</td>` +
+            "</tr>"
+        ));
 };
 
 export default SystemPage;

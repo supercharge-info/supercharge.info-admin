@@ -1,4 +1,3 @@
-import $ from "jquery";
 import EventBus from "../../util/EventBus";
 import URL from "../../URL";
 import EditEvents from "./EditEvents";
@@ -21,6 +20,6 @@ export default class SiteLoadAction {
         $.getJSON(URL.site.load + "?siteId=" + siteId, function (site) {
             EventBus.dispatch(EditEvents.site_loaded, site);
         });
-    };
+    }
 
-};
+}

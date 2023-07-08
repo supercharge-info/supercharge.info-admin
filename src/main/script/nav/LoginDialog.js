@@ -1,5 +1,5 @@
 import URL from "../URL";
-import $ from "jquery";
+import EventBus from "../util/EventBus";
 
 /**
  * @constructor
@@ -17,7 +17,7 @@ export default class LoginDialog {
 
         this.dialog.on('shown.bs.modal', () => $('#name').focus())
             .on('hidden.bs.modal', () => this.onHide())
-            .on('submit', e => this.handleSubmitLogin());
+            .on('submit', () => this.handleSubmitLogin());
     }
 
     show(page) {
@@ -43,24 +43,20 @@ export default class LoginDialog {
             error: d => this.loginSuccess(d.responseJSON)
         });
         return false;
-    };
+    }
 
     loginSuccess(response) {
         this.button.prop('disabled', false);
         if (response.result === 'SUCCESS') {
-            if (this.nav) {
-                this.nav.handleLoginCheckResponse(response);
-                if (this.destination) {
-                    this.nav.changePage(this.destination);
-                }
-                this.dialog.modal('hide');
-            } else {
-                window.location.reload(true);
+            EventBus.dispatch("login-response", response);
+            if (this.destination) {
+                EventBus.dispatch("change-page", this.destination);
             }
+            this.dialog.modal('hide');
         } else {
             this.errorBox.show().html(response.messages);
         }
-    };
+    }
 
 }
 

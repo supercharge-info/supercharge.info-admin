@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "build": "cross-env NODE_ENV=production webpack --mode=production",
-    "start": "cross-env NODE_ENV=development webpack serve",
-    "release": "npm version --message 'RELEASE: %s' patch && git push origin master && git push origin --tags"
+    "lint": "eslint --fix --ext .js src/",
+    "start": "cross-env NODE_ENV=development webpack serve --mode=development",
+    "release": "npm version patch --message 'RELEASE: %s' && git push origin master && git push origin --tags"
   },
   "author": "",
   "license": "ISC",
@@ -25,27 +26,30 @@
     "defaults"
   ],
   "devDependencies": {
-    "@babel/core": "7.14.0",
-    "@babel/preset-env": "7.14.1",
-    "babel-loader": "8.2.2",
+    "@babel/core": "^7.22.8",
+    "@babel/eslint-parser": "^7.22.7",
+    "@babel/preset-env": "^7.22.7",
+    "babel-loader": "^8.3.0",
     "cross-env": "^7.0.3",
-    "css-loader": "5.2.4",
-    "html-minifier": "4.0.0",
-    "html-webpack-plugin": "5.3.1",
-    "style-loader": "2.0.0",
-    "url-loader": "4.1.1",
-    "webpack": "^5.39.0",
-    "webpack-cli": "4.10.0",
-    "webpack-dev-server": "4.11.1"
+    "css-loader": "^5.2.7",
+    "eslint": "^8.44.0",
+    "eslint-webpack-plugin": "^4.0.1",
+    "html-minifier": "^4.0.0",
+    "html-webpack-plugin": "^5.5.3",
+    "mini-css-extract-plugin": "^2.7.6",
+    "url-loader": "^4.1.1",
+    "webpack": "^5.88.1",
+    "webpack-cli": "^4.10.0",
+    "webpack-dev-server": "^4.15.1"
   },
   "dependencies": {
-    "bootstrap": "3.4.1",
-    "core-js": "3.11.3",
-    "datatables.net": "^1.13.4",
-    "datatables.net-bs": "^1.13.4",
+    "bootstrap": "^3.4.1",
+    "core-js": "^3.31.1",
+    "datatables.net": "^1.13.5",
+    "datatables.net-bs": "^1.13.5",
+    "dompurify": "^3.0.4",
     "highcharts": "^11.1.0",
-    "jquery": "3.6.4",
-    "jquery-serializejson": "3.2.1",
-    "xss-filters": "^1.2.7"
+    "jquery": "^3.7.0",
+    "jquery-serializejson": "^3.2.1"
   }
 }

@@ -1,9 +1,9 @@
-import $ from "jquery";
 import EventBus from "../../util/EventBus";
 import URL from "../../URL";
 import FeatureForm from "./FeatureForm";
 import FeatureEvents from "./FeatureEvents";
-import FeatureAction from "./FeatureAction"
+import FeatureAction from "./FeatureAction";
+import {currentUser} from "../../nav/User";
 
 export default class FeaturePage {
 
@@ -16,11 +16,11 @@ export default class FeaturePage {
 
     onPageShow() {
         this.loadTable();
-    };
+    }
 
     loadTable() {
         $.getJSON(URL.feature.list, $.proxy(this.populateTable, this));
-    };
+    }
 
     populateTable(feedbackArray) {
         const tableHead = this.table.find("thead");
@@ -42,8 +42,8 @@ export default class FeaturePage {
                 `<td>${index + 1}</td>` +
                 "<td>" +
                 `<a href='' class='feature-edit-trigger' data-id='${feature.id}'>edit</a>` +
-                "<br/><br/>" +
-                `<a href='' class='feature-delete-trigger' data-id='${feature.id}'>delete</a>` +
+                (!currentUser.hasRole("admin") ? "" : "<br/><br/>" +
+                `<a href='' class='feature-delete-trigger' data-id='${feature.id}'>delete</a>`) +
                 "</td>" +
                 `<td>${feature.id}</td>` +
                 `<td>${feature.addedDate}</td>` +
@@ -56,14 +56,14 @@ export default class FeaturePage {
 
         $(".feature-edit-trigger").on("click", FeaturePage.handleEditClick);
         $(".feature-delete-trigger").on("click", FeaturePage.handleDeleteClick);
-    };
+    }
 
 
     static handleEditClick(event) {
         event.preventDefault();
         const siteId = $(event.target).data("id");
         EventBus.dispatch(FeatureEvents.feature_selected_for_edit, siteId);
-    };
+    }
 
     static handleDeleteClick(event) {
         event.preventDefault();

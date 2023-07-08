@@ -1,4 +1,3 @@
-import $ from "jquery";
 import EventBus from "../../util/EventBus";
 import URL from "../../URL";
 
@@ -17,7 +16,7 @@ export default class ChangeLogDeleteAction {
     }
 
     deleteChange(event, changeLogId) {
-        $.get(URL.change.delete + "/" + changeLogId, function () {
+        $.post(URL.change.delete, { changeId: changeLogId }, function () {
             EventBus.dispatch("change-log-deleted-event");
         }).fail(function (jqXHR) {
             alert("Error occurred while deleting " + changeLogId + "\n"

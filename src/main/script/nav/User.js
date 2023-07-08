@@ -1,6 +1,4 @@
-import $ from "jquery";
 import Objects from "../util/Objects";
-
 
 /**
  * Constructor
@@ -13,19 +11,19 @@ export class User {
 
     setRoles(newValues) {
         this.roles = newValues;
-    };
+    }
 
     setUsername(username) {
         this.username = username;
-    };
+    }
 
     hasRole(roleName) {
         return $.inArray(roleName, this.roles) >= 0;
-    };
+    }
 
     isAuthenticated() {
         return Objects.isNotNullOrUndef(this.username);
-    };
+    }
 
 
 }

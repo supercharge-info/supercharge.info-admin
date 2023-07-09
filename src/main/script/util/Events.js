@@ -1,5 +1,3 @@
-import $ from "jquery";
-
 /**
  * Static utility methods for dealing with events.
  */
@@ -15,7 +13,7 @@ export default class Events {
         const link = $(event.target),
             target = link.attr('href') || link.parent().attr('href'),
             actionName = target.replace('#', '');
-        return {link: link, actionName: actionName};
-    };
+        return { link, actionName };
+    }
 
 }

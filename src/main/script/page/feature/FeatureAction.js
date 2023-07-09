@@ -1,5 +1,4 @@
 import EventBus from "../../util/EventBus";
-import $ from "jquery";
 import URL from "../../URL";
 import FeatureEvents from "./FeatureEvents";
 
@@ -9,7 +8,7 @@ export default class FeatureAction {
     }
 
     doDelete(event, featureId) {
-        $.get(URL.feature.delete + "/" + featureId, function () {
+        $.post(URL.feature.delete, { featureId }, function () {
             EventBus.dispatch(FeatureEvents.feature_list_changed);
         }).fail(function () {
             alert("Error occurred while deleting " + featureId);

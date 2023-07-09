@@ -1,7 +1,6 @@
 import EventBus from "../../util/EventBus";
 import URL from "../../URL";
-import $ from "jquery";
-import EditEvents from './EditEvents'
+import EditEvents from './EditEvents';
 
 /**
  * listens for: site-selected-for-delete-event
@@ -18,7 +17,7 @@ export default class SiteDeleteAction {
 
     deleteSite(event, siteId, siteName) {
         if (confirm("Delete site " + siteName + "?")) {
-            $.get(URL.site.delete + "?siteId=" + siteId, function () {
+            $.post(URL.site.delete, { siteId }, function () {
                 EventBus.dispatch(EditEvents.site_list_changed);
             }).fail(function (jqXHR) {
                 if(jqXHR.status === 403) {
@@ -28,7 +27,7 @@ export default class SiteDeleteAction {
                 }
             });
         }
-    };
+    }
 
 }
-;
+

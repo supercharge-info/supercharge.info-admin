@@ -1,5 +1,4 @@
 import URL from "../../URL";
-import $ from "jquery";
 import 'datatables.net';
 import 'datatables.net-bs';
 import EventBus from "../../util/EventBus";
@@ -29,14 +28,14 @@ class ComparePage {
             this.loaded = true;
             $.get(URL.val.webscrape + this.suffix)
                 .done($.proxy(this.populateWebScrapeReport, this))
-                .fail(e => {
+                .fail(() => {
                     this.loaded = false;
                     if(confirm('Failed to load compare page, do you want to retry?')) {
                         this.onPageShow();
                     }
                 });
         }
-    };
+    }
 
     populateWebScrapeReport(reportHtml) {
         this.validationWebScrapeDiv.html(reportHtml);
@@ -71,7 +70,7 @@ class ComparePage {
                 + "<'row'<'col-sm-12'tr>><'row'<'col-sm-5'i><'col-sm-7'p>>"
         });
         this.fieldMismatchesTable.addClass('datatable-multi-row').find('tbody tr:not(:has(td[rowspan]))').each((i,e) => {
-            let tr = $(e).prev();
+            const tr = $(e).prev();
             tr.children('[rowspan]').attr('data-datatable-multi-row-rowspan','2').removeAttr('rowspan');
             tr.children().eq(1).append($('<script type="text/template">').addClass('extra-row-content').text($(e).remove().prop('outerHTML')));
         });
@@ -87,11 +86,11 @@ class ComparePage {
             this.countrySelect = $('<select>').addClass('form-control input-sm').append('<option value="">All Countries</option>').append(Object.keys(this.countryList).sort().map(e => $(`<option>${e}</option>`)));
             $(this.missingLocalSitesTable.table().container()).find('.row:first > div:eq(1)').append($('<label>').text('Country:').append(this.countrySelect));
             this.countrySelect.on('change', () => {
-                [ this.missingLocalSitesTable, this.missingTeslaSitesTable, this.fieldMismatchesTable ].forEach(t => t.column((i, d, n) => n.innerText == 'country').search(`^${this.countrySelect.val() || '.*'}$`, true, false).draw())
+                [ this.missingLocalSitesTable, this.missingTeslaSitesTable, this.fieldMismatchesTable ].forEach(t => t.column((i, d, n) => n.innerText == 'country').search(`^${this.countrySelect.val() || '.*'}$`, true, false).draw());
             });
         }
         $(window).keydown($.proxy(this.handleFindShortcut, this));
-    };
+    }
 
     handleTabChange(e) {
         const elem = $(e.target);
@@ -101,7 +100,7 @@ class ComparePage {
         e.preventDefault();
         elem.tab('show').closest('.nav').nextAll().hide();
 
-        const target = $(elem.data('target')).show();
+        $(elem.data('target')).show();
         if (!this.other) {
             this.other = new ComparePage(true);
         }
@@ -112,17 +111,17 @@ class ComparePage {
         // From: https://stackoverflow.com/a/50183806/1507941
         // Handles using a rowspan in DataTables, which is not supported otherwise
         // Pairs rows together using one "real" row and the lower row existing in a script
-        let table = $(this);
+        const table = $(this);
 
         // only apply this to specific tables
         if (table.closest(".datatable-multi-row").length) {
             // for each row in the table body...
             table.find("tbody>tr").each(function() {
-                let tr = $(this);
+                const tr = $(this);
 
                 // get the "extra row" content from the <script> tag.
                 // note, this could be any DOM object in the row.
-                let extra_row = tr.find(".extra-row-content").html();
+                const extra_row = tr.find(".extra-row-content").html();
 
                 // in case draw() fires multiple times,
                 // we only want to add new rows once.
@@ -131,8 +130,8 @@ class ComparePage {
                     tr.find("td").each(function() {
                         // for each cell in the top row,
                         // set the "rowspan" according to the data value.
-                        let td = $(this);
-                        let rowspan = parseInt(td.data("datatable-multi-row-rowspan"), 10);
+                        const td = $(this);
+                        const rowspan = parseInt(td.data("datatable-multi-row-rowspan"), 10);
                         if (rowspan) {
                           td.attr('rowspan', rowspan);
                         }
@@ -147,25 +146,25 @@ class ComparePage {
 
         const link = $(event.target);
         const tr = link.parents("tr");
-        const title = tr.find("td").eq(0).find("a").html();
-        const locationId = tr.find("td").eq(1).html();
-        const stallCount = tr.find("td").eq(2).html();
-        const latitude = tr.find("td").eq(3).html();
-        const longitude = tr.find("td").eq(4).html();
-        const address = tr.find("td").eq(5).html();
-        const city = tr.find("td").eq(6).html();
-        const state = tr.find("td").eq(7).html();
-        const country = tr.find("td").eq(8).html();
-        const region = tr.find("td").eq(9).html();
-        const hours = tr.find("td").eq(10).html();
-        const chargers = tr.find("td").eq(11).html();
-        const locationType = tr.find("td").eq(12).html();
+        const title = tr.find("td").eq(0).find("a").text();
+        const locationId = tr.find("td").eq(1).find('a').prop('href');
+        const stallCount = tr.find("td").eq(2).text();
+        const latitude = tr.find("td").eq(3).text();
+        const longitude = tr.find("td").eq(4).text();
+        const address = tr.find("td").eq(5).text();
+        const city = tr.find("td").eq(6).text();
+        const state = tr.find("td").eq(7).text();
+        const country = tr.find("td").eq(8).text();
+        //const region = tr.find("td").eq(9).text();
+        const hours = tr.find("td").eq(10).text();
+        //const chargers = tr.find("td").eq(11).text();
+        const locationType = tr.find("td").eq(12).text();
         const form = $("#site-edit-form");
 
         // reset all form fields
         form.trigger("reset");
         //
-        form.find("input[name='locationId']").val(locationId);
+        form.find("input[name='locationId']").val((locationId.match(/[^/]+$/) || [])[0]);
         form.find("input[name='name']").val(title);
         form.find("select[name='status']").find("option[value=OPEN]").prop('selected', 'selected');
         form.find("input[name='dateOpened']").val(ComparePage.getTodayDateString());
@@ -181,7 +180,7 @@ class ComparePage {
             , $("#address-country-select").children().length > 1 ? 0 : 500);
         form.find("select[name='otherEVs']").find(`option:contains(${ locationType.split(/,\s*/).includes("PARTY") })`).prop('selected', 'selected');
 
-        $("#page-link-edit").click();
+        EventBus.dispatch("change-page", "edit");
     }
 
     handleFindShortcut(event) {

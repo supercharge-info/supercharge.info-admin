@@ -1,137 +1,139 @@
-import $ from "jquery";
-import "bootstrap";
+import 'bootstrap';
+import EventBus from "../util/EventBus";
 import Events from "../util/Events";
-import Objects from "../util/Objects";
 import URL from "../URL";
 import LoginDialog from "./LoginDialog";
-import AccountPage from "../page/account/AccountPage";
 import ApiPage from "../page/api/ApiPage";
-import ValidationPage from "../page/validation/ValidationPage";
-import ComparePage from "../page/compare/ComparePage";
-import FeaturePage from "../page/feature/FeaturePage";
-import EditPage from "../page/edit/EditPage";
-import ChangeLogPage from "../page/changeLog/ChangeLogPage";
-import SystemPage from "../page/system/SystemPage";
 import {currentUser} from "./User";
 
+export default class NavBar {
+    /**
+     * Constructor
+     */
+    constructor() {
+        this.initListeners();
+        this.login = new LoginDialog();
+        this.loginLink = $("#login-link");
+        this.usernameLink = $("#username-link");
 
-/**
- * Constructor
- */
-const NavBar = function () {
-    this.initListeners();
-    this.login = new LoginDialog(this);
-    this.loginLink = $("#login-link");
-    this.usernameLink = $("#username-link");
+        $("#logout-link").click(NavBar.handleLogoutClick);
+        EventBus.addListener("change-page", this.changePage, this);
+        EventBus.addListener("login-response", this.handleLoginCheckResponse, this);
 
-    $("#logout-link").click($.proxy(this.handleLogoutClick, this));
-
-    this.pageMap = {
-        account: {requiredRole: "any", page: new AccountPage()},
-        api: {page: new ApiPage()},
-        comparison: {requiredRole: "editor", page: new ComparePage()},
-        validation: {requiredRole: "editor", page: new ValidationPage()},
-        edit: {requiredRole: "editor", page: new EditPage()},
-        changeLog: {requiredRole: "editor", page: new ChangeLogPage()},
-        feature: {requiredRole: "feature", page: new FeaturePage()},
-        system: {requiredRole: "admin", page: new SystemPage()}
+        this.pageMap = {
+            api: {page: new ApiPage()}
+        };
+        this.loading = true;
+        import('./DeferredPages').then(({ default: getPages }) => {
+            this.pageMap = { ...this.pageMap, ...getPages() };
+            if (this.loading !== true) {
+                $('#loading').modal('hide');
+                EventBus.dispatch("change-page", this.loading);
+            }
+            this.loading = false;
+        });
     }
-};
 
-NavBar.prototype.setInitialPage = function () {
-    this.changePage("api");
+    setInitialPage() {
+        EventBus.dispatch("change-page", "api");
 
-    $.getJSON(URL.login.check, r => {
-        this.handleLoginCheckResponse(r);
+        $.getJSON(URL.login.check, r => {
+            EventBus.dispatch("login-response", r);
 
-        if (currentUser.hasRole('editor')) {
-            this.changePage('edit'); 
-        } else if (currentUser.isAuthenticated()) {
-            this.changePage("account");
-        }
-    });
-};
+            if (currentUser.hasRole('editor')) {
+                EventBus.dispatch("change-page", "edit");
+            } else if (currentUser.isAuthenticated()) {
+                EventBus.dispatch("change-page", "account");
+            }
+        });
+    }
 
-NavBar.prototype.initListeners = function () {
-    $("#navbar-menu-item-list").find("a[href]").click($.proxy(this.handlePageChangeClick, this));
-    $("body").click($.proxy(this.autoCloseCollapsedNavBar, this));
-};
+    initListeners() {
+        $("#navbar-menu-item-list").find("a[href]").click(NavBar.handlePageChangeClick);
+        $("body").click(NavBar.autoCloseCollapsedNavBar);
+    }
 
-NavBar.prototype.handlePageChangeClick = function (event) {
-    const eventDetail = Events.eventDetail(event);
-    this.changePage(eventDetail.actionName);
-};
+    /**
+     * Navigation
+     */
+    static handlePageChangeClick(event) {
+        const eventDetail = Events.eventDetail(event);
+        EventBus.dispatch("change-page", eventDetail.actionName);
+    }
 
-NavBar.prototype.autoCloseCollapsedNavBar = function (event) {
-    const navbarCollapse = $(".navbar-collapse");
-    if ($(".navbar-toggle").is(":visible") && navbarCollapse.is(":visible")) {
-        const target = $(event.target);
-        if (!target.closest(".dropdown-toggle").length && (!target.is(".form-control") || target.closest(".navbar").length === 0)) {
-            navbarCollapse.collapse('toggle');
+    static autoCloseCollapsedNavBar(event) {
+        const navbarCollapse = $(".navbar-collapse");
+        if ($(".navbar-toggle").is(":visible") && navbarCollapse.is(":visible")) {
+            const target = $(event.target);
+            if (!target.closest(".dropdown-toggle").length && (!target.is(".form-control") || target.closest(".navbar").length === 0)) {
+                navbarCollapse.collapse('toggle');
+            }
         }
     }
-};
 
-NavBar.prototype.changePage = function (newPageName) {
-    Object.entries(this.pageMap).forEach(([pageName, pageDefinition]) => {
-        if (pageName === newPageName && newPageName !== this.currentPage) {
-            const roleRequired = Objects.isNotNullOrUndef(pageDefinition.requiredRole);
-
-            if (roleRequired && !currentUser.isAuthenticated()) {
+    changePage(event, newPageName) {
+        const { role, page } = this.pageMap[newPageName] || {};
+        if (newPageName === this.currentPage) {
+            return;
+        } else if (page) {
+            if (role && !currentUser.isAuthenticated()) {
                 this.login.show(newPageName);
                 return;
             }
-            if (roleRequired && pageDefinition.requiredRole != 'any' && !currentUser.hasRole(pageDefinition.requiredRole)) {
+            if (role && role != 'any' && !currentUser.hasRole(role)) {
                 alert("Insufficient privileges to access page:" + newPageName +
-                    " need=" + pageDefinition.requiredRole +
-                    " have=" + currentUser.roles);
+                    " need=" + role +
+                    " have=" + (currentUser.roles || 'none'));
                 return;
             }
             this.hideCurrentPage();
             this.currentPage = newPageName;
             this.showCurrentPage();
-            pageDefinition.page.onPageShow();
+            page.onPageShow();
+        } else if (this.loading) {
+            this.loading = newPageName;
+            setTimeout(() => {
+                if(this.loading && !$('#loading').length) {
+                    $('<div class="modal fade" id="loading" tabindex="-1" role="dialog"><div class="modal-dialog modal-dialog-centered modal-sm"><div class="modal-content"><div class="modal-body">Loading, please wait...</div></div></div></div>').appendTo('body')
+                    .on('hidden.bs.modal', e => $(e).remove()).modal({ backdrop: 'static', keyboard: false });
+                }
+            }, 500);
         }
-    });
-};
-
-NavBar.prototype.hideCurrentPage = function () {
-    $("#page-" + this.currentPage).hide();
-    $("#page-link-" + this.currentPage).closest("li").removeClass("active");
-};
-
-NavBar.prototype.showCurrentPage = function () {
-    $("#page-" + this.currentPage).show();
-    $("#page-link-" + this.currentPage).closest("li").addClass("active");
-    $('html').scrollTop(0).scrollLeft(0);
-};
-
-/**
- * Logout
- */
-NavBar.prototype.handleLogoutClick = function(event) {
-    event.preventDefault();
-    $.get(URL.login.logout).always(() => this.handleLoginCheckResponse(null));
-};
-
-NavBar.prototype.handleLoginCheckResponse = function(response) {
-    if (response !== null && response.result === "SUCCESS") {
-        currentUser.setUsername(response.username);
-        currentUser.setRoles(response.roles);
-        this.loginLink.hide();
-        this.usernameLink.html(
-            `<span class='glyphicon glyphicon-user' aria-hidden='true'></span> <span class="username">${response.username}</span> <span class='caret'/>`
-        ).show();
-    } else {
-        currentUser.setUsername(null);
-        currentUser.setRoles([]);
-        this.usernameLink.hide();
-        this.loginLink.show();
-        this.changePage("api");
     }
-};
 
+    hideCurrentPage() {
+        $("#page-" + this.currentPage).hide();
+        $("#page-link-" + this.currentPage).closest("li").removeClass("active");
+    }
 
-export default NavBar;
+    showCurrentPage() {
+        $("#page-" + this.currentPage).show();
+        $("#page-link-" + this.currentPage).closest("li").addClass("active");
+        $('html').scrollTop(0).scrollLeft(0);
+    }
 
+    /**
+     * Logout
+     */
+    static handleLogoutClick(event) {
+        event.preventDefault();
+        $.get(URL.login.logout).always(() => EventBus.dispatch("login-response"));
+    }
 
+    handleLoginCheckResponse(event, response) {
+        if (response?.result === "SUCCESS") {
+            currentUser.setUsername(response.username);
+            currentUser.setRoles(response.roles);
+            this.loginLink.hide();
+            this.usernameLink.html(
+                `<span class='glyphicon glyphicon-user' aria-hidden='true'></span> <span class="username">${response.username}</span> <span class='caret'/>`
+            ).show();
+        } else {
+            currentUser.setUsername(null);
+            currentUser.setRoles([]);
+            this.usernameLink.hide();
+            this.loginLink.show();
+            EventBus.dispatch("change-page", "api");
+        }
+    }
+}

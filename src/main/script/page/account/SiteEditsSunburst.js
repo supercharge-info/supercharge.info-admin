@@ -9,8 +9,8 @@ export default class SiteEditsSunburst {
     static getChildren(item) {
         return item.children
             ? Object.entries(item.children)
-                .sort(([z, a], [y, b]) => b.value - a.value)
-                .reduce((a, [z, c]) => a.concat(SiteEditsSunburst.getChildren(c)), [{ id: item.id, parent: item.parent, name: item.name, color: item.color }])
+                .sort(([, a], [, b]) => b.value - a.value)
+                .reduce((a, [, c]) => a.concat(SiteEditsSunburst.getChildren(c)), [{ id: item.id, parent: item.parent, name: item.name, color: item.color }])
             : [item];
     }
 
@@ -49,7 +49,7 @@ export default class SiteEditsSunburst {
             a.children[regionId].children[countryId].value++;
             a.children[regionId].children[countryId].children[state || country].value++;
             return a;
-        }, { id: '0', parent: '', name: 'World', color: 'transparent', children: {} }))
+        }, { id: '0', parent: '', name: 'World', color: 'transparent', children: {} }));
 
         Highcharts.chart("site-edits-pie", {
             chart: {
@@ -69,7 +69,7 @@ export default class SiteEditsSunburst {
                 style: { fontWeight: 'normal' }
             },
             series: [{
-                data: data,
+                data,
                 name: 'Root',
                 allowDrillToNode: true,
                 borderRadius: 3,
@@ -96,6 +96,6 @@ export default class SiteEditsSunburst {
             }]
         });
 
-    };
+    }
 
-};
+}

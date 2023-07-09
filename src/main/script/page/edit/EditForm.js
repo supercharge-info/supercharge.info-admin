@@ -1,5 +1,4 @@
 import "jquery-serializejson";
-import $ from "jquery";
 import URL from "../../URL";
 import FormFiller from "../../util/FormFiller";
 import EventBus from "../../util/EventBus";
@@ -34,7 +33,7 @@ export default class EditForm {
         this.saveButton.click($.proxy(this.handleSaveButton, this));
         this.copyButton.click($.proxy(this.handleCopyButton, this));
         this.elevationButton.click($.proxy(this.handleElevationLookupButton, this));
-        this.changeHistButton.click($.proxy(this.handleHistoryButton, this))
+        this.changeHistButton.click($.proxy(this.handleHistoryButton, this));
     }
 
     handleSaveButton(event) {
@@ -48,7 +47,7 @@ export default class EditForm {
             success: $.proxy(this.handleSaveResponse, this),
             dataType: "json"
         });
-    };
+    }
 
     handleSaveResponse(response) {
         this.messageBox.html("<ul></ul>");
@@ -63,7 +62,7 @@ export default class EditForm {
             EventBus.dispatch(EditEvents.site_edit_selection, response.siteId);
             EventBus.dispatch(EditEvents.site_list_changed);
         }
-    };
+    }
 
     loadNewSite(event, site) {
         if (!this.isReload) {
@@ -77,7 +76,7 @@ export default class EditForm {
         /* populate form */
         FormFiller.populateForm(this.siteEditForm, site);
         $('html').animate({ scrollTop: 0, scrollLeft: 0 });
-    };
+    }
 
     populateCountryOptions(countries) {
         $("#address-country-select").append(
@@ -89,12 +88,12 @@ export default class EditForm {
             )
         );
 
-    };
+    }
 
-    handleCopyButton(countries) {
+    handleCopyButton() {
         this.siteEditForm.find("input[name='id']").val("");
         this.siteEditForm.find("input[name='dateModified']").val("");
-    };
+    }
 
     handleElevationLookupButton(event) {
         event.preventDefault();
@@ -120,12 +119,12 @@ export default class EditForm {
         } else {
             alert('Please enter both latitude and longitude');
         }
-    };
+    }
 
     /**
      * When "lat, lng" (or lat [space] lng) is pasted in latitude field move the lng value into the lng input
      */
-    handleLatitudeChange(event) {
+    handleLatitudeChange() {
         const latInput = this.latitudeInput;
         const lngInput = this.longitudeInput;
         /* have to do this in a timeout because we receive this even before the pasted text is avail in input */
@@ -157,9 +156,9 @@ export default class EditForm {
                 }
             }
         }, 50);
-    };
+    }
 
-    handleLongitudeChange(event) {
+    handleLongitudeChange() {
         const lngInput = this.longitudeInput;
         /* have to do this in a timeout because we receive this even before the pasted text is avail in input */
         setTimeout(() => {
@@ -185,4 +184,4 @@ export default class EditForm {
         EventBus.dispatch(EditEvents.load_history_trigger, siteId);
     }
 
-};
+}

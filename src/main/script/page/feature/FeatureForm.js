@@ -1,4 +1,3 @@
-import $ from "jquery";
 import URL from "../../URL";
 import EventBus from "../../util/EventBus";
 import FeatureEvents from "./FeatureEvents";
@@ -18,7 +17,7 @@ export default class FeatureForm {
     }
 
     validateForm() {
-        let invalid = this.form.find(':invalid');
+        const invalid = this.form.find(':invalid');
         if (invalid.length) {
             if (invalid[0].reportValidity && invalid[0].validationMessage) {
                 invalid.each((i, e) => e.reportValidity(e.validationMesage));

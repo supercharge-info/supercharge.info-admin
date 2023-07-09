@@ -1,22 +1,10 @@
 /* - - - - - - - - - - - - - - - - - - - - Navigation */
 @import "global/layout.css";
 @import "global/NavBar.css";
-/* - - - - - - - - - - - - - - - - - - - - PAGE: Account */
-@import "page/account/account.css";
 /* - - - - - - - - - - - - - - - - - - - - PAGE: API */
 @import "page/api/api.css";
-/* - - - - - - - - - - - - - - - - - - - - PAGE: Comparison */
-@import "page/compare/compare.css";
-/* - - - - - - - - - - - - - - - - - - - - PAGE: Validation */
-@import "page/validation/validation.css";
-/* - - - - - - - - - - - - - - - - - - - - PAGE: Edit */
-@import "page/edit/edit.css";
-/* - - - - - - - - - - - - - - - - - - - - PAGE: Feature */
-@import "page/feature/feature.css";
-
 /* - - - - - - - - - - - - - - - - - - - - Third Party */
 @import "~bootstrap/dist/css/bootstrap.css";
-@import "~datatables.net-bs/css/dataTables.bootstrap.css";
 /* - - - - - - - - - - - - - - - - - - - - Third party override */
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,200;8..144,400;8..144,700&display=swap');
 @import "lib/bootstrap-override.css";

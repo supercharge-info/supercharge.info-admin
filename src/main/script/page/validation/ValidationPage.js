@@ -17,8 +17,38 @@ ValidationPage.prototype.onPageShow = function () {
 ValidationPage.prototype.populateTable = function (data) {
 
     const tableBody = this.validationTable.find("tbody");
-    tableBody.html("");
+    this.data = data.reduce((a, c) => {
+        if (!(c.validation.category in a)) {
+            a[c.validation.category] = [];
+        }
+        a[c.validation.category].push(c);
+        return a;
+    }, {});
 
+    if (!this.tabs) {
+        this.validationTable.addClass('fade');
+        this.tabs = $('<ul>').addClass('nav nav-pills')
+            .append(Object.keys(this.data).map((c) => {
+                const count = this.data[c].reduce((n, v) => n + v.failureRows.length, 0);
+                const tab = $('<a href="#" data-target="#validation-table">').text(c)
+                    .click(e => {
+                        e.preventDefault();
+                        $(e.target).tab('show');
+                    }).on('shown.bs.tab', () =>
+                        ValidationPage.showCategory(tableBody, this.data[c]));
+                if (count > 0) {
+                    tab.append(' ').append($('<span class="badge">').text(count));
+                }
+                return $('<li>').prop('role', 'presentation').append(tab);
+            })).insertBefore(this.validationTable.addClass('fade in'));
+        this.tabs.find('a:first').tab('show');
+    }
+
+};
+
+ValidationPage.showCategory = function (tableBody, data) {
+
+    tableBody.html("");
     $.each(data, function (key, validationResult) {
 
         const rowClass = validationResult.pass ? "" : "fail-row";

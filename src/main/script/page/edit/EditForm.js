@@ -13,6 +13,8 @@ export default class EditForm {
         this.messageBox = $("#edit-site-message-div");
 
         EventBus.addListener(EditEvents.site_loaded, this.loadNewSite, this);
+        EventBus.addListener(EditEvents.load_history_complete, this.historyButtonUpdate, this);
+        EventBus.addListener(EditEvents.load_change_log_complete, this.changeLogButtonUpdate, this);
 
         this.latitudeInput = $("#latitude-input");
         this.latitudeInput.bind('paste', $.proxy(this.handleLatitudeChange, this));
@@ -25,15 +27,26 @@ export default class EditForm {
     }
 
     initButtons() {
+        this.resetButton = $("#edit-site-reset-button");
         this.copyButton = $("#edit-site-copy-button");
         this.saveButton = $("#edit-site-save-button");
         this.elevationButton = $("#elevation-lookup-button");
-        this.changeHistButton = $("#edit-site-history-button");
+        this.editHistButton = $("#edit-site-history-button");
+        this.changeLogButton = $("#change-site-history-button");
 
         this.saveButton.click($.proxy(this.handleSaveButton, this));
+        this.resetButton.click(() => this.enableButtons(false));
         this.copyButton.click($.proxy(this.handleCopyButton, this));
         this.elevationButton.click($.proxy(this.handleElevationLookupButton, this));
-        this.changeHistButton.click($.proxy(this.handleHistoryButton, this));
+        this.editHistButton.click($.proxy(this.handleHistoryButton, this));
+        this.changeLogButton.click($.proxy(this.handleChangeLogButton, this));
+        this.enableButtons(false);
+    }
+
+    enableButtons(enabled) {
+        /* Activate buttons */
+        this.elevationButton.add(this.editHistButton).add(this.changeLogButton)
+            .add(this.copyButton).prop('disabled', !enabled);
     }
 
     handleSaveButton(event) {
@@ -75,6 +88,7 @@ export default class EditForm {
 
         /* populate form */
         FormFiller.populateForm(this.siteEditForm, site);
+        this.enableButtons(true);
         $('html').animate({ scrollTop: 0, scrollLeft: 0 });
     }
 
@@ -93,6 +107,7 @@ export default class EditForm {
     handleCopyButton() {
         this.siteEditForm.find("input[name='id']").val("");
         this.siteEditForm.find("input[name='dateModified']").val("");
+        this.enableButtons(false);
     }
 
     handleElevationLookupButton(event) {
@@ -178,10 +193,30 @@ export default class EditForm {
          }, 50);
     }
 
+    handleChangeLogButton(event) {
+        event.preventDefault();
+        this.changeLogButton.prop('disabled', true);
+        const siteId = this.siteEditForm.find("input[name='id']").val();
+        EventBus.dispatch(EditEvents.load_change_log_trigger, siteId);
+    }
+
+    changeLogButtonUpdate(event, loaded) {
+        const icon = this.changeLogButton.find('span');
+        this.changeLogButton.text(loaded ? " Hide Change Logs" : " Manage Change Logs")
+            .prepend(icon)[loaded ? 'addClass' : 'removeClass']('active').prop('disabled', false);
+    }
+
     handleHistoryButton(event) {
         event.preventDefault();
+        this.editHistButton.prop('disabled', true);
         const siteId = this.siteEditForm.find("input[name='id']").val();
         EventBus.dispatch(EditEvents.load_history_trigger, siteId);
+    }
+
+    historyButtonUpdate(event, loaded) {
+        const icon = this.editHistButton.find('span');
+        this.editHistButton.text(loaded ? " Hide Edit History" : " View Edit History")
+            .prepend(icon)[loaded ? 'addClass' : 'removeClass']('active').prop('disabled', false);
     }
 
 }

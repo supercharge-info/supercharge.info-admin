@@ -401,28 +401,44 @@
             </div>
 
             <div class="col-xs-12">
+                <hr />
                 <div id="edit-site-message-div"></div>
-                <button id="edit-site-save-button" type="submit" style="padding: 4px 10px 4px 10px; font-weight: bold"
-                        title="save changes">
-                    Save
-                </button>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <button id="edit-site-reset-button" type="reset" style="padding: 4px 10px 4px 10px"
-                        title="clear all fields in this form">Reset Form
-                </button>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <button id="edit-site-copy-button" type="button" style="padding: 4px 10px 4px 10px"
-                        title="copy all fields to new, un-saved, site">Clone Site
-                </button>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <button id="edit-site-history-button" type="submit" style="padding: 4px 10px 4px 10px"
-                        title="view detailed change history">
-                    View Change History
-                </button>
+                <div class="btn-group">
+                    <button id="edit-site-save-button" type="submit" class="btn btn-primary"
+                            title="save changes">
+                        <span class="glyphicon glyphicon-saved"></span>
+                        Save
+                    </button>
+                    <button id="edit-site-reset-button" type="reset" class="btn btn-default"
+                            title="clear all fields in this form">
+                        <span class="glyphicon glyphicon-erase"></span>
+                        Reset Form
+                    </button>
+                    <button id="edit-site-copy-button" type="button" class="btn btn-default"
+                            title="copy all fields to new, un-saved, site">
+                        <span class="glyphicon glyphicon-duplicate"></span>
+                        Clone Site
+                    </button>
+                    <button id="edit-site-history-button" type="submit" class="btn btn-default"
+                            title="view detailed edit history">
+                        <span class="glyphicon glyphicon-eye-open"></span>
+                        View Edit History
+                    </button>
+                    <button id="change-site-history-button" type="submit" class="btn btn-default"
+                            title="view/edit change logs">
+                        <span class="glyphicon glyphicon-tasks"></span>
+                        Manage Change Logs
+                    </button>
+                </div>
             </div>
 
         </form>
+
+        <table id="edit-site-detail-table" class="table table-condensed table-hover table-bordered"
+               style="margin-top: 1em">
+            <thead></thead>
+            <tbody></tbody>
+        </table>
 
         <table id="edit-change-detail-table" class="table table-condensed table-hover table-bordered"
                style="margin-top: 1em">

@@ -5,16 +5,20 @@ import { sanitize } from 'dompurify';
 
 export default class ChangeDetailView {
     constructor() {
-        this.table = $("#edit-change-detail-table");
+        this.table = $("#edit-site-detail-table");
         EventBus.addListener(EditEvents.load_history_trigger, this.loadHistory, this);
         EventBus.addListener(EditEvents.site_edit_selection, this.clearTable, this);
         EventBus.addListener(EditEvents.site_delete_selection, this.clearTable, this);
     }
 
     loadHistory(event, siteId) {
-        $.getJSON(URL.site.changeDetail + "?siteId=" + siteId).done(
-            $.proxy(this.renderTable, this)
-        );
+        if (this.table.find("tbody, thead").children().length) {
+            this.clearTable();
+        } else {
+            $.getJSON(URL.site.changeDetail + "?siteId=" + siteId).done(
+                $.proxy(this.renderTable, this)
+            );
+        }
     }
 
     renderTable(data) {
@@ -46,9 +50,11 @@ export default class ChangeDetailView {
             );
         });
 
+        EventBus.dispatch(EditEvents.load_history_complete, true);
     }
 
     clearTable() {
         this.table.find("tbody, thead").html("");
+        EventBus.dispatch(EditEvents.load_history_complete, false);
     }
 }

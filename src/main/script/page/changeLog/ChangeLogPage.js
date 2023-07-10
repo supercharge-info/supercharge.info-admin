@@ -80,7 +80,7 @@ export default class ChangeLogPage {
     static handleDeleteClick(event) {
         event.preventDefault();
         const link = $(event.target);
-        const siteName = link.parents("tr").find("td").eq(4).html();
+        const siteName = link.closest("tr").find("td").eq(4).text();
         if (confirm(`Delete change log for ${siteName}?`)) {
             const changeLogId = link.data("id");
             EventBus.dispatch("change-log-selected-for-delete-event", changeLogId);

@@ -25,7 +25,26 @@ const EditEvents = {
      * Indicates that history should be loaded for this specified site.
      * @data is siteId
      */
-    load_history_trigger: "load_history_trigger"
+    load_history_trigger: "load_history_trigger",
+
+    /**
+     * Indicates that history table has completed loading or unloading.
+     * @data is true/false
+     */
+    load_history_complete: "load_history_complete",
+
+    /**
+     * Indicates that changelogs should be loaded for this specified site.
+     * @data is siteId
+     */
+    load_change_log_trigger: "load_change_log_trigger",
+
+    /**
+     * Indicates that changelog table has completed loading or unloading.
+     * @data is true/false
+     */
+    load_change_log_complete: "load_change_log_complete"
+
 };
 
 export default EditEvents;

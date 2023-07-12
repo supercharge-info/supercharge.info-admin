@@ -29,7 +29,8 @@ U.site = {
     "loadAll": mvc + "/siteadmin/loadAll",
     "edit": mvc + "/siteadmin/edit",
     "changeDetail": mvc + "/siteadmin/changeDetail",
-    "changeLog": mvc + "/siteHistory"
+    "changeLog": mvc + "/siteadmin/changeLogEdits",
+    "changeEdit": mvc + "/siteadmin/changeEdit"
 };
 
 U.system = {

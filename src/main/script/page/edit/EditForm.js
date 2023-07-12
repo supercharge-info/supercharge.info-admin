@@ -12,14 +12,15 @@ export default class EditForm {
         this.siteEditForm = $('#site-edit-form');
         this.messageBox = $("#edit-site-message-div");
 
+        this.siteEditForm.on('reset', () => this.handleReset());
         EventBus.addListener(EditEvents.site_loaded, this.loadNewSite, this);
         EventBus.addListener(EditEvents.load_history_complete, this.historyButtonUpdate, this);
         EventBus.addListener(EditEvents.load_change_log_complete, this.changeLogButtonUpdate, this);
 
         this.latitudeInput = $("#latitude-input");
-        this.latitudeInput.bind('paste', $.proxy(this.handleLatitudeChange, this));
+        this.latitudeInput.on('paste', $.proxy(this.handleLatitudeChange, this));
         this.longitudeInput = $("#longitude-input");
-        this.longitudeInput.bind('paste', $.proxy(this.handleLongitudeChange, this));
+        this.longitudeInput.on('paste', $.proxy(this.handleLongitudeChange, this));
 
         $.getJSON(URL.data.country, $.proxy(this.populateCountryOptions, this));
 
@@ -27,7 +28,6 @@ export default class EditForm {
     }
 
     initButtons() {
-        this.resetButton = $("#edit-site-reset-button");
         this.copyButton = $("#edit-site-copy-button");
         this.saveButton = $("#edit-site-save-button");
         this.elevationButton = $("#elevation-lookup-button");
@@ -35,7 +35,6 @@ export default class EditForm {
         this.changeLogButton = $("#change-site-history-button");
 
         this.saveButton.click($.proxy(this.handleSaveButton, this));
-        this.resetButton.click(() => this.enableButtons(false));
         this.copyButton.click($.proxy(this.handleCopyButton, this));
         this.elevationButton.click($.proxy(this.handleElevationLookupButton, this));
         this.editHistButton.click($.proxy(this.handleHistoryButton, this));
@@ -88,6 +87,7 @@ export default class EditForm {
 
         /* populate form */
         FormFiller.populateForm(this.siteEditForm, site);
+        $('input[name="notify"][value="yes"]').closest('.btn').button('toggle');
         this.enableButtons(true);
         $('html').animate({ scrollTop: 0, scrollLeft: 0 });
     }
@@ -102,6 +102,11 @@ export default class EditForm {
             )
         );
 
+    }
+
+    handleReset() {
+        $('input[name="notify"][value="yes"]').closest('.btn').button('toggle');
+        this.enableButtons(false);
     }
 
     handleCopyButton() {
@@ -204,6 +209,10 @@ export default class EditForm {
         const icon = this.changeLogButton.find('span');
         this.changeLogButton.text(loaded ? " Hide Change Logs" : " Manage Change Logs")
             .prepend(icon)[loaded ? 'addClass' : 'removeClass']('active').prop('disabled', false);
+        if (loaded && this.editHistButton.is('.active')) {
+            const siteId = this.siteEditForm.find("input[name='id']").val();
+            EventBus.dispatch(EditEvents.load_history_trigger, siteId);
+        }
     }
 
     handleHistoryButton(event) {
@@ -217,6 +226,10 @@ export default class EditForm {
         const icon = this.editHistButton.find('span');
         this.editHistButton.text(loaded ? " Hide Edit History" : " View Edit History")
             .prepend(icon)[loaded ? 'addClass' : 'removeClass']('active').prop('disabled', false);
+        if (loaded && this.changeLogButton.is('.active')) {
+            const siteId = this.siteEditForm.find("input[name='id']").val();
+            EventBus.dispatch(EditEvents.load_change_log_trigger, siteId);
+        }
     }
 
 }

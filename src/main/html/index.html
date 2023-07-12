@@ -276,6 +276,26 @@
                                 <option name="construction" value="CONSTRUCTION">CONSTRUCTION</option>
                                 <option name="open" value="OPEN">OPEN</option>
                             </select>
+                            <span class="btn-group" data-toggle="buttons">
+                                <label class="btn btn-default btn-xs active" title="publish to social media"
+                                       style="vertical-align: top; padding: 0 5px;">
+                                    <input type="radio" name="notify" value="yes" checked="checked" />
+                                    <span class="glyphicon glyphicon-bell"></span>
+                                    <strong>Notify</strong>
+                                </label>
+                                <label class="btn btn-default btn-xs" title="reduce visibility of change log"
+                                       style="vertical-align: top; padding: 0 5px;">
+                                    <input type="radio" name="notify" value="log" />
+                                    <span class="glyphicon glyphicon-eye-close"></span>
+                                    <strong>Log</strong>
+                                </label>
+                                <label class="btn btn-default btn-xs" title="skip changelog"
+                                       style="vertical-align: top; padding: 0 5px;">
+                                    <input type="radio" name="notify" value="no" />
+                                    <span class="glyphicon glyphicon-minus-sign"></span>
+                                    <strong>Skip</strong>
+                                </label>
+                            </span>
                         </td>
                     </tr>
                     <tr>
@@ -298,7 +318,7 @@
                         <th>Elevation (m)</th>
                         <td>
                             <input name="elevationMeters" size="9" maxlength="9"/> &nbsp;
-                            <button id="elevation-lookup-button">auto lookup</button>
+                            <button id="elevation-lookup-button" class="btn btn-sm btn-default">auto lookup</button>
                             &nbsp;&nbsp;
                             <a href="http://www.gpsvisualizer.com/elevation" target="_blank">gpsvisualizer</a>
                             &nbsp;
@@ -401,7 +421,6 @@
             </div>
 
             <div class="col-xs-12">
-                <hr />
                 <div id="edit-site-message-div"></div>
                 <div class="btn-group">
                     <button id="edit-site-save-button" type="submit" class="btn btn-primary"
@@ -419,6 +438,9 @@
                         <span class="glyphicon glyphicon-duplicate"></span>
                         Clone Site
                     </button>
+                </div>
+                &nbsp; | &nbsp;
+                <div class="btn-group">
                     <button id="edit-site-history-button" type="submit" class="btn btn-default"
                             title="view detailed edit history">
                         <span class="glyphicon glyphicon-eye-open"></span>
@@ -434,14 +456,12 @@
 
         </form>
 
-        <table id="edit-site-detail-table" class="table table-condensed table-hover table-bordered"
-               style="margin-top: 1em">
+        <table id="edit-site-detail-table" class="table table-condensed table-hover table-bordered">
             <thead></thead>
             <tbody></tbody>
         </table>
 
-        <table id="edit-change-detail-table" class="table table-condensed table-hover table-bordered"
-               style="margin-top: 1em">
+        <table id="edit-change-detail-table" class="table table-condensed table-hover table-bordered">
             <thead></thead>
             <tbody></tbody>
         </table>

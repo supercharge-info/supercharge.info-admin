@@ -50,7 +50,10 @@ export default class ChangeLogPage {
                             `<a href="#" class="change-log-delete-trigger" data-id="${r.id}">delete</a>`
                     },
                     { data: 'id' },
-                    { data: 'date', searchable: false, render: (d, t) => t == 'sort' ? d : new Date(d).toLocaleDateString('en-US') },
+                    { data: 'date', searchable: false, render: (d, t) => {
+                        const [ y, m, day ] = d.split('-');
+                        return t == 'sort' ? d : new Date(y, m - 1, day).toLocaleDateString('en-US');
+                    } },
                     { data: 'changeType', searchable: false },
                     { data: 'siteName', render: sanitize },
                     { data: 'region' },

@@ -30,7 +30,8 @@ ValidationPage.prototype.populateTable = function (data) {
         this.tabs = $('<ul>').addClass('nav nav-pills')
             .append(Object.keys(this.data).map((c) => {
                 const count = this.data[c].reduce((n, v) => n + v.failureRows.length, 0);
-                const tab = $('<a href="#" data-target="#validation-table">').text(c)
+                const tab = $('<a href="#" data-target="#validation-table">')
+                    .text(c.replace('_',' ').replace(/(?<=\w)(\w+)/g, s => s.toLowerCase()))
                     .click(e => {
                         e.preventDefault();
                         $(e.target).tab('show');

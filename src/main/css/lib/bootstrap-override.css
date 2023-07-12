@@ -24,3 +24,36 @@ body {
 .dropdown-menu-links {
     min-width: auto;
 }
+.btn-default.disabled:hover,
+.btn-default[disabled]:hover,
+.btn-default {
+    background-color: #f7f7f7;
+    border-color: #adadad;
+}
+.btn-group {
+    margin: 1em 0;
+}
+.btn-default.focus {
+    background-color: #fff;
+    border-color: #ccc;
+}
+.btn.focus,
+.btn.active.focus {
+    outline: 0;
+}
+.btn[data-toggle="button"] input[type="checkbox"],
+.btn[data-toggle="button"] input[type="radio"],
+.btn-group[data-toggle="buttons"] > .btn input[type="checkbox"],
+.btn-group[data-toggle="buttons"] > .btn input[type="radio"] {
+    position: absolute;
+    clip: rect(0,0,0,0);
+    pointer-events: none;
+}
+.btn[data-toggle="button"] *,
+.btn-group[data-toggle="buttons"] > .btn * {
+    color: #555;
+}
+.btn[data-toggle="button"].active *,
+.btn-group[data-toggle="buttons"] > .btn.active * {
+    color: #000;
+}

@@ -1,3 +1,4 @@
+/* DataTables */
 div.dataTables_wrapper div.dataTables_middle {
     display: flex;
 }
@@ -40,7 +41,14 @@ table.dataTable.view-table thead > tr > td.sorting_asc:before,
 table.dataTable.view-table thead > tr > td.sorting_desc:after {
     opacity: 1;
 }
+table.dataTable thead > tr > th.sorting:before,
+table.dataTable thead > tr > th.sorting:after,
+table.dataTable thead > tr > td.sorting:before,
+table.dataTable thead > tr > td.sorting:after {
+    right: 3px;
+}
 table.dataTable thead > tr > th.sorting {
+    padding-right: 16px;
     position: sticky;
 }
 div.dataTables_wrapper label {
@@ -67,7 +75,67 @@ div.dataTables_wrapper select.form-control {
         text-align: left;
     }
 }
-/* Draw more attention to search box (esp. when pressing Ctrl-F) */
+/* Draw more attention to search box (ie. when pressing Ctrl-F) */
 input[type="search"]:focus {
     box-shadow: 0 0 10px rgb(102, 175, 223);
+}
+/* Button Overrides */
+.btn-default:active, .btn-default.active,
+.open > .dropdown-toggle.btn-default,
+.btn-default:hover {
+    background-color: #e0e0e8;
+}
+.btn-default:focus, .btn-default.focus {
+    background-color: #dedee6;
+    border-color: #ccc;
+}
+.btn-default.disabled:hover,
+.btn-default[disabled]:hover,
+.btn-default {
+    background-color: #f0f0f7;
+    border-color: #adadad;
+}
+.btn-default:active:hover, .btn-default.active:hover,
+.open > .dropdown-toggle.btn-default:hover,
+.btn-default:active:focus, .btn-default.active:focus,
+.open > .dropdown-toggle.btn-default:focus,
+.btn-default:active.focus, .btn-default.active.focus,
+.open > .dropdown-toggle.btn-default.focus {
+	background-color: #cbcbd4;
+}
+.btn-group {
+    margin: 1em 0;
+}
+.btn.focus,
+.btn.active.focus {
+    outline: 0;
+}
+.btn[data-toggle="button"] input[type="checkbox"],
+.btn[data-toggle="button"] input[type="radio"],
+.btn-group[data-toggle="buttons"] > .btn input[type="checkbox"],
+.btn-group[data-toggle="buttons"] > .btn input[type="radio"] {
+    position: absolute;
+    clip: rect(0,0,0,0);
+    pointer-events: none;
+}
+.btn[data-toggle="button"] *,
+.btn-group[data-toggle="buttons"] > .btn * {
+    color: #555;
+}
+.btn[data-toggle="button"].active *,
+.btn-group[data-toggle="buttons"] > .btn.active * {
+    color: #000;
+}
+/* Statuses */
+.label-success {
+    background-color: #f54;
+}
+.label-info {
+    background-color: #36f;
+}
+.label-warning {
+    background-color: darkorange;
+}
+.label-danger {
+    background-color: #000;
 }

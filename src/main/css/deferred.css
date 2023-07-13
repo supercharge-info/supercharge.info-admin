@@ -11,4 +11,4 @@
 /* - - - - - - - - - - - - - - - - - - - - Third Party */
 @import "~datatables.net-bs/css/dataTables.bootstrap.css";
 /* - - - - - - - - - - - - - - - - - - - - Third party override */
-@import "lib/datatables-override.css";
+@import "lib/deferred-override.css";

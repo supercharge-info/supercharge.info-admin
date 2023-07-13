@@ -1,11 +1,15 @@
 body {
     font-family: 'Roboto Flex', 'Helvetica Neue', Arial, Helvetica, sans-serif;
 }
+/* Nav */
 .navbar {
     margin-bottom: 2px;
 }
 .navbar-fixed-top .navbar-collapse, .navbar-fixed-bottom .navbar-collapse {
     max-height: calc(100vh - 50px);
+}
+.navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {
+    background-color: #ddd;
 }
 .table-bordered th, .view-table th {
     position: sticky;
@@ -17,43 +21,4 @@ body {
     background-color: #fff;
     box-shadow: inset 0px -1px 0px 0px #ddd;
     border-bottom-width: 1px !important;
-}
-#edit-sites-list-table-wrapper th {
-    top: -1px;
-}
-.dropdown-menu-links {
-    min-width: auto;
-}
-.btn-default.disabled:hover,
-.btn-default[disabled]:hover,
-.btn-default {
-    background-color: #f7f7f7;
-    border-color: #adadad;
-}
-.btn-group {
-    margin: 1em 0;
-}
-.btn-default.focus {
-    background-color: #fff;
-    border-color: #ccc;
-}
-.btn.focus,
-.btn.active.focus {
-    outline: 0;
-}
-.btn[data-toggle="button"] input[type="checkbox"],
-.btn[data-toggle="button"] input[type="radio"],
-.btn-group[data-toggle="buttons"] > .btn input[type="checkbox"],
-.btn-group[data-toggle="buttons"] > .btn input[type="radio"] {
-    position: absolute;
-    clip: rect(0,0,0,0);
-    pointer-events: none;
-}
-.btn[data-toggle="button"] *,
-.btn-group[data-toggle="buttons"] > .btn * {
-    color: #555;
-}
-.btn[data-toggle="button"].active *,
-.btn-group[data-toggle="buttons"] > .btn.active * {
-    color: #000;
 }

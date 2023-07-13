@@ -35,14 +35,17 @@ export default class AccountPage {
     }
 
     handleStatsResults(response) {
-        this.loginTable.show().find("tbody").html("");
-        this.loginTable.append(response.attempts.map(attempt =>
-            "<tr>" +
-            "<td>" + attempt.date + "</td>" +
-            "<td>" + attempt.result + "</td>" +
-            "<td>" + attempt.remoteIP + "</td>" +
-            "</tr>"
-        ));
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        this.loginTable.show().find("tbody").html("")
+            .append(response.attempts.map(attempt => `<tr>
+                <td>${ new Date(attempt.date)[
+                    today > new Date(attempt.date) ? 'toLocaleDateString' : 'toLocaleTimeString'
+                ]() }</td>
+                <td>${ attempt.result }</td>
+                <td>${ attempt.remoteIP }</td>
+            </tr>`));
         if (response.logins && Object.keys(response.logins).length != 0) {
             YtdGraph.draw("ytd-logins-graph", "Account Logins YTD", "Logins", response.logins);
         } else {
@@ -72,6 +75,9 @@ export default class AccountPage {
             this.sunburst.draw(response);
 
             if (!this.dataTable) {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
                 this.editHistoryTable.find('thead').html(`<tr>
                     <th>id</th>
                     <th>name</th>
@@ -92,7 +98,12 @@ export default class AccountPage {
                         { data: 'fieldName' },
                         { data: 'oldValue' },
                         { data: 'newValue' },
-                        { data: 'changeDate.epochSecond', searchable: false, render: (d, t) => t == 'sort' ? d : new Date(d * 1000).toLocaleString('en-US') }
+                        {
+                            data: 'changeDate.epochSecond',
+                            searchable: false,
+                            render: (d, t) => t == 'sort' ? d : new Date(d * 1000)[
+                                d * 1000 < today.getTime() ? 'toLocaleDateString' : 'toLocaleTimeString'
+                            ]() }
                     ],
                     dom: "<'row'<'col-sm-4'f><'col-sm-4 dataTables_middle dataTables_title'><'col-sm-4'l>>"
                         + "<'row'<'col-sm-12'tr>><'row'<'col-sm-5'i><'col-sm-7'p>>"

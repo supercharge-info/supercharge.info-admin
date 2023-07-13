@@ -27,7 +27,7 @@ export default class NavBar {
         import('./DeferredPages').then(({ default: getPages }) => {
             this.pageMap = { ...this.pageMap, ...getPages() };
             if (this.loading !== true) {
-                $('#loading').modal('hide');
+                $('#loading').modal('hide').on('hidden.bs.modal', e => $(e.target).remove());
                 EventBus.dispatch("change-page", this.loading);
             }
             this.loading = false;

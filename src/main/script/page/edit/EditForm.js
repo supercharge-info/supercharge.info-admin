@@ -87,7 +87,9 @@ export default class EditForm {
 
         /* populate form */
         FormFiller.populateForm(this.siteEditForm, site);
-        $('input[name="notify"][value="yes"]').closest('.btn').button('toggle');
+        const date = this.siteEditForm.find('input[name="dateModified"]');
+        date.val(new Date(date.val()).toLocaleString());
+        this.siteEditForm.find('input[name="notify"][value="yes"]').closest('.btn').button('toggle');
         this.enableButtons(true);
         $('html').animate({ scrollTop: 0, scrollLeft: 0 });
     }

@@ -7,3 +7,10 @@ table.edit-table {
 table.edit-table td {
     padding: 2px 2px 2px 2px;
 }
+#edit-sites-list-table-wrapper th {
+    top: -1px;
+}
+.dropdown-menu-links {
+    min-width: auto;
+}
+

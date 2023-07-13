@@ -11,10 +11,13 @@ const ValidationPage = function () {
 };
 
 ValidationPage.prototype.onPageShow = function () {
-    $.getJSON(URL.val.database, $.proxy(this.populateTable, this));
+    if (!this.loaded) {
+        $.getJSON(URL.val.database, $.proxy(this.populateTable, this));
+    }
 };
 
 ValidationPage.prototype.populateTable = function (data) {
+    this.loaded = true;
 
     const tableBody = this.validationTable.find("tbody");
     this.data = data.reduce((a, c) => {
@@ -26,7 +29,6 @@ ValidationPage.prototype.populateTable = function (data) {
     }, {});
 
     if (!this.tabs) {
-        this.validationTable.addClass('fade');
         this.tabs = $('<ul>').addClass('nav nav-pills')
             .append(Object.keys(this.data).map((c) => {
                 const count = this.data[c].reduce((n, v) => n + v.failureRows.length, 0);
@@ -41,7 +43,7 @@ ValidationPage.prototype.populateTable = function (data) {
                     tab.append(' ').append($('<span class="badge">').text(count));
                 }
                 return $('<li>').prop('role', 'presentation').append(tab);
-            })).insertBefore(this.validationTable.addClass('fade in'));
+            })).replaceAll(this.validationTable.prev());
         this.tabs.find('a:first').tab('show');
     }
 

@@ -73,6 +73,8 @@ export default class FeatureForm {
         $.getJSON(URL.feature.load + "/" + featureId, (feature) => {
             console.log(JSON.stringify(feature));
             FormFiller.populateForm(this.form, feature);
+            const date = this.form.find('input[name="modifiedDate"]');
+            date.val(new Date(date.val()).toLocaleString());
             $('html').animate({ scrollTop: 0, scrollLeft: 0 }, { complete: () => this.form.find('textarea').focus() });
         });
     }

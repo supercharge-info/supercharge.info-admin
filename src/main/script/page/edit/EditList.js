@@ -1,4 +1,5 @@
 import EventBus from "../../util/EventBus";
+import Status from "../../Status";
 import URL from "../../URL";
 import EditEvents from './EditEvents';
 import SiteDeleteAction from "./SiteDeleteAction";
@@ -28,23 +29,22 @@ export default class EditList {
             this.siteListTable
                 .on("click", "a.site-edit-trigger", EditList.handleEditClick)
                 .on("click", "a.site-delete-trigger", EditList.handleDeleteClick);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
 
-            const tableHead = this.siteListTable.find("thead");
-            tableHead.html("" +
-                `<tr>
-                    <th>Action</th>
-                    <th>Id</th>
-                    <th>Name</th>
-                    <th>Status</th>
-                    <th>Date Opened</th>
-                    <th>Power (kW)</th>
-                    <th>Stalls</th>
-                    <th>Other EVs</th>
-                    <th>Version</th>
-                    <th>Modified</th>
-                    <th>Links</th>
-                </tr>`
-                );
+            this.siteListTable.find("thead").html(`<tr>
+                <th>Action</th>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Status</th>
+                <th>Date Opened</th>
+                <th>Power (kW)</th>
+                <th>Stalls</th>
+                <th>Other EVs</th>
+                <th>Version</th>
+                <th>Modified</th>
+                <th>Links</th>
+            </tr>`);
             this.dataTable = this.siteListTable.DataTable({
                 data: sites,
                 order: [[9, 'desc']],
@@ -60,13 +60,19 @@ export default class EditList {
                     },
                     { data: 'id' },
                     { data: 'name', render: sanitize },
-                    { data: 'status' },
+                    { data: 'status', render: d => `<span class="${ Status[d].className }">${ d }</span>` },
                     { data: 'dateOpened', defaultContent: '', searchable: false },
                     { data: 'powerKiloWatt', searchable: false },
                     { data: 'stallCount', searchable: false },
                     { data: 'otherEVs', searchable: false },
                     { data: 'version', searchable: false },
-                    { data: 'dateModified', searchable: false, render: (d, t) => t == 'sort' ? d : new Date(d).toLocaleString('en-US') },
+                    {
+                        data: 'dateModified',
+                        searchable: false,
+                        render: (d, t) => t == 'sort' ? d : new Date(d)[
+                            today > new Date(d) ? 'toLocaleDateString' : 'toLocaleTimeString'
+                        ]()
+                    },
                     {
                         data: null,
                         searchable: false,

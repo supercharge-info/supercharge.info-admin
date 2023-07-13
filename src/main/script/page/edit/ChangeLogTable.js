@@ -1,3 +1,4 @@
+import Status from "../../Status";
 import URL from "../../URL";
 import EventBus from "../../util/EventBus";
 import EditEvents from "./EditEvents";
@@ -7,7 +8,8 @@ export default class ChangeLogTable {
         this.table = $("#edit-change-detail-table")
             .on("click", "a.delete-change-log", ChangeLogTable.handleDeleteClick)
             .on("click", "a.edit-change-log", ChangeLogTable.handleEditClick)
-            .on("click", "a.save-change-log", e => this.handleSaveClick(e));
+            .on("click", "a.save-change-log", e => this.handleSaveClick(e))
+            .on("click", "a.cancel-edit-change-log", e => this.handleCancelClick(e));
 
         EventBus.addListener("change-log-deleted-event", this.loadHistory, this);
         EventBus.addListener(EditEvents.load_change_log_trigger, this.loadHistory, this);
@@ -61,17 +63,22 @@ export default class ChangeLogTable {
         EventBus.dispatch(EditEvents.load_change_log_complete, false);
     }
 
-    static buildRow(changeLog) {
+    static buildRow({ dateModified: { epochSecond: t }, siteStatus: status, ...changeLog }) {
 		const [y, m, d] = changeLog.changeDate.split('-');
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
         return `<tr>
                    <td><a href="#" class="edit-change-log" data-id="${changeLog.id}">edit</a>
                        | <a href="#" class="delete-change-log" data-id="${changeLog.id}">delete</a>
                    </td>
                    <td>${changeLog.id}</td>
-                   <td>${new Date(y, m - 1, d).toLocaleDateString('en-US')}</td>
+                   <td>${new Date(y, m - 1, d).toLocaleDateString()}</td>
                    <td>${changeLog.changeType}</td>
-                   <td>${changeLog.siteStatus}</td>
-                   <td>${new Date(changeLog.dateModified.epochSecond * 1000).toLocaleString('en-US')}</td>
+                   <td><span class="${ Status[status].className }">${status}</span></td>
+                   <td>${new Date(t * 1000)[
+                       today.getTime() > t * 1000 ? 'toLocaleDateString' : 'toLocaleTimeString'
+                   ]()}</td>
                    <td>${changeLog.username}</td>
                </tr>`;
     }
@@ -98,7 +105,8 @@ export default class ChangeLogTable {
 
         date.html($('<input type="date">').val(new Date(date.text()).toISOString().split('T')[0]));
         status.html($('#site-edit-form select[name="status"]').clone().removeProp('name').val(status.text()));
-        link.attr('class', 'save-change-log').text('save');
+        link.attr('class', 'save-change-log').addClass('btn btn-primary btn-xs').text('save').next()
+            .attr('class', 'cancel-edit-change-log').addClass('btn btn-danger btn-xs').text('cancel');
     }
 
     handleSaveClick(event) {
@@ -121,6 +129,11 @@ export default class ChangeLogTable {
         } else {
             alert('Please select both date and status for this change log.');
         }
+    }
+
+    handleCancelClick(event) {
+        event.preventDefault();
+        this.loadHistory();
     }
 
 }

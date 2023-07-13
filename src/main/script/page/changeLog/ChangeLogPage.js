@@ -2,6 +2,7 @@ import 'datatables.net';
 import 'datatables.net-bs';
 import EventBus from "../../util/EventBus";
 import ChangeLogDeleteAction from "./ChangeLogDeleteAction";
+import Status from "../../Status";
 import URL from "../../URL";
 import { sanitize } from 'dompurify';
 
@@ -25,19 +26,16 @@ export default class ChangeLogPage {
         if (!this.dataTable) {
             this.changeLogListTable.on("click", "a.change-log-delete-trigger", ChangeLogPage.handleDeleteClick);
 
-            const tableHead = this.changeLogListTable.find("thead");
-            tableHead.html("" +
-                "<tr>" +
-                "<th>Action</th>" +
-                "<th>Id</th>" +
-                "<th>Date</th>" +
-                "<th>Change Type</th>" +
-                "<th>Site Name</th>" +
-                "<th>Site Region</th>" +
-                "<th>Site Country</th>" +
-                "<th>Site Status</th>" +
-                "</tr>" +
-                "");
+            this.changeLogListTable.find("thead").html(`<tr>
+                <th>Action</th>
+                <th>Id</th>
+                <th>Date</th>
+                <th>Change Type</th>
+                <th>Site Name</th>
+                <th>Site Region</th>
+                <th>Site Country</th>
+                <th>Site Status</th>
+            </tr>`);
             this.dataTable = this.changeLogListTable.DataTable({
                 data: changeLogs,
                 order: [[1, 'desc']],
@@ -52,13 +50,13 @@ export default class ChangeLogPage {
                     { data: 'id' },
                     { data: 'date', searchable: false, render: (d, t) => {
                         const [ y, m, day ] = d.split('-');
-                        return t == 'sort' ? d : new Date(y, m - 1, day).toLocaleDateString('en-US');
+                        return t == 'sort' ? d : new Date(y, m - 1, day).toLocaleDateString();
                     } },
                     { data: 'changeType', searchable: false },
                     { data: 'siteName', render: sanitize },
                     { data: 'region' },
                     { data: 'country' },
-                    { data: 'siteStatus' }
+                    { data: 'siteStatus', render: d => `<span class="${ Status[d].className }">${ d }</span>` }
                 ],
                 dom: "<'row'<'col-sm-4'f><'col-sm-4 dataTables_middle dataTables_title'><'col-sm-4'l>>"
                     + "<'row'<'col-sm-12'tr>><'row'<'col-sm-5'i><'col-sm-7'p>>"

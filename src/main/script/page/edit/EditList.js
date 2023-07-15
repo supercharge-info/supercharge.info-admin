@@ -7,6 +7,7 @@ import SiteLoadAction from "./SiteLoadAction";
 import {currentUser} from "../../nav/User";
 import 'datatables.net';
 import 'datatables.net-bs';
+import 'datatables.net-responsive';
 import { sanitize } from 'dompurify';
 
 export default class EditList {
@@ -56,22 +57,27 @@ export default class EditList {
                         render: (d,t,r) =>
                             `<a href="#" class="site-edit-trigger" data-id="${r.id}">edit</a>`
                             + (!currentUser.hasRole("admin") ? "" : " &nbsp; "
-                            + `<a href="#" class="site-delete-trigger" data-id="${r.id}">delete</a>`)
+                            + `<a href="#" class="site-delete-trigger" data-id="${r.id}">delete</a>`),
+                        className: 'all'
                     },
-                    { data: 'id' },
-                    { data: 'name', render: sanitize },
-                    { data: 'status', render: d => `<span class="${ Status[d].className }">${ d }</span>` },
-                    { data: 'dateOpened', defaultContent: '', searchable: false },
-                    { data: 'powerKiloWatt', searchable: false },
-                    { data: 'stallCount', searchable: false },
-                    { data: 'otherEVs', searchable: false },
-                    { data: 'version', searchable: false },
+                    { data: 'id', responsivePriority: 2 },
+                    { data: 'name', render: sanitize, className: 'all' },
+                    {
+                        data: 'status',
+                        render: d => `<span class="${ Status[d].className }">${ d }</span>`,
+                        className: 'all'
+                    },
+                    { data: 'dateOpened', defaultContent: '', searchable: false, responsivePriority: 2 },
+                    { data: 'powerKiloWatt', searchable: false, className: 'all' },
+                    { data: 'stallCount', searchable: false, className: 'all' },
+                    { data: 'otherEVs', searchable: false, responsivePriority: 3 },
+                    { data: 'version', searchable: false, responsivePriority: 4 },
                     {
                         data: 'dateModified',
                         searchable: false,
                         render: (d, t) => t == 'sort' ? d : new Date(d)[
                             today > new Date(d) ? 'toLocaleDateString' : 'toLocaleTimeString'
-                        ]()
+                        ](), responsivePriority: 1
                     },
                     {
                         data: null,
@@ -87,11 +93,15 @@ export default class EditList {
                                     ${r.urlDiscuss ? `<li><a href="${r.urlDiscuss}" target="_blank">forum</a></li>` : ''}
                                     ${r.locationId ? `<li><a href="https://www.tesla.c${r.address.country=='China' && !['Hong Kong', 'Macau'].includes(r.address.state) ? 'n' : 'om'}/findus/location/supercharger/${r.locationId}" target="_blank">tesla.c${r.address.country=='China' && !['Hong Kong', 'Macau'].includes(r.address.state) ? 'n' : 'om'}</a></li>` : ''}
                                 </ul>
-                            </div>`
+                            </div>`,
+                            className: 'all'
                     }
                 ],
                 dom: "<'row'<'col-sm-4'f><'col-sm-4 dataTables_middle dataTables_title'><'col-sm-4'l>>"
-                    + "<'row'<'col-sm-12'tr>><'row'<'col-sm-5'i><'col-sm-7'p>>"
+                    + "<'row'<'col-sm-12'tr>><'row'<'col-sm-5'i><'col-sm-7'p>>",
+                responsive: {
+                    details: false
+                }
             });
             $(this.dataTable.table().container()).find('.row:first > div:eq(1)').text('All Sites');
             $(window).keydown($.proxy(this.handleFindShortcut, this));

@@ -22,6 +22,11 @@ const EditEvents = {
     site_loaded: "site_loaded",
 
     /**
+     * Reset the form to edit a site, allowing for state to be managed properly.
+     */
+    site_reset: "site_reset",
+
+    /**
      * Indicates that history should be loaded for this specified site.
      * @data is siteId
      */

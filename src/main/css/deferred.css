@@ -10,5 +10,6 @@
 @import "page/feature/feature.css";
 /* - - - - - - - - - - - - - - - - - - - - Third Party */
 @import "~datatables.net-bs/css/dataTables.bootstrap.css";
+@import "~datatables.net-responsive-bs/css/responsive.bootstrap.css";
 /* - - - - - - - - - - - - - - - - - - - - Third party override */
 @import "lib/deferred-override.css";

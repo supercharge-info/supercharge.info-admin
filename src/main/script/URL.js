@@ -30,7 +30,8 @@ U.site = {
     "edit": mvc + "/siteadmin/edit",
     "changeDetail": mvc + "/siteadmin/changeDetail",
     "changeLog": mvc + "/siteadmin/changeLogEdits",
-    "changeEdit": mvc + "/siteadmin/changeEdit"
+    "changeEdit": mvc + "/siteadmin/changeEdit",
+    "changeAdd": mvc + "/siteadmin/changeAdd"
 };
 
 U.system = {

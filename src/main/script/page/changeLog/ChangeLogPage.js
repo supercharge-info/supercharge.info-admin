@@ -1,5 +1,6 @@
 import 'datatables.net';
 import 'datatables.net-bs';
+import 'datatables.net-responsive';
 import EventBus from "../../util/EventBus";
 import ChangeLogDeleteAction from "./ChangeLogDeleteAction";
 import Status from "../../Status";
@@ -19,10 +20,10 @@ export default class ChangeLogPage {
     }
 
     loadChangeLogList() {
-        $.getJSON(URL.change.list, $.proxy(this.populateSystemPropsTable, this));
+        $.getJSON(URL.change.list, $.proxy(this.populateChanges, this));
     }
 
-    populateSystemPropsTable(changeLogs) {
+    populateChanges(changeLogs) {
         if (!this.dataTable) {
             this.changeLogListTable.on("click", "a.change-log-delete-trigger", ChangeLogPage.handleDeleteClick);
 
@@ -45,21 +46,29 @@ export default class ChangeLogPage {
                         data: null,
                         searchable: false,
                         render: (d,t,r) =>
-                            `<a href="#" class="change-log-delete-trigger" data-id="${r.id}">delete</a>`
+                            `<a href="#" class="change-log-delete-trigger" data-id="${r.id}">delete</a>`,
+                        className: 'all'
                     },
                     { data: 'id' },
                     { data: 'date', searchable: false, render: (d, t) => {
                         const [ y, m, day ] = d.split('-');
                         return t == 'sort' ? d : new Date(y, m - 1, day).toLocaleDateString();
-                    } },
+                    }, className: 'all' },
                     { data: 'changeType', searchable: false },
-                    { data: 'siteName', render: sanitize },
+                    { data: 'siteName', render: sanitize, className: 'all' },
                     { data: 'region' },
-                    { data: 'country' },
-                    { data: 'siteStatus', render: d => `<span class="${ Status[d].className }">${ d }</span>` }
+                    { data: 'country', className: 'all' },
+                    {
+                        data: 'siteStatus',
+                        render: d => `<span class="${ Status[d].className }">${ d }</span>`,
+                        className: 'all'
+                    }
                 ],
                 dom: "<'row'<'col-sm-4'f><'col-sm-4 dataTables_middle dataTables_title'><'col-sm-4'l>>"
-                    + "<'row'<'col-sm-12'tr>><'row'<'col-sm-5'i><'col-sm-7'p>>"
+                    + "<'row'<'col-sm-12'tr>><'row'<'col-sm-5'i><'col-sm-7'p>>",
+                responsive: {
+                    details: false
+                }
             });
             $(this.dataTable.table().container()).find('.row:first > div:eq(1)').text('All Changes');
             $(window).keydown($.proxy(this.handleFindShortcut, this));

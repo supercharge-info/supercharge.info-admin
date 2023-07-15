@@ -284,7 +284,7 @@
                                 <option name="construction" value="CONSTRUCTION">CONSTRUCTION</option>
                                 <option name="open" value="OPEN">OPEN</option>
                             </select>
-                            <span class="btn-group" data-toggle="buttons">
+                            <span class="notify-buttons btn-group" data-toggle="buttons">
                                 <label class="btn btn-default btn-xs active" title="publish to social media"
                                        style="vertical-align: top; padding: 0 5px;">
                                     <input type="radio" name="notify" value="yes" checked="checked" />
@@ -325,7 +325,7 @@
                     <tr>
                         <th>Elevation (m)</th>
                         <td>
-                            <input name="elevationMeters" size="9" maxlength="9"/> &nbsp;
+                            <input name="elevationMeters" type="number" size="9" maxlength="9"/> &nbsp;
                             <button id="elevation-lookup-button" class="btn btn-sm btn-default">auto lookup</button>
                             &nbsp;&nbsp;
                             <a href="http://www.gpsvisualizer.com/elevation" target="_blank">gpsvisualizer</a>
@@ -338,12 +338,12 @@
                     </tr>
                     <tr>
                         <th>Stall Count</th>
-                        <td><input name="stallCount" size="4"/></td>
+                        <td><input name="stallCount" inputmode="numeric" size="4"/></td>
                     </tr>
                     <tr>
                         <th>Power (kW)</th>
                         <td>
-                            <input name="powerKiloWatt" type="text" size="5" maxlength="3"/>
+                            <input name="powerKiloWatt" type="text" inputmode="numeric" size="5" maxlength="3"/>
                         </td>
                     </tr>
 
@@ -401,7 +401,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <th>Battery/Storage</th>
+                        <th>Battery/<wbr/>Storage</th>
                         <td>
                             <select name="battery">
                                 <option name="false" value="false">false</option>

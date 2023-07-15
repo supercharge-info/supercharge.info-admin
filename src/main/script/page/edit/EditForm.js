@@ -12,11 +12,12 @@ export default class EditForm {
         this.siteEditForm = $('#site-edit-form');
         this.messageBox = $("#edit-site-message-div");
 
-        this.siteEditForm.on('reset', () => this.handleReset());
         EventBus.addListener(EditEvents.site_loaded, this.loadNewSite, this);
+        EventBus.addListener(EditEvents.site_reset, this.resetForm, this);
         EventBus.addListener(EditEvents.load_history_complete, this.historyButtonUpdate, this);
         EventBus.addListener(EditEvents.load_change_log_complete, this.changeLogButtonUpdate, this);
 
+        this.siteEditForm.find('select[name="status"]').on('change', () => this.handleStatusChange());
         this.latitudeInput = $("#latitude-input");
         this.latitudeInput.on('paste', $.proxy(this.handleLatitudeChange, this));
         this.longitudeInput = $("#longitude-input");
@@ -34,6 +35,7 @@ export default class EditForm {
         this.editHistButton = $("#edit-site-history-button");
         this.changeLogButton = $("#change-site-history-button");
 
+        $("#edit-site-reset-button").on('click', e => this.handleReset(e));
         this.saveButton.click($.proxy(this.handleSaveButton, this));
         this.copyButton.click($.proxy(this.handleCopyButton, this));
         this.elevationButton.click($.proxy(this.handleElevationLookupButton, this));
@@ -87,9 +89,10 @@ export default class EditForm {
 
         /* populate form */
         FormFiller.populateForm(this.siteEditForm, site);
+        this.handleStatusChange(true);
         const date = this.siteEditForm.find('input[name="dateModified"]');
         date.val(new Date(date.val()).toLocaleString());
-        this.siteEditForm.find('input[name="notify"][value="yes"]').closest('.btn').button('toggle');
+        this.siteEditForm.find('input[name="notify"][value="yes"]').closest('.btn').button('toggle').closest('.btn-group').hide();
         this.enableButtons(true);
         $('html').animate({ scrollTop: 0, scrollLeft: 0 });
     }
@@ -106,8 +109,13 @@ export default class EditForm {
 
     }
 
-    handleReset() {
-        $('input[name="notify"][value="yes"]').closest('.btn').button('toggle');
+    handleReset(event) {
+        event.preventDefault();
+    }
+
+    resetForm() {
+        this.siteEditForm.trigger('reset');
+        this.handleStatusChange(true);
         this.enableButtons(false);
     }
 
@@ -115,6 +123,19 @@ export default class EditForm {
         this.siteEditForm.find("input[name='id']").val("");
         this.siteEditForm.find("input[name='dateModified']").val("");
         this.enableButtons(false);
+        this.handleStatusChange(true);
+    }
+
+    handleStatusChange(reset) {
+        const newStatus = this.siteEditForm.find('select[name="status"]').val();
+        if (reset) {
+            if (this.siteEditForm.find("input[name='id']").val()) {
+                this.status = newStatus;
+            } else {
+                this.status = null;
+            }
+        }
+        this.siteEditForm.find('input[name="notify"]').closest('.btn-group')[this.status == newStatus ? 'hide' : 'show']();
     }
 
     handleElevationLookupButton(event) {

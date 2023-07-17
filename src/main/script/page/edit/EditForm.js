@@ -46,13 +46,16 @@ export default class EditForm {
 
     enableButtons(enabled) {
         /* Activate buttons */
-        this.elevationButton.add(this.editHistButton).add(this.changeLogButton)
+        this.editHistButton.add(this.changeLogButton)
             .add(this.copyButton).prop('disabled', !enabled);
     }
 
     handleSaveButton(event) {
         event.preventDefault();
         const data = this.siteEditForm.serializeJSON();
+        if ($('#edit-change-detail-table .btn').length && !confirm('You have unsaved changelog edits that will be lost, continue?')) {
+            return;
+        }
         $.ajax({
             type: "POST",
             url: URL.site.edit,
@@ -111,9 +114,11 @@ export default class EditForm {
 
     handleReset(event) {
         event.preventDefault();
+        this.resetForm();
     }
 
     resetForm() {
+        EventBus.dispatch(EditEvents.clear_panels);
         this.siteEditForm.trigger('reset');
         this.handleStatusChange(true);
         this.enableButtons(false);

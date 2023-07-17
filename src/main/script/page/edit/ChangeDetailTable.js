@@ -7,8 +7,7 @@ export default class ChangeDetailView {
     constructor() {
         this.table = $("#edit-site-detail-table");
         EventBus.addListener(EditEvents.load_history_trigger, this.loadHistory, this);
-        EventBus.addListener(EditEvents.site_edit_selection, this.clearTable, this);
-        EventBus.addListener(EditEvents.site_delete_selection, this.clearTable, this);
+        EventBus.addListener(EditEvents.clear_panels, this.clearTable, this);
     }
 
     loadHistory(event, siteId) {

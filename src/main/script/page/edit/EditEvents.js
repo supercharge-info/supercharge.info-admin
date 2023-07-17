@@ -27,6 +27,11 @@ const EditEvents = {
     site_reset: "site_reset",
 
     /**
+     * Clear panels associated with editing a site.
+     */
+    clear_panels: "clear_panels",
+
+    /**
      * Indicates that history should be loaded for this specified site.
      * @data is siteId
      */

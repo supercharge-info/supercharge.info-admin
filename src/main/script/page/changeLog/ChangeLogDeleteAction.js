@@ -17,7 +17,7 @@ export default class ChangeLogDeleteAction {
 
     deleteChange(event, changeLogId) {
         $.post(URL.change.delete, { changeId: changeLogId }, function () {
-            EventBus.dispatch("change-log-deleted-event");
+            EventBus.dispatch("change-log-deleted-event", changeLogId);
         }).fail(function (jqXHR) {
             alert("Error occurred while deleting " + changeLogId + "\n"
                 + jqXHR.status + " : " + jqXHR.statusText);

@@ -10,12 +10,11 @@ export default class ChangeLogTable {
             .on("click", "a.delete-change-log", ChangeLogTable.handleDeleteClick)
             .on("click", "a.edit-change-log", ChangeLogTable.handleEditClick)
             .on("click", "a.save-change-log", e => this.handleSaveClick(e))
-            .on("click", "a.cancel-edit-change-log", e => this.handleCancelClick(e));
+            .on("click", "a.cancel-edit-change-log", ChangeLogTable.handleCancelClick);
 
-        EventBus.addListener("change-log-deleted-event", this.loadHistory, this);
+        EventBus.addListener("change-log-deleted-event", this.handleDeletedChange, this);
         EventBus.addListener(EditEvents.load_change_log_trigger, this.loadHistory, this);
-        EventBus.addListener(EditEvents.site_edit_selection, this.clearTable, this);
-        EventBus.addListener(EditEvents.site_delete_selection, this.clearTable, this);
+        EventBus.addListener(EditEvents.clear_panels, this.clearTable, this);
     }
 
     loadHistory(event, siteId) {
@@ -38,18 +37,16 @@ export default class ChangeLogTable {
     renderTable(data) {
         const tBody = this.table.find("tbody");
 
-        this.table.find("thead").html("" +
-            `<tr>
-                <th>action | <a href="#" class="add-change-log">add</a></th>
-                <th>change id</th>
-                <th>change date</th>
-                <th>change type</th>
-                <th>status</th>
-                <th>notify</th>
-                <th>date modified</th>
-                <th>user modified</th>
-            </tr>`
-        );
+        this.table.find("thead").html(`<tr>
+            <th>action | <a href="#" class="add-change-log">add</a></th>
+            <th>change id</th>
+            <th>change date</th>
+            <th>change type</th>
+            <th>status</th>
+            <th>notify</th>
+            <th>date modified</th>
+            <th>user modified</th>
+        </tr>`);
 
         tBody.html("");
         $.each(data, function (index, e) {
@@ -147,11 +144,20 @@ export default class ChangeLogTable {
         const status = tds.eq(4);
         const notify = tds.eq(5);
 
-        date.html($('<input type="date">').val(new Date(date.text()).toISOString().split('T')[0]));
-        status.html($('#site-edit-form select[name="status"]').clone().removeProp('name').val(status.text()));
-        notify.html(ChangeLogTable.buildNotifyButton(notify.text() == 'Yes'));
+        date.html($('<input type="date">').val(new Date(date.text()).toISOString().split('T')[0]).data('original', date.text()));
+        status.html($('#site-edit-form select[name="status"]').clone().removeProp('name').val(status.text()).data('original', status.text()));
+        notify.html(ChangeLogTable.buildNotifyButton(notify.text() == 'Yes').data('original', notify.text()));
         link.attr('class', 'save-change-log').addClass('btn btn-primary btn-xs').text('save').next()
             .attr('class', 'cancel-edit-change-log').addClass('btn btn-danger btn-xs').text('cancel');
+    }
+
+    handleDeletedChange(event, id) {
+        const tr = this.table.find('td:nth-child(2)').filter((i, e) => e.innerHTML == id).closest('tr');
+        if (tr.is(':last-child')) {
+            // Change last UPDATE to ADD
+            tr.prev().children(':eq(3)').text('ADD');
+        }
+        tr.remove();
     }
 
     handleSaveClick(event) {
@@ -180,14 +186,46 @@ export default class ChangeLogTable {
                 siteStatus: status.val(),
                 notify: notify.val()
             }, d => {
-                this.renderTable(d);
+                const updated = d.reduce((a, c) => !a || a.dateModified.epochSecond < c.dateModified.epochSecond ? c : a, null);
+                const index = d.length - d.indexOf(updated);
+                const trs = link.closest('tr').siblings();
+
+                link.closest('tr').remove();
+                if (trs.length < index) {
+                    this.table.find('tbody').prepend(ChangeLogTable.buildRow(updated));
+                } else {
+                    if (index == 1 && d[d.length-2].changeType == 'UPDATE') {
+                        // Change last ADD to UPDATE
+                        trs.last().children(':eq(3)').text('UPDATE');
+                    }
+                    trs.eq(trs.length - index).after(ChangeLogTable.buildRow(updated));
+                }
             }).fail(jqXHR => alert(`Error occurred updating ${changeLogId}\n${jqXHR.status} : ${jqXHR.statusText}`));
         }
     }
 
-    handleCancelClick(event) {
+    static handleCancelClick(event) {
         event.preventDefault();
-        this.loadHistory();
+        const link = $(event.target);
+        const id = link.data('id');
+        const inputs = link.closest("tr").find("input[type='date'], select, .btn-group");
+
+        if (id) {
+            link.closest('tr').children(':first').replaceWith(`<td>
+                <a href="#" class="edit-change-log" data-id="${id}">edit</a>
+                | <a href="#" class="delete-change-log" data-id="${id}">delete</a>
+            </td>`);
+            inputs.each((i, e) => {
+                const el = $(e);
+                if (e.tagName == 'SELECT') {
+                    el.closest('td').html(`<span class="${ Status[el.data('original')].className }">${el.data('original')}</span>`);
+                } else {
+                    el.closest('td').text(el.data('original'));
+                }
+            });
+        } else {
+            link.closest('tr').remove();
+        }
     }
 
 }

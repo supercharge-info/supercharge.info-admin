@@ -8,6 +8,7 @@ export default class ChangeLogTable {
         this.table = $("#edit-change-detail-table")
             .on("click", "a.add-change-log", ChangeLogTable.handleAddClick)
             .on("click", "a.delete-change-log", ChangeLogTable.handleDeleteClick)
+            .on("click", "a.fix-change-log", e => this.handleRestoreAdded(e))
             .on("click", "a.edit-change-log", ChangeLogTable.handleEditClick)
             .on("click", "a.save-change-log", e => this.handleSaveClick(e))
             .on("click", "a.cancel-edit-change-log", ChangeLogTable.handleCancelClick);
@@ -52,6 +53,11 @@ export default class ChangeLogTable {
         $.each(data, function (index, e) {
             tBody.append(ChangeLogTable.buildRow(e));
         });
+
+        const lastChangeType = tBody.find('tr:last td:eq(3)');
+        if (lastChangeType.text() == 'UPDATE') {
+            lastChangeType.html('UPDATE (<a href="#" class="fix-change-log">fix</a>)');
+        }
 
         EventBus.dispatch(EditEvents.load_change_log_complete, true);
     }
@@ -160,6 +166,13 @@ export default class ChangeLogTable {
         tr.remove();
     }
 
+    handleRestoreAdded(event) {
+        event.preventDefault();
+        const link = $(event.target);
+        $.post(URL.change.restoreAdded, { siteId: this.siteId }, () => link.closest('td').text('ADD'))
+            .fail(jqXHR => alert(`Error occurred updating first changelog\n${jqXHR.status} : ${jqXHR.statusText}`));
+    }
+
     handleSaveClick(event) {
         event.preventDefault();
         const link = $(event.target);
@@ -186,16 +199,23 @@ export default class ChangeLogTable {
                 siteStatus: status.val(),
                 notify: notify.val()
             }, d => {
+                // Just the updated row
                 const updated = d.reduce((a, c) => !a || a.dateModified.epochSecond < c.dateModified.epochSecond ? c : a, null);
+                // Count from end of table
                 const index = d.length - d.indexOf(updated);
                 const trs = link.closest('tr').siblings();
 
+                // Remove old row
                 link.closest('tr').remove();
+                if (index > 1) {
+                    // Mark last row as ADD
+                    trs.last().children(':eq(3)').text('ADD');
+                }
                 if (trs.length < index) {
                     this.table.find('tbody').prepend(ChangeLogTable.buildRow(updated));
                 } else {
-                    if (index == 1 && d[d.length-2].changeType == 'UPDATE') {
-                        // Change last ADD to UPDATE
+                    if (index == 1) {
+                        // Change old ADD to UPDATE
                         trs.last().children(':eq(3)').text('UPDATE');
                     }
                     trs.eq(trs.length - index).after(ChangeLogTable.buildRow(updated));

@@ -15,7 +15,8 @@ U.account = {
 
 U.change = {
     "list": mvc + "/allChanges",
-    "delete": mvc + "/changes/delete"
+    "delete": mvc + "/changes/delete",
+    "restoreAdded": mvc + "/changes/restoreAdded"
 };
 
 U.val = {

@@ -33,7 +33,7 @@ ValidationPage.prototype.populateTable = function (data) {
             .append(Object.keys(this.data).map((c) => {
                 const count = this.data[c].reduce((n, v) => n + v.failureRows.length, 0);
                 const tab = $('<a href="#" data-target="#validation-table">')
-                    .text(c.replace('_',' ').replace(/(?<=\w)(\w+)/g, s => s.toLowerCase()))
+                    .text(c.replace('_',' ').replace(/(\w)(\w+)/g, (a,s,r) => s + r.toLowerCase()))
                     .click(e => {
                         e.preventDefault();
                         $(e.target).tab('show');

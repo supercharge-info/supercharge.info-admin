@@ -89,6 +89,24 @@ input[type="search"]:focus {
     background-color: #dedee6;
     border-color: #ccc;
 }
+/* Active disabled */
+.btn-default.active.disabled,
+.btn-default.active[disabled],
+.btn-default.active.disabled.focus,
+.btn-default.active[disabled].focus,
+.btn-default.active.disabled:focus,
+.btn-default.active[disabled]:focus,
+.btn-default.active.disabled:hover,
+.btn-default.active[disabled]:hover,
+.btn-default:active.disabled,
+.btn-default:active[disabled],
+.btn-default:active.disabled:hover,
+.btn-default:active[disabled]:hover,
+/* Just disabled */
+.btn-default.disabled.focus,
+.btn-default[disabled].focus,
+.btn-default.disabled:focus,
+.btn-default[disabled]:focus,
 .btn-default.disabled:hover,
 .btn-default[disabled]:hover,
 .btn-default {
@@ -118,8 +136,10 @@ input[type="search"]:focus {
     clip: rect(0,0,0,0);
     pointer-events: none;
 }
-.btn[data-toggle="button"] *,
-.btn-group[data-toggle="buttons"] > .btn * {
+.btn-group[data-toggle="buttons"] > .btn.active.disabled *,
+.btn[data-toggle="button"].active.disabled *,
+.btn-group[data-toggle="buttons"] > .btn *,
+.btn[data-toggle="button"] * {
     color: #555;
 }
 .btn[data-toggle="button"].active *,

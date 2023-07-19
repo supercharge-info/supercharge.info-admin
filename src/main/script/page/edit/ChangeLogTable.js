@@ -89,8 +89,8 @@ export default class ChangeLogTable {
     }
 
     static buildNotifyButton(value) {
-        const notify = $('.notify-buttons').first().clone().show();
-        notify.find('.btn').each((i, e) => e.classList[!i === value ? 'add' : 'remove']('active')).last().remove();
+        const notify = $('.notify-buttons').first().clone();
+        notify.find('.btn').removeClass('disabled').each((i, e) => e.classList[!i === value ? 'add' : 'remove']('active')).last().remove();
         notify.find('strong').each((i, e) => {
             e.innerHTML = i ? 'No' : 'Yes';
         });

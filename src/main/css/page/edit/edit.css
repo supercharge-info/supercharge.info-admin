@@ -11,11 +11,17 @@ table.edit-table td {
     margin: 0;
     vertical-align: top;
 }
+#delete-container {
+    display: inline-block;
+}
 .add-change-log {
     font-weight: normal;
 }
 #edit-sites-list-table-wrapper th {
     top: -1px;
+}
+#edit-sites-list-table tbody tr {
+    cursor: pointer;
 }
 #edit-sites-list-table a.dropdown-toggle {
     white-space: nowrap;

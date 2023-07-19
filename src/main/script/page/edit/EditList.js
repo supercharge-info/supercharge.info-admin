@@ -4,7 +4,6 @@ import URL from "../../URL";
 import EditEvents from './EditEvents';
 import SiteDeleteAction from "./SiteDeleteAction";
 import SiteLoadAction from "./SiteLoadAction";
-import {currentUser} from "../../nav/User";
 import 'datatables.net';
 import 'datatables.net-bs';
 import 'datatables.net-responsive';
@@ -19,6 +18,7 @@ export default class EditList {
         new SiteLoadAction();
 
         EventBus.addListener(EditEvents.site_list_changed, this.loadSiteList, this);
+        EventBus.addListener(EditEvents.site_deleted, this.loadSiteList, this);
     }
 
     loadSiteList() {
@@ -27,14 +27,11 @@ export default class EditList {
 
     populateEditSiteTable(sites) {
         if (!this.dataTable) {
-            this.siteListTable
-                .on("click", "a.site-edit-trigger", EditList.handleEditClick)
-                .on("click", "a.site-delete-trigger", EditList.handleDeleteClick);
+            this.siteListTable.on("click", "tbody tr", e => this.handleEditClick(e));
             const today = new Date();
             today.setHours(0, 0, 0, 0);
 
             this.siteListTable.find("thead").html(`<tr>
-                <th>Action</th>
                 <th>Id</th>
                 <th>Name</th>
                 <th>Status</th>
@@ -51,15 +48,6 @@ export default class EditList {
                 order: [[9, 'desc']],
                 lengthMenu: [10, 25, 100, 1000, 10000],
                 columns: [
-                    {
-                        data: null,
-                        searchable: false,
-                        render: (d,t,r) =>
-                            `<a href="#" class="site-edit-trigger" data-id="${r.id}">edit</a>`
-                            + (!currentUser.hasRole("admin") ? "" : " &nbsp; "
-                            + `<a href="#" class="site-delete-trigger" data-id="${r.id}">delete</a>`),
-                        className: 'all'
-                    },
                     { data: 'id', responsivePriority: 2 },
                     { data: 'name', render: sanitize, className: 'all' },
                     {
@@ -120,19 +108,13 @@ export default class EditList {
         }
     }
 
-    static handleEditClick(event) {
-        event.preventDefault();
-        const link = $(event.target);
-        const siteId = link.data("id");
-        EventBus.dispatch(EditEvents.site_edit_selection, siteId);
-    }
-
-    static handleDeleteClick(event) {
-        event.preventDefault();
-        const link = $(event.target);
-        const siteId = link.data("id");
-        const siteName = link.parents("tr").find("td").eq(2).html();
-        EventBus.dispatch(EditEvents.site_delete_selection, siteId, siteName);
+    handleEditClick(event) {
+        const target = $(event.target);
+        if (!target.is('a, dropdown-menu *')) {
+            event.preventDefault();
+            const data = this.dataTable.row(target.closest('tr')).data();
+            EventBus.dispatch(EditEvents.site_edit_selection, data.id);
+        }
     }
 
 }

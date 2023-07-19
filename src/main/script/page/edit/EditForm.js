@@ -14,6 +14,7 @@ export default class EditForm {
 
         EventBus.addListener(EditEvents.site_loaded, this.loadNewSite, this);
         EventBus.addListener(EditEvents.site_reset, this.resetForm, this);
+        EventBus.addListener(EditEvents.site_deleted, this.resetForm, this);
         EventBus.addListener(EditEvents.load_history_complete, this.historyButtonUpdate, this);
         EventBus.addListener(EditEvents.load_change_log_complete, this.changeLogButtonUpdate, this);
 
@@ -34,6 +35,7 @@ export default class EditForm {
         this.elevationButton = $("#elevation-lookup-button");
         this.editHistButton = $("#edit-site-history-button");
         this.changeLogButton = $("#change-site-history-button");
+        this.deleteButton = $("#edit-site-delete-button");
 
         $("#edit-site-reset-button").on('click', e => this.handleReset(e));
         this.saveButton.click($.proxy(this.handleSaveButton, this));
@@ -41,12 +43,17 @@ export default class EditForm {
         this.elevationButton.click($.proxy(this.handleElevationLookupButton, this));
         this.editHistButton.click($.proxy(this.handleHistoryButton, this));
         this.changeLogButton.click($.proxy(this.handleChangeLogButton, this));
+        this.deleteButton.click($.proxy(this.handleDeleteButton, this));
         this.enableButtons(false);
+    }
+
+    toggleDeleteButton(show) {
+        this.deleteButton.closest('#delete-container').toggle(show);
     }
 
     enableButtons(enabled) {
         /* Activate buttons */
-        this.editHistButton.add(this.changeLogButton)
+        this.editHistButton.add(this.changeLogButton).add(this.deleteButton)
             .add(this.copyButton).prop('disabled', !enabled);
     }
 
@@ -95,7 +102,7 @@ export default class EditForm {
         this.handleStatusChange(true);
         const date = this.siteEditForm.find('input[name="dateModified"]');
         date.val(new Date(date.val()).toLocaleString());
-        this.siteEditForm.find('input[name="notify"][value="yes"]').closest('.btn').button('toggle').closest('.btn-group').hide();
+        this.siteEditForm.find('input[name="notify"][value="yes"]').closest('.btn').button('toggle');
         this.enableButtons(true);
         $('html').animate({ scrollTop: 0, scrollLeft: 0 });
     }
@@ -122,6 +129,7 @@ export default class EditForm {
         this.siteEditForm.trigger('reset');
         this.handleStatusChange(true);
         this.enableButtons(false);
+        this.messageBox.html("");
     }
 
     handleCopyButton() {
@@ -140,7 +148,8 @@ export default class EditForm {
                 this.status = null;
             }
         }
-        this.siteEditForm.find('input[name="notify"]').closest('.btn-group')[this.status == newStatus ? 'hide' : 'show']();
+        this.siteEditForm.find('input[name="notify"]').closest('.btn-group')
+            .children()[this.status == newStatus ? 'addClass' : 'removeClass']('disabled');
     }
 
     handleElevationLookupButton(event) {
@@ -258,6 +267,13 @@ export default class EditForm {
             const siteId = this.siteEditForm.find("input[name='id']").val();
             EventBus.dispatch(EditEvents.load_change_log_trigger, siteId);
         }
+    }
+
+    handleDeleteButton(event) {
+        event.preventDefault();
+        const siteId = this.siteEditForm.find("input[name='id']").val();
+        const siteName = this.siteEditForm.find("input[name='name']").val();
+        EventBus.dispatch(EditEvents.site_delete_selection, siteId, siteName);
     }
 
 }

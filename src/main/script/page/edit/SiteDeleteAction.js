@@ -18,7 +18,7 @@ export default class SiteDeleteAction {
     deleteSite(event, siteId, siteName) {
         if (confirm("Delete site " + siteName + "?")) {
             $.post(URL.site.delete, { siteId }, function () {
-                EventBus.dispatch(EditEvents.site_deleted);
+                EventBus.dispatch(EditEvents.site_deleted, siteId);
             }).fail(function (jqXHR) {
                 if(jqXHR.status === 403) {
                     alert(`Insufficient privileges to delete site ${siteId}.`);

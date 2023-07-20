@@ -18,11 +18,15 @@ export default class EditList {
         new SiteLoadAction();
 
         EventBus.addListener(EditEvents.site_list_changed, this.loadSiteList, this);
-        EventBus.addListener(EditEvents.site_deleted, this.loadSiteList, this);
+        EventBus.addListener(EditEvents.site_deleted, this.deleteSite, this);
     }
 
     loadSiteList() {
         $.getJSON(URL.site.loadAll, $.proxy(this.populateEditSiteTable, this));
+    }
+
+    deleteSite(event, siteId) {
+        this.dataTable.row((i,d) => d.id == siteId).remove().draw();
     }
 
     populateEditSiteTable(sites) {

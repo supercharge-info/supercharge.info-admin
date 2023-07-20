@@ -5,6 +5,7 @@ import FormFiller from "../../util/FormFiller";
 
 export default class FeatureForm {
     constructor() {
+        this.isReload = false;
         this.previewButton = $("#feature-preview-button");
         this.saveButton = $("#feature-save-button");
         this.form = $("#feature-form");
@@ -52,23 +53,36 @@ export default class FeatureForm {
             contentType: "application/json",
             data: JSON.stringify(data),
             success: $.proxy(this.handleSaveResponse, this),
+            error: r => this.handleSaveResponse(r.responseJSON),
             dataType: "json"
         });
     }
 
 
     handleSaveResponse(response) {
-        this.messageBox.html("<ul></ul>");
-        this.messageBox.attr('style', (response.result === "SUCCESS") ? 'color:green' : 'color:red');
-        this.messageBox.find("ul").append(response.messages.map(v => `<li>${v}</li>`));
+        this.messageBox.addClass('alert').html('')
+            .removeClass(response.result === 'SUCCESS' ? 'alert-danger' : 'alert-success')
+            .addClass(response.result === 'SUCCESS' ? 'alert-success' : 'alert-danger');
+
+        const resultIcon = response.result === 'SUCCESS' ? 'ok' : 'exclamation-sign';
+        const icon = `<span class="glyphicon glyphicon-${resultIcon}"></span>`;
+        this.messageBox.append(response.messages.map(v => `${icon} ${v}<br />`));
 
         if (response.result === "SUCCESS") {
+            this.isReload = true;
             EventBus.dispatch(FeatureEvents.feature_list_changed);
             EventBus.dispatch(FeatureEvents.feature_selected_for_edit, response.featureId);
         }
     }
 
     loadForEdit(event, featureId) {
+        if (!this.isReload) {
+            /* clear any existing message*/
+            this.messageBox.html("").removeClass('alert alert-danger alert-success');
+        } else {
+            /* Ok, we have reloaded the site after a save/edit, without clearing messages */
+            this.isReload = false;
+        }
         this.form.trigger("reset");
         $.getJSON(URL.feature.load + "/" + featureId, (feature) => {
             console.log(JSON.stringify(feature));

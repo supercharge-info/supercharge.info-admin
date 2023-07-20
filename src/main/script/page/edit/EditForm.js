@@ -14,7 +14,7 @@ export default class EditForm {
 
         EventBus.addListener(EditEvents.site_loaded, this.loadNewSite, this);
         EventBus.addListener(EditEvents.site_reset, this.resetForm, this);
-        EventBus.addListener(EditEvents.site_deleted, this.resetForm, this);
+        EventBus.addListener(EditEvents.site_deleted, this.handleDeleteResponse, this);
         EventBus.addListener(EditEvents.load_history_complete, this.historyButtonUpdate, this);
         EventBus.addListener(EditEvents.load_change_log_complete, this.changeLogButtonUpdate, this);
 
@@ -37,7 +37,7 @@ export default class EditForm {
         this.changeLogButton = $("#change-site-history-button");
         this.deleteButton = $("#edit-site-delete-button");
 
-        $("#edit-site-reset-button").on('click', e => this.handleReset(e));
+        $("#edit-site-reset-button").on('click', e => this.handleResetButton(e));
         this.saveButton.click($.proxy(this.handleSaveButton, this));
         this.copyButton.click($.proxy(this.handleCopyButton, this));
         this.elevationButton.click($.proxy(this.handleElevationLookupButton, this));
@@ -73,13 +73,19 @@ export default class EditForm {
         });
     }
 
+    handleDeleteResponse(event, siteId) {
+        this.resetForm();
+        this.handleSaveResponse({ result: 'DELETED', messages: [`Site ${siteId} has been successfully deleted.`] });
+    }
+
     handleSaveResponse(response) {
-        this.messageBox.html("<ul></ul>");
-        this.messageBox.attr('style', (response.result === "SUCCESS") ? 'color:green' : 'color:red');
-        const ol = this.messageBox.find("ul");
-        $.each(response.messages, function (index, value) {
-            ol.append(`<li>${value}</li>`);
-        });
+        this.messageBox.addClass('alert').html('')
+            .removeClass(response.result === 'SUCCESS' ? 'alert-danger' : 'alert-success')
+            .addClass(response.result === 'SUCCESS' ? 'alert-success' : 'alert-danger');
+
+        const resultIcon = response.result === 'SUCCESS' ? 'ok' : 'exclamation-sign';
+        const icon = `<span class="glyphicon glyphicon-${resultIcon}"></span>`;
+        this.messageBox.append(response.messages.map(v => `${icon} ${v}<br />`));
 
         if (response.result === "SUCCESS") {
             this.isReload = true;
@@ -91,7 +97,7 @@ export default class EditForm {
     loadNewSite(event, site) {
         if (!this.isReload) {
             /* clear any existing message*/
-            this.messageBox.html("");
+            this.messageBox.html("").removeClass('alert alert-danger alert-success');
         } else {
             /* Ok, we have reloaded the site after a save/edit, without clearing messages */
             this.isReload = false;
@@ -119,9 +125,10 @@ export default class EditForm {
 
     }
 
-    handleReset(event) {
+    handleResetButton(event) {
         event.preventDefault();
         this.resetForm();
+        this.messageBox.html("").removeClass('alert alert-danger alert-success');
     }
 
     resetForm() {
@@ -129,7 +136,6 @@ export default class EditForm {
         this.siteEditForm.trigger('reset');
         this.handleStatusChange(true);
         this.enableButtons(false);
-        this.messageBox.html("");
     }
 
     handleCopyButton() {

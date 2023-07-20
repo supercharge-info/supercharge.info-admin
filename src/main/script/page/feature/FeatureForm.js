@@ -60,12 +60,12 @@ export default class FeatureForm {
 
 
     handleSaveResponse(response) {
+        const ok = response.result === 'SUCCESS';
         this.messageBox.addClass('alert').html('')
-            .removeClass(response.result === 'SUCCESS' ? 'alert-danger' : 'alert-success')
-            .addClass(response.result === 'SUCCESS' ? 'alert-success' : 'alert-danger');
+            .removeClass(ok ? 'alert-danger' : 'alert-success')
+            .addClass(ok ? 'alert-success' : 'alert-danger');
 
-        const resultIcon = response.result === 'SUCCESS' ? 'ok' : 'exclamation-sign';
-        const icon = `<span class="glyphicon glyphicon-${resultIcon}"></span>`;
+        const icon = `<span class="glyphicon glyphicon-${ok ? 'ok' : 'exclamation-sign'}"></span>`;
         this.messageBox.append(response.messages.map(v => `${icon} ${v}<br />`));
 
         if (response.result === "SUCCESS") {
@@ -80,7 +80,7 @@ export default class FeatureForm {
             /* clear any existing message*/
             this.messageBox.html("").removeClass('alert alert-danger alert-success');
         } else {
-            /* Ok, we have reloaded the site after a save/edit, without clearing messages */
+            /* Ok, we have reloaded the feature after a save/edit, without clearing messages */
             this.isReload = false;
         }
         this.form.trigger("reset");

@@ -60,8 +60,10 @@ export default class EditForm {
     handleSaveButton(event) {
         event.preventDefault();
         const data = this.siteEditForm.serializeJSON();
-        if ($('#edit-change-detail-table .btn').length && !confirm('You have unsaved changelog edits that will be lost, continue?')) {
-            return;
+        if ($('#edit-change-detail-table .btn').length) {
+            if (!confirm('You have unsaved changelog edits that will be lost, continue?')) {
+                return;
+            }
         }
         $.ajax({
             type: "POST",
@@ -75,16 +77,19 @@ export default class EditForm {
 
     handleDeleteResponse(event, siteId) {
         this.resetForm();
-        this.handleSaveResponse({ result: 'DELETED', messages: [`Site ${siteId} has been successfully deleted.`] });
+        this.handleSaveResponse({
+            result: 'DELETED',
+            messages: [`Site ${siteId} has been successfully deleted.`]
+        });
     }
 
     handleSaveResponse(response) {
+        const ok = response.result === 'SUCCESS';
         this.messageBox.addClass('alert').html('')
-            .removeClass(response.result === 'SUCCESS' ? 'alert-danger' : 'alert-success')
-            .addClass(response.result === 'SUCCESS' ? 'alert-success' : 'alert-danger');
+            .removeClass(ok ? 'alert-danger' : 'alert-success')
+            .addClass(ok ? 'alert-success' : 'alert-danger');
 
-        const resultIcon = response.result === 'SUCCESS' ? 'ok' : 'exclamation-sign';
-        const icon = `<span class="glyphicon glyphicon-${resultIcon}"></span>`;
+        const icon = `<span class="glyphicon glyphicon-${ok ? 'ok' : 'exclamation-sign'}"></span>`;
         this.messageBox.append(response.messages.map(v => `${icon} ${v}<br />`));
 
         if (response.result === "SUCCESS") {
@@ -117,7 +122,9 @@ export default class EditForm {
         $("#address-country-select").append(
             countries.sort((a,b) =>
                 // Sort USA, then China, then alphabetic
-                a.name == 'USA' ? -1 : b.name == 'USA' ? 1 : a.name == 'China' ? -1 : b.name == 'China' ? 1 : a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1
+                a.name == 'USA' ? -1 : b.name == 'USA' ? 1
+                : a.name == 'China' ? -1 : b.name == 'China' ? 1
+                : a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1
             ).map(
                 country => $("<option value='" + country.id + "'>" + country.name + "</option>")
             )
@@ -141,6 +148,7 @@ export default class EditForm {
     handleCopyButton() {
         this.siteEditForm.find("input[name='id']").val("");
         this.siteEditForm.find("input[name='dateModified']").val("");
+        EventBus.dispatch(EditEvents.clear_panels);
         this.enableButtons(false);
         this.handleStatusChange(true);
     }

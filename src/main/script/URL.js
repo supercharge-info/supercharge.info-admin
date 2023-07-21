@@ -15,7 +15,8 @@ U.account = {
 
 U.change = {
     "list": mvc + "/allChanges",
-    "delete": mvc + "/changes/delete"
+    "delete": mvc + "/changes/delete",
+    "restoreAdded": mvc + "/changes/restoreAdded"
 };
 
 U.val = {
@@ -28,7 +29,10 @@ U.site = {
     "load": mvc + "/siteadmin/load",
     "loadAll": mvc + "/siteadmin/loadAll",
     "edit": mvc + "/siteadmin/edit",
-    "changeDetail": mvc + "/siteadmin/changeDetail"
+    "changeDetail": mvc + "/siteadmin/changeDetail",
+    "changeLog": mvc + "/siteadmin/changeLogEdits",
+    "changeEdit": mvc + "/siteadmin/changeEdit",
+    "changeAdd": mvc + "/siteadmin/changeAdd"
 };
 
 U.system = {

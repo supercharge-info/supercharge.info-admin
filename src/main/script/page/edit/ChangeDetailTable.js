@@ -5,50 +5,52 @@ import { sanitize } from 'dompurify';
 
 export default class ChangeDetailView {
     constructor() {
-        this.table = $("#edit-change-detail-table");
+        this.table = $("#edit-site-detail-table");
         EventBus.addListener(EditEvents.load_history_trigger, this.loadHistory, this);
-        EventBus.addListener(EditEvents.site_edit_selection, this.clearTable, this);
-        EventBus.addListener(EditEvents.site_delete_selection, this.clearTable, this);
+        EventBus.addListener(EditEvents.clear_panels, this.clearTable, this);
     }
 
     loadHistory(event, siteId) {
-        $.getJSON(URL.site.changeDetail + "?siteId=" + siteId).done(
-            $.proxy(this.renderTable, this)
-        );
+        if (this.table.find("tbody, thead").children().length) {
+            this.clearTable();
+        } else {
+            $.getJSON(URL.site.changeDetail + "?siteId=" + siteId).done(
+                $.proxy(this.renderTable, this)
+            );
+        }
     }
 
     renderTable(data) {
-        const tHead = this.table.find("thead");
-        const tBody = this.table.find("tbody");
+        const tBody = this.table.find("tbody").html("");
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
 
-        tHead.html("" +
-            `<tr>
-                <th>version</th>
-                <th>change date</th>
-                <th>change by</th>
-                <th>field</th>
-                <th>old value</th>
-                <th>new value</th>
-            </tr>`
-        );
-
-        tBody.html("");
-        $.each(data, function (index, e) {
-            tBody.append(
-                `<tr>
-                    <td>${e.version}</td>
-                    <td>${new Date(e.changeDate.epochSecond * 1000).toLocaleString('en-US')}</td>
-                    <td>${sanitize(e.username)}</td>
-                    <td>${e.fieldName}</td>
-                    <td>${sanitize(e.oldValue)}</td>
-                    <td>${sanitize(e.newValue)}</td>
-                </tr>`
-            );
+        this.table.find("thead").html(`<tr>
+            <th>version</th>
+            <th>change date</th>
+            <th>change by</th>
+            <th>field</th>
+            <th>old value</th>
+            <th>new value</th>
+        </tr>`);
+        $.each(data, function (index, {changeDate: { epochSecond: d }, ...e}) {
+            tBody.append(`<tr>
+                <td>${e.version}</td>
+                <td>${new Date(d * 1000)[
+                    today.getTime() > d * 1000 ? 'toLocaleDateString' : 'toLocaleTimeString'
+                ]()}</td>
+                <td>${sanitize(e.username)}</td>
+                <td>${e.fieldName}</td>
+                <td>${sanitize(e.oldValue)}</td>
+                <td>${sanitize(e.newValue)}</td>
+            </tr>`);
         });
 
+        EventBus.dispatch(EditEvents.load_history_complete, true);
     }
 
     clearTable() {
         this.table.find("tbody, thead").html("");
+        EventBus.dispatch(EditEvents.load_history_complete, false);
     }
 }

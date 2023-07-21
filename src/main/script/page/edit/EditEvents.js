@@ -6,6 +6,11 @@ const EditEvents = {
     site_list_changed: "site_list_changed",
 
     /**
+     * Indicates that the current site has been deleted, and that the form should be reset/list reloaded.
+     */
+    site_deleted: "site_deleted",
+
+    /**
      * The 'delete' button on one site has been clicked.
      */
     site_delete_selection: "site_delete_selection",
@@ -22,10 +27,39 @@ const EditEvents = {
     site_loaded: "site_loaded",
 
     /**
+     * Reset the form to edit a site, allowing for state to be managed properly.
+     */
+    site_reset: "site_reset",
+
+    /**
+     * Clear panels associated with editing a site.
+     */
+    clear_panels: "clear_panels",
+
+    /**
      * Indicates that history should be loaded for this specified site.
      * @data is siteId
      */
-    load_history_trigger: "load_history_trigger"
+    load_history_trigger: "load_history_trigger",
+
+    /**
+     * Indicates that history table has completed loading or unloading.
+     * @data is true/false
+     */
+    load_history_complete: "load_history_complete",
+
+    /**
+     * Indicates that changelogs should be loaded for this specified site.
+     * @data is siteId
+     */
+    load_change_log_trigger: "load_change_log_trigger",
+
+    /**
+     * Indicates that changelog table has completed loading or unloading.
+     * @data is true/false
+     */
+    load_change_log_complete: "load_change_log_complete"
+
 };
 
 export default EditEvents;

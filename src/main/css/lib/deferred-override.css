@@ -1,0 +1,164 @@
+/* DataTables */
+div.dataTables_wrapper div.dataTables_middle {
+    display: flex;
+}
+div.dataTables_wrapper div.dataTables_title {
+    font-size: 24px;
+}
+@media screen and (min-width: 768px) {
+    div.dataTables_wrapper div.dataTables_middle {
+        text-align: center;
+        display: block;
+    }
+}
+div.dataTables_wrapper div.dataTables_length {
+    text-align: right;
+}
+div.dataTables_wrapper div.dataTables_filter {
+    text-align: left;
+}
+@media screen and (max-width: 767px) {
+    div.dataTables_wrapper div.dataTables_length,
+    div.dataTables_wrapper div.dataTables_filter,
+    div.dataTables_wrapper div.dataTables_info,
+    div.dataTables_wrapper div.dataTables_paginate {
+        float: right;
+        margin-left: 10px;
+        clear: right;
+    }
+}
+table.dataTable {
+    box-sizing: content-box;
+    width: 100%;
+}
+table.dataTable.view-table thead > tr > th.sorting:after,
+table.dataTable.view-table thead > tr > th.sorting:before {
+    opacity: 0.3;
+}
+table.dataTable.view-table thead > tr > th.sorting_asc:before,
+table.dataTable.view-table thead > tr > th.sorting_desc:after,
+table.dataTable.view-table thead > tr > td.sorting_asc:before,
+table.dataTable.view-table thead > tr > td.sorting_desc:after {
+    opacity: 1;
+}
+table.dataTable thead > tr > th.sorting:before,
+table.dataTable thead > tr > th.sorting:after,
+table.dataTable thead > tr > td.sorting:before,
+table.dataTable thead > tr > td.sorting:after {
+    right: 3px;
+}
+table.dataTable thead > tr > th.sorting {
+    padding-right: 16px;
+    position: sticky;
+}
+div.dataTables_wrapper label {
+    font-weight: normal;
+}
+div.dataTables_wrapper select.form-control {
+    display: inline-block;
+    margin-left: 0.5em;
+    width: auto;
+}
+/* Cause dropdown of last row of last table of page to drop up instead to avoid scrolling */
+.page .dataTables_wrapper:last-child .dataTable tr:last-child .dropdown .caret {
+    border-top: 0;
+    border-bottom: 4px dashed;
+}
+
+.page .dataTables_wrapper:last-child .dataTable tr:last-child .dropdown .dropdown-menu {
+    top: auto;
+    bottom: 100%;
+    margin-bottom: 2px;
+}
+@media screen and (max-width: 767px) {
+    div.dataTables_wrapper div.dataTables_length, div.dataTables_wrapper div.dataTables_filter, div.dataTables_wrapper div.dataTables_info, div.dataTables_wrapper div.dataTables_paginate {
+        text-align: left;
+    }
+}
+/* Draw more attention to search box (ie. when pressing Ctrl-F) */
+input[type="search"]:focus {
+    box-shadow: 0 0 10px rgb(102, 175, 223);
+}
+/* Button Overrides */
+.btn-default:active, .btn-default.active,
+.open > .dropdown-toggle.btn-default,
+.btn-default:hover {
+    background-color: #e0e0e8;
+}
+.btn-default:focus, .btn-default.focus {
+    background-color: #dedee6;
+    border-color: #ccc;
+}
+/* Active disabled */
+.btn-default.active.disabled,
+.btn-default.active[disabled],
+.btn-default.active.disabled.focus,
+.btn-default.active[disabled].focus,
+.btn-default.active.disabled:focus,
+.btn-default.active[disabled]:focus,
+.btn-default.active.disabled:hover,
+.btn-default.active[disabled]:hover,
+.btn-default:active.disabled,
+.btn-default:active[disabled],
+.btn-default:active.disabled:hover,
+.btn-default:active[disabled]:hover,
+/* Just disabled */
+.btn-default.disabled.focus,
+.btn-default[disabled].focus,
+.btn-default.disabled:focus,
+.btn-default[disabled]:focus,
+.btn-default.disabled:hover,
+.btn-default[disabled]:hover,
+.btn-default {
+    background-color: #f0f0f7;
+    border-color: #adadad;
+}
+.btn-default:active:hover, .btn-default.active:hover,
+.open > .dropdown-toggle.btn-default:hover,
+.btn-default:active:focus, .btn-default.active:focus,
+.open > .dropdown-toggle.btn-default:focus,
+.btn-default:active.focus, .btn-default.active.focus,
+.open > .dropdown-toggle.btn-default.focus {
+	background-color: #cbcbd4;
+}
+.btn-group {
+    margin: 1em 0;
+}
+.btn.focus,
+.btn.active.focus {
+    outline: 0;
+}
+.btn[data-toggle="button"] input[type="checkbox"],
+.btn[data-toggle="button"] input[type="radio"],
+.btn-group[data-toggle="buttons"] > .btn input[type="checkbox"],
+.btn-group[data-toggle="buttons"] > .btn input[type="radio"] {
+    position: absolute;
+    clip: rect(0,0,0,0);
+    pointer-events: none;
+}
+.btn-group[data-toggle="buttons"] > .btn.active.disabled *,
+.btn[data-toggle="button"].active.disabled *,
+.btn-group[data-toggle="buttons"] > .btn *,
+.btn[data-toggle="button"] * {
+    color: #555;
+}
+.btn[data-toggle="button"].active *,
+.btn-group[data-toggle="buttons"] > .btn.active * {
+    color: #000;
+}
+/* Statuses */
+.label-success {
+    background-color: #f54;
+}
+.label-info {
+    background-color: #36f;
+}
+.label-warning {
+    background-color: darkorange;
+}
+.label-danger {
+    background-color: #000;
+}
+.alert {
+    margin: 1em 0 0;
+}

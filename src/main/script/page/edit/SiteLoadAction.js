@@ -16,7 +16,6 @@ export default class SiteLoadAction {
     }
 
     loadForEdit(event, siteId) {
-        this.siteEditForm.trigger("reset");
         $.getJSON(URL.site.load + "?siteId=" + siteId, function (site) {
             EventBus.dispatch(EditEvents.site_loaded, site);
         });

@@ -1,11 +1,12 @@
 import EventBus from "../../util/EventBus";
+import Status from "../../Status";
 import URL from "../../URL";
 import EditEvents from './EditEvents';
 import SiteDeleteAction from "./SiteDeleteAction";
 import SiteLoadAction from "./SiteLoadAction";
-import {currentUser} from "../../nav/User";
 import 'datatables.net';
 import 'datatables.net-bs';
+import 'datatables.net-responsive';
 import { sanitize } from 'dompurify';
 
 export default class EditList {
@@ -17,56 +18,59 @@ export default class EditList {
         new SiteLoadAction();
 
         EventBus.addListener(EditEvents.site_list_changed, this.loadSiteList, this);
+        EventBus.addListener(EditEvents.site_deleted, this.deleteSite, this);
     }
 
     loadSiteList() {
         $.getJSON(URL.site.loadAll, $.proxy(this.populateEditSiteTable, this));
     }
 
+    deleteSite(event, siteId) {
+        this.dataTable.row((i,d) => d.id == siteId).remove().draw();
+    }
+
     populateEditSiteTable(sites) {
         if (!this.dataTable) {
-            this.siteListTable
-                .on("click", "a.site-edit-trigger", EditList.handleEditClick)
-                .on("click", "a.site-delete-trigger", EditList.handleDeleteClick);
+            this.siteListTable.on("click", "tbody tr", e => this.handleEditClick(e));
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
 
-            const tableHead = this.siteListTable.find("thead");
-            tableHead.html("" +
-                `<tr>
-                    <th>Action</th>
-                    <th>Id</th>
-                    <th>Name</th>
-                    <th>Status</th>
-                    <th>Date Opened</th>
-                    <th>Power (kW)</th>
-                    <th>Stalls</th>
-                    <th>Other EVs</th>
-                    <th>Version</th>
-                    <th>Modified</th>
-                    <th>Links</th>
-                </tr>`
-                );
+            this.siteListTable.find("thead").html(`<tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Status</th>
+                <th>Date Opened</th>
+                <th>Power (kW)</th>
+                <th>Stalls</th>
+                <th>Other EVs</th>
+                <th>Version</th>
+                <th>Modified</th>
+                <th>Links</th>
+            </tr>`);
             this.dataTable = this.siteListTable.DataTable({
                 data: sites,
                 order: [[9, 'desc']],
                 lengthMenu: [10, 25, 100, 1000, 10000],
                 columns: [
+                    { data: 'id', responsivePriority: 2 },
+                    { data: 'name', render: sanitize, className: 'all' },
                     {
-                        data: null,
-                        searchable: false,
-                        render: (d,t,r) =>
-                            `<a href="#" class="site-edit-trigger" data-id="${r.id}">edit</a>`
-                            + (!currentUser.hasRole("admin") ? "" : " &nbsp; "
-                            + `<a href="#" class="site-delete-trigger" data-id="${r.id}">delete</a>`)
+                        data: 'status',
+                        render: d => `<span class="${ Status[d].className }">${ d }</span>`,
+                        className: 'all'
                     },
-                    { data: 'id' },
-                    { data: 'name', render: sanitize },
-                    { data: 'status' },
-                    { data: 'dateOpened', defaultContent: '', searchable: false },
-                    { data: 'powerKiloWatt', searchable: false },
-                    { data: 'stallCount', searchable: false },
-                    { data: 'otherEVs', searchable: false },
-                    { data: 'version', searchable: false },
-                    { data: 'dateModified', searchable: false, render: (d, t) => t == 'sort' ? d : new Date(d).toLocaleString('en-US') },
+                    { data: 'dateOpened', defaultContent: '', searchable: false, responsivePriority: 2 },
+                    { data: 'powerKiloWatt', searchable: false, className: 'all' },
+                    { data: 'stallCount', searchable: false, className: 'all' },
+                    { data: 'otherEVs', searchable: false, responsivePriority: 3 },
+                    { data: 'version', searchable: false, responsivePriority: 4 },
+                    {
+                        data: 'dateModified',
+                        searchable: false,
+                        render: (d, t) => t == 'sort' ? d : new Date(d)[
+                            today > new Date(d) ? 'toLocaleDateString' : 'toLocaleTimeString'
+                        ](), responsivePriority: 1
+                    },
                     {
                         data: null,
                         searchable: false,
@@ -81,11 +85,15 @@ export default class EditList {
                                     ${r.urlDiscuss ? `<li><a href="${r.urlDiscuss}" target="_blank">forum</a></li>` : ''}
                                     ${r.locationId ? `<li><a href="https://www.tesla.c${r.address.country=='China' && !['Hong Kong', 'Macau'].includes(r.address.state) ? 'n' : 'om'}/findus/location/supercharger/${r.locationId}" target="_blank">tesla.c${r.address.country=='China' && !['Hong Kong', 'Macau'].includes(r.address.state) ? 'n' : 'om'}</a></li>` : ''}
                                 </ul>
-                            </div>`
+                            </div>`,
+                            className: 'all'
                     }
                 ],
                 dom: "<'row'<'col-sm-4'f><'col-sm-4 dataTables_middle dataTables_title'><'col-sm-4'l>>"
-                    + "<'row'<'col-sm-12'tr>><'row'<'col-sm-5'i><'col-sm-7'p>>"
+                    + "<'row'<'col-sm-12'tr>><'row'<'col-sm-5'i><'col-sm-7'p>>",
+                responsive: {
+                    details: false
+                }
             });
             $(this.dataTable.table().container()).find('.row:first > div:eq(1)').text('All Sites');
             $(window).keydown($.proxy(this.handleFindShortcut, this));
@@ -104,19 +112,13 @@ export default class EditList {
         }
     }
 
-    static handleEditClick(event) {
-        event.preventDefault();
-        const link = $(event.target);
-        const siteId = link.data("id");
-        EventBus.dispatch(EditEvents.site_edit_selection, siteId);
-    }
-
-    static handleDeleteClick(event) {
-        event.preventDefault();
-        const link = $(event.target);
-        const siteId = link.data("id");
-        const siteName = link.parents("tr").find("td").eq(2).html();
-        EventBus.dispatch(EditEvents.site_delete_selection, siteId, siteName);
+    handleEditClick(event) {
+        const target = $(event.target);
+        if (!target.is('a, dropdown-menu *')) {
+            event.preventDefault();
+            const data = this.dataTable.row(target.closest('tr')).data();
+            EventBus.dispatch(EditEvents.site_edit_selection, data.id);
+        }
     }
 
 }

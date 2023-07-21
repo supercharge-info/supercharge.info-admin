@@ -13,11 +13,16 @@ export default class EditForm {
         this.messageBox = $("#edit-site-message-div");
 
         EventBus.addListener(EditEvents.site_loaded, this.loadNewSite, this);
+        EventBus.addListener(EditEvents.site_reset, this.resetForm, this);
+        EventBus.addListener(EditEvents.site_deleted, this.handleDeleteResponse, this);
+        EventBus.addListener(EditEvents.load_history_complete, this.historyButtonUpdate, this);
+        EventBus.addListener(EditEvents.load_change_log_complete, this.changeLogButtonUpdate, this);
 
+        this.siteEditForm.find('select[name="status"]').on('change', () => this.handleStatusChange());
         this.latitudeInput = $("#latitude-input");
-        this.latitudeInput.bind('paste', $.proxy(this.handleLatitudeChange, this));
+        this.latitudeInput.on('paste', $.proxy(this.handleLatitudeChange, this));
         this.longitudeInput = $("#longitude-input");
-        this.longitudeInput.bind('paste', $.proxy(this.handleLongitudeChange, this));
+        this.longitudeInput.on('paste', $.proxy(this.handleLongitudeChange, this));
 
         $.getJSON(URL.data.country, $.proxy(this.populateCountryOptions, this));
 
@@ -28,17 +33,38 @@ export default class EditForm {
         this.copyButton = $("#edit-site-copy-button");
         this.saveButton = $("#edit-site-save-button");
         this.elevationButton = $("#elevation-lookup-button");
-        this.changeHistButton = $("#edit-site-history-button");
+        this.editHistButton = $("#edit-site-history-button");
+        this.changeLogButton = $("#change-site-history-button");
+        this.deleteButton = $("#edit-site-delete-button");
 
+        $("#edit-site-reset-button").on('click', e => this.handleResetButton(e));
         this.saveButton.click($.proxy(this.handleSaveButton, this));
         this.copyButton.click($.proxy(this.handleCopyButton, this));
         this.elevationButton.click($.proxy(this.handleElevationLookupButton, this));
-        this.changeHistButton.click($.proxy(this.handleHistoryButton, this));
+        this.editHistButton.click($.proxy(this.handleHistoryButton, this));
+        this.changeLogButton.click($.proxy(this.handleChangeLogButton, this));
+        this.deleteButton.click($.proxy(this.handleDeleteButton, this));
+        this.enableButtons(false);
+    }
+
+    toggleDeleteButton(show) {
+        this.deleteButton.closest('#delete-container').toggle(show);
+    }
+
+    enableButtons(enabled) {
+        /* Activate buttons */
+        this.editHistButton.add(this.changeLogButton).add(this.deleteButton)
+            .add(this.copyButton).prop('disabled', !enabled);
     }
 
     handleSaveButton(event) {
         event.preventDefault();
         const data = this.siteEditForm.serializeJSON();
+        if ($('#edit-change-detail-table .btn').length) {
+            if (!confirm('You have unsaved changelog edits that will be lost, continue?')) {
+                return;
+            }
+        }
         $.ajax({
             type: "POST",
             url: URL.site.edit,
@@ -49,13 +75,22 @@ export default class EditForm {
         });
     }
 
-    handleSaveResponse(response) {
-        this.messageBox.html("<ul></ul>");
-        this.messageBox.attr('style', (response.result === "SUCCESS") ? 'color:green' : 'color:red');
-        const ol = this.messageBox.find("ul");
-        $.each(response.messages, function (index, value) {
-            ol.append(`<li>${value}</li>`);
+    handleDeleteResponse(event, siteId) {
+        this.resetForm();
+        this.handleSaveResponse({
+            result: 'DELETED',
+            messages: [`Site ${siteId} has been successfully deleted.`]
         });
+    }
+
+    handleSaveResponse(response) {
+        const ok = response.result === 'SUCCESS';
+        this.messageBox.addClass('alert').html('')
+            .removeClass(ok ? 'alert-danger' : 'alert-success')
+            .addClass(ok ? 'alert-success' : 'alert-danger');
+
+        const icon = `<span class="glyphicon glyphicon-${ok ? 'ok' : 'exclamation-sign'}"></span>`;
+        this.messageBox.append(response.messages.map(v => `${icon} ${v}<br />`));
 
         if (response.result === "SUCCESS") {
             this.isReload = true;
@@ -67,7 +102,7 @@ export default class EditForm {
     loadNewSite(event, site) {
         if (!this.isReload) {
             /* clear any existing message*/
-            this.messageBox.html("");
+            this.messageBox.html("").removeClass('alert alert-danger alert-success');
         } else {
             /* Ok, we have reloaded the site after a save/edit, without clearing messages */
             this.isReload = false;
@@ -75,6 +110,11 @@ export default class EditForm {
 
         /* populate form */
         FormFiller.populateForm(this.siteEditForm, site);
+        this.handleStatusChange(true);
+        const date = this.siteEditForm.find('input[name="dateModified"]');
+        date.val(new Date(date.val()).toLocaleString());
+        this.siteEditForm.find('input[name="notify"][value="yes"]').closest('.btn').button('toggle');
+        this.enableButtons(true);
         $('html').animate({ scrollTop: 0, scrollLeft: 0 });
     }
 
@@ -82,7 +122,9 @@ export default class EditForm {
         $("#address-country-select").append(
             countries.sort((a,b) =>
                 // Sort USA, then China, then alphabetic
-                a.name == 'USA' ? -1 : b.name == 'USA' ? 1 : a.name == 'China' ? -1 : b.name == 'China' ? 1 : a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1
+                a.name == 'USA' ? -1 : b.name == 'USA' ? 1
+                : a.name == 'China' ? -1 : b.name == 'China' ? 1
+                : a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1
             ).map(
                 country => $("<option value='" + country.id + "'>" + country.name + "</option>")
             )
@@ -90,9 +132,38 @@ export default class EditForm {
 
     }
 
+    handleResetButton(event) {
+        event.preventDefault();
+        this.resetForm();
+        this.messageBox.html("").removeClass('alert alert-danger alert-success');
+    }
+
+    resetForm() {
+        EventBus.dispatch(EditEvents.clear_panels);
+        this.siteEditForm.trigger('reset');
+        this.handleStatusChange(true);
+        this.enableButtons(false);
+    }
+
     handleCopyButton() {
         this.siteEditForm.find("input[name='id']").val("");
         this.siteEditForm.find("input[name='dateModified']").val("");
+        EventBus.dispatch(EditEvents.clear_panels);
+        this.enableButtons(false);
+        this.handleStatusChange(true);
+    }
+
+    handleStatusChange(reset) {
+        const newStatus = this.siteEditForm.find('select[name="status"]').val();
+        if (reset) {
+            if (this.siteEditForm.find("input[name='id']").val()) {
+                this.status = newStatus;
+            } else {
+                this.status = null;
+            }
+        }
+        this.siteEditForm.find('input[name="notify"]').closest('.btn-group')
+            .children()[this.status == newStatus ? 'addClass' : 'removeClass']('disabled');
     }
 
     handleElevationLookupButton(event) {
@@ -178,10 +249,45 @@ export default class EditForm {
          }, 50);
     }
 
+    handleChangeLogButton(event) {
+        event.preventDefault();
+        this.changeLogButton.prop('disabled', true);
+        const siteId = this.siteEditForm.find("input[name='id']").val();
+        EventBus.dispatch(EditEvents.load_change_log_trigger, siteId);
+    }
+
+    changeLogButtonUpdate(event, loaded) {
+        const icon = this.changeLogButton.find('span');
+        this.changeLogButton.text(loaded ? " Hide Change Logs" : " Manage Change Logs")
+            .prepend(icon)[loaded ? 'addClass' : 'removeClass']('active').prop('disabled', false);
+        if (loaded && this.editHistButton.is('.active')) {
+            const siteId = this.siteEditForm.find("input[name='id']").val();
+            EventBus.dispatch(EditEvents.load_history_trigger, siteId);
+        }
+    }
+
     handleHistoryButton(event) {
         event.preventDefault();
+        this.editHistButton.prop('disabled', true);
         const siteId = this.siteEditForm.find("input[name='id']").val();
         EventBus.dispatch(EditEvents.load_history_trigger, siteId);
+    }
+
+    historyButtonUpdate(event, loaded) {
+        const icon = this.editHistButton.find('span');
+        this.editHistButton.text(loaded ? " Hide Edit History" : " View Edit History")
+            .prepend(icon)[loaded ? 'addClass' : 'removeClass']('active').prop('disabled', false);
+        if (loaded && this.changeLogButton.is('.active')) {
+            const siteId = this.siteEditForm.find("input[name='id']").val();
+            EventBus.dispatch(EditEvents.load_change_log_trigger, siteId);
+        }
+    }
+
+    handleDeleteButton(event) {
+        event.preventDefault();
+        const siteId = this.siteEditForm.find("input[name='id']").val();
+        const siteName = this.siteEditForm.find("input[name='name']").val();
+        EventBus.dispatch(EditEvents.site_delete_selection, siteId, siteName);
     }
 
 }

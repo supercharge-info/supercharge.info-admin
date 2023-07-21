@@ -1,11 +1,15 @@
 body {
     font-family: 'Roboto Flex', 'Helvetica Neue', Arial, Helvetica, sans-serif;
 }
+/* Nav */
 .navbar {
     margin-bottom: 2px;
 }
 .navbar-fixed-top .navbar-collapse, .navbar-fixed-bottom .navbar-collapse {
     max-height: calc(100vh - 50px);
+}
+.navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {
+    background-color: #ddd;
 }
 .table-bordered th, .view-table th {
     position: sticky;
@@ -17,10 +21,4 @@ body {
     background-color: #fff;
     box-shadow: inset 0px -1px 0px 0px #ddd;
     border-bottom-width: 1px !important;
-}
-#edit-sites-list-table-wrapper th {
-    top: -1px;
-}
-.dropdown-menu-links {
-    min-width: auto;
 }

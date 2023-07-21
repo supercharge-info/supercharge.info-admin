@@ -191,7 +191,7 @@
                 </ul>
             </li>
         </ul>
-        <div id="validation-web-scrape-report">
+        <div id="validation-web-scrape-report" class="fade active in">
             <div class="dataTables_processing">
                 <div>
                     <div></div>
@@ -201,7 +201,7 @@
                 </div>
             </div>
         </div>
-        <div id="validation-web-scrape-china-report" style="display: none">
+        <div id="validation-web-scrape-china-report" class="fade" style="display: none">
             <div class="dataTables_processing">
                 <div>
                     <div></div>
@@ -217,7 +217,15 @@
     PAGE: Validation
     = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = -->
     <div id="page-validation" class="page" style="display: none">
-        <table id="validation-table" class="view-table">
+        <div class="dataTables_processing">
+            <div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+        </div>
+        <table id="validation-table" class="view-table fade">
             <caption>Database Validations</caption>
             <thead>
             <tr>
@@ -276,6 +284,26 @@
                                 <option name="construction" value="CONSTRUCTION">CONSTRUCTION</option>
                                 <option name="open" value="OPEN">OPEN</option>
                             </select>
+                            <span class="notify-buttons btn-group" data-toggle="buttons">
+                                <label class="btn btn-default btn-xs active" title="publish to social media"
+                                       style="vertical-align: top; padding: 0 5px;">
+                                    <input type="radio" name="notify" value="yes" checked="checked" />
+                                    <span class="glyphicon glyphicon-bell"></span>
+                                    <strong>Notify</strong>
+                                </label>
+                                <label class="btn btn-default btn-xs" title="reduce visibility of change log"
+                                       style="vertical-align: top; padding: 0 5px;">
+                                    <input type="radio" name="notify" value="log" />
+                                    <span class="glyphicon glyphicon-eye-close"></span>
+                                    <strong>Log</strong>
+                                </label>
+                                <label class="btn btn-default btn-xs" title="skip changelog"
+                                       style="vertical-align: top; padding: 0 5px;">
+                                    <input type="radio" name="notify" value="no" />
+                                    <span class="glyphicon glyphicon-minus-sign"></span>
+                                    <strong>Skip</strong>
+                                </label>
+                            </span>
                         </td>
                     </tr>
                     <tr>
@@ -297,8 +325,8 @@
                     <tr>
                         <th>Elevation (m)</th>
                         <td>
-                            <input name="elevationMeters" size="9" maxlength="9"/> &nbsp;
-                            <button id="elevation-lookup-button">auto lookup</button>
+                            <input name="elevationMeters" type="number" size="9" maxlength="9"/> &nbsp;
+                            <button id="elevation-lookup-button" class="btn btn-sm btn-default">auto lookup</button>
                             &nbsp;&nbsp;
                             <a href="http://www.gpsvisualizer.com/elevation" target="_blank">gpsvisualizer</a>
                             &nbsp;
@@ -310,12 +338,12 @@
                     </tr>
                     <tr>
                         <th>Stall Count</th>
-                        <td><input name="stallCount" size="4"/></td>
+                        <td><input name="stallCount" inputmode="numeric" size="4"/></td>
                     </tr>
                     <tr>
                         <th>Power (kW)</th>
                         <td>
-                            <input name="powerKiloWatt" type="text" size="5" maxlength="3"/>
+                            <input name="powerKiloWatt" type="text" inputmode="numeric" size="5" maxlength="3"/>
                         </td>
                     </tr>
 
@@ -373,7 +401,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <th>Battery/Storage</th>
+                        <th>Battery/<wbr/>Storage</th>
                         <td>
                             <select name="battery">
                                 <option name="false" value="false">false</option>
@@ -402,30 +430,54 @@
 
             <div class="col-xs-12">
                 <div id="edit-site-message-div"></div>
-                <button id="edit-site-save-button" type="submit" style="padding: 4px 10px 4px 10px; font-weight: bold"
-                        title="save changes">
-                    Save
-                </button>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <button id="edit-site-reset-button" type="reset" style="padding: 4px 10px 4px 10px"
-                        title="clear all fields in this form">Reset Form
-                </button>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <button id="edit-site-copy-button" type="button" style="padding: 4px 10px 4px 10px"
-                        title="copy all fields to new, un-saved, site">Clone Site
-                </button>
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <button id="edit-site-history-button" type="submit" style="padding: 4px 10px 4px 10px"
-                        title="view detailed change history">
-                    View Change History
-                </button>
+                <div class="btn-group">
+                    <button id="edit-site-save-button" type="submit" class="btn btn-primary"
+                            title="save changes">
+                        <span class="glyphicon glyphicon-saved"></span>
+                        Save
+                    </button>
+                    <button id="edit-site-reset-button" type="reset" class="btn btn-default"
+                            title="clear all fields in this form">
+                        <span class="glyphicon glyphicon-erase"></span>
+                        Reset Form
+                    </button>
+                    <button id="edit-site-copy-button" type="button" class="btn btn-default"
+                            title="copy all fields to new, un-saved, site">
+                        <span class="glyphicon glyphicon-duplicate"></span>
+                        Clone Site
+                    </button>
+                </div>
+                &nbsp; | &nbsp;
+                <div class="btn-group">
+                    <button id="edit-site-history-button" type="submit" class="btn btn-default"
+                            title="view detailed edit history">
+                        <span class="glyphicon glyphicon-eye-open"></span>
+                        View Edit History
+                    </button>
+                    <button id="change-site-history-button" type="submit" class="btn btn-default"
+                            title="view/edit change logs">
+                        <span class="glyphicon glyphicon-tasks"></span>
+                        Manage Change Logs
+                    </button>
+                </div>
+                <div id="delete-container" style="display:hidden">
+                    &nbsp; | &nbsp;
+                    <button id="edit-site-delete-button" type="submit" class="btn btn-danger"
+                            title="permanently delete site">
+                        <span class="glyphicon glyphicon-trash"></span>
+                        Delete Site
+                    </button>
+                </div>
             </div>
 
         </form>
 
-        <table id="edit-change-detail-table" class="table table-condensed table-hover table-bordered"
-               style="margin-top: 1em">
+        <table id="edit-site-detail-table" class="table table-condensed table-hover table-bordered">
+            <thead></thead>
+            <tbody></tbody>
+        </table>
+
+        <table id="edit-change-detail-table" class="table table-condensed table-hover table-bordered">
             <thead></thead>
             <tbody></tbody>
         </table>
@@ -488,9 +540,8 @@
                 </tr>
             </table>
         </form>
-        <br/><br/>
         <div id="feature-edit-message-box"></div>
-        <br/><br/>
+        <br/>
         <table id="feature-table" class="table table-condensed table-hover table-bordered">
             <caption>Feature Announcements</caption>
             <thead></thead>
@@ -529,7 +580,7 @@
                         <input class="form-control" type="password" id="word" placeholder="Password" required>
                     </div>
                 </form>
-                <div id="login-error-box" style="display:none"></div>
+                <div id="login-error-box" class="alert alert-danger" style="display:none"></div>
             </div>
             <div class="modal-footer">
                 <button id="login-button" form="login-panel" class="btn btn-large btn-primary btn-block">Login</button>

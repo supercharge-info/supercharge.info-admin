@@ -36,9 +36,9 @@ export default class ChangeDetailView {
         $.each(data, function (index, {changeDate: { epochSecond: d }, ...e}) {
             tBody.append(`<tr>
                 <td>${e.version}</td>
-                <td>${new Date(d * 1000)[
+                <td><span title="${new Date(d * 1000).toLocaleString()}">${new Date(d * 1000)[
                     today.getTime() > d * 1000 ? 'toLocaleDateString' : 'toLocaleTimeString'
-                ]()}</td>
+                ]()}</span></td>
                 <td>${sanitize(e.username)}</td>
                 <td>${e.fieldName}</td>
                 <td>${sanitize(e.oldValue)}</td>

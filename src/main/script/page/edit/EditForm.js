@@ -102,7 +102,9 @@ export default class EditForm {
     loadNewSite(event, site) {
         if (!this.isReload) {
             /* clear any existing message*/
+            this.siteEditForm.trigger('reset');
             this.messageBox.html("").removeClass('alert alert-danger alert-success');
+            EventBus.dispatch(EditEvents.clear_panels);
         } else {
             /* Ok, we have reloaded the site after a save/edit, without clearing messages */
             this.isReload = false;
@@ -148,6 +150,7 @@ export default class EditForm {
     handleCopyButton() {
         this.siteEditForm.find("input[name='id']").val("");
         this.siteEditForm.find("input[name='dateModified']").val("");
+        this.siteEditForm.find("input[name='version']").val("");
         EventBus.dispatch(EditEvents.clear_panels);
         this.enableButtons(false);
         this.handleStatusChange(true);

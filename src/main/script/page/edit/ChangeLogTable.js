@@ -81,9 +81,9 @@ export default class ChangeLogTable {
                    <td>${changeLog.changeType}</td>
                    <td><span class="${ Status[status].className }">${status}</span></td>
                    <td>${changeLog.notify ? 'Yes' : 'No'}</td>
-                   <td>${new Date(t * 1000)[
+                   <td><span title="${new Date(t * 1000).toLocaleString()}">${new Date(t * 1000)[
                        today.getTime() > t * 1000 ? 'toLocaleDateString' : 'toLocaleTimeString'
-                   ]()}</td>
+                   ]()}</span></td>
                    <td>${changeLog.username}</td>
                </tr>`;
     }
@@ -133,8 +133,8 @@ export default class ChangeLogTable {
         event.preventDefault();
         const link = $(event.target);
         const tds = link.closest("tr").find("td");
-        const date = tds.eq(1).text();
-        const status = tds.eq(3).text();
+        const date = tds.eq(2).text();
+        const status = tds.eq(4).text();
 
         if (confirm(`Delete change log ${status} on ${date}?`)) {
             const changeLogId = link.data("id");

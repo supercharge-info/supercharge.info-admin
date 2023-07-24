@@ -49,7 +49,7 @@ export default class EditList {
             </tr>`);
             this.dataTable = this.siteListTable.DataTable({
                 data: sites,
-                order: [[9, 'desc']],
+                order: [[8, 'desc']],
                 lengthMenu: [10, 25, 100, 1000, 10000],
                 columns: [
                     { data: 'id', responsivePriority: 2 },

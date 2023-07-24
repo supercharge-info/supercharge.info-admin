@@ -40,9 +40,9 @@ export default class AccountPage {
 
         this.loginTable.show().find("tbody").html("")
             .append(response.attempts.map(attempt => `<tr>
-                <td>${ new Date(attempt.date)[
+                <td><span title="${new Date(attempt.date).toLocaleString()}">${ new Date(attempt.date)[
                     today > new Date(attempt.date) ? 'toLocaleDateString' : 'toLocaleTimeString'
-                ]() }</td>
+                ]() }</span></td>
                 <td>${ attempt.result }</td>
                 <td>${ attempt.remoteIP }</td>
             </tr>`));
@@ -101,9 +101,11 @@ export default class AccountPage {
                         {
                             data: 'changeDate.epochSecond',
                             searchable: false,
-                            render: (d, t) => t == 'sort' ? d : new Date(d * 1000)[
-                                d * 1000 < today.getTime() ? 'toLocaleDateString' : 'toLocaleTimeString'
-                            ]() }
+                            render: (d, t) => t == 'sort' ? d : `<span title="${new Date(d * 1000).toLocaleString()}">` +
+                                new Date(d * 1000)[
+                                    d * 1000 < today.getTime() ? 'toLocaleDateString' : 'toLocaleTimeString'
+                                ]() + '</span>'
+                        }
                     ],
                     dom: "<'row'<'col-sm-4'f><'col-sm-4 dataTables_middle dataTables_title'><'col-sm-4'l>>"
                         + "<'row'<'col-sm-12'tr>><'row'<'col-sm-5'i><'col-sm-7'p>>"

@@ -107,8 +107,17 @@ export default class EditList {
             event.preventDefault();
 
             const navHeight = $('.navbar-header').height() || $('.navbar').height();
+            const position = $(window).scrollTop();
             const input = $(this.dataTable.table().container()).find('input');
-            $('html').animate({ scrollTop: input.offset().top - navHeight - 10 }, { complete: () => input.focus() });
+            const options = {};
+
+            // Perform scroll
+            if (position + navHeight <= input.offset().top && position + $(window).height() >= input.offset().top + input.height()) {
+                input.focus().select();
+            } else {
+                options.complete = () => input.focus().select();
+            }
+            $('html').animate({ scrollTop: input.offset().top - navHeight - 10 }, options);
         }
     }
 

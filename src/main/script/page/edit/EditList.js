@@ -22,14 +22,14 @@ export default class EditList {
     }
 
     loadSiteList() {
-        $.getJSON(URL.site.loadAll, $.proxy(this.populateEditSiteTable, this));
+        this.populateEditSiteTable();
     }
 
     deleteSite(event, siteId) {
         this.dataTable.row((i,d) => d.id == siteId).remove().draw();
     }
 
-    populateEditSiteTable(sites) {
+    populateEditSiteTable() {
         if (!this.dataTable) {
             this.siteListTable.on("click", "tbody tr", e => this.handleEditClick(e));
             const today = new Date();
@@ -48,7 +48,8 @@ export default class EditList {
                 <th>Links</th>
             </tr>`);
             this.dataTable = this.siteListTable.DataTable({
-                data: sites,
+                processing: true,
+                ajax: { url: URL.site.loadAll, dataSrc: '' },
                 order: [[8, 'desc']],
                 lengthMenu: [10, 25, 100, 1000, 10000],
                 columns: [
@@ -98,7 +99,7 @@ export default class EditList {
             $(this.dataTable.table().container()).find('.row:first > div:eq(1)').text('All Sites');
             $(window).keydown($.proxy(this.handleFindShortcut, this));
         } else {
-            this.dataTable.clear().rows.add(sites).draw();
+            this.dataTable.ajax.reload(null, false);
         }
     }
 

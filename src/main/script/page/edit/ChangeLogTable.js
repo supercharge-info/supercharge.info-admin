@@ -12,6 +12,7 @@ export default class ChangeLogTable {
             .on("click", "a.edit-change-log", ChangeLogTable.handleEditClick)
             .on("click", "a.save-change-log", e => this.handleSaveClick(e))
             .on("click", "a.cancel-edit-change-log", ChangeLogTable.handleCancelClick);
+        this.table.parent().on("hidden.bs.collapse", () => this.table.find("thead, tbody").html(""));
 
         EventBus.addListener("change-log-deleted-event", this.handleDeletedChange, this);
         EventBus.addListener(EditEvents.load_change_log_trigger, this.loadHistory, this);
@@ -59,11 +60,12 @@ export default class ChangeLogTable {
             lastChangeType.html('UPDATE (<a href="#" class="fix-change-log">fix</a>)');
         }
 
+        this.table.parent().collapse('show');
         EventBus.dispatch(EditEvents.load_change_log_complete, true);
     }
 
     clearTable() {
-        this.table.find("tbody, thead").html("");
+        this.table.parent().collapse('hide');
         EventBus.dispatch(EditEvents.load_change_log_complete, false);
     }
 

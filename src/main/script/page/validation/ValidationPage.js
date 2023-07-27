@@ -28,25 +28,49 @@ ValidationPage.prototype.populateTable = function (data) {
         return a;
     }, {});
 
-    if (!this.tabs) {
-        this.tabs = $('<ul>').addClass('nav nav-pills')
+    if (!this.tabs || this.tabs.is('.fade')) {
+        this.tabs = (this.tabs?.html('') || $('<ul>')).addClass('fade nav nav-pills')
             .append(Object.keys(this.data).map((c) => {
                 const count = this.data[c].reduce((n, v) => n + v.failureRows.length, 0);
                 const tab = $('<a href="#" data-target="#validation-table">')
-                    .text(c.replace('_',' ').replace(/(\w)(\w+)/g, (a,s,r) => s + r.toLowerCase()))
+                    .html(ValidationPage.tabTitle(c))
                     .click(e => {
                         e.preventDefault();
                         $(e.target).tab('show');
-                    }).on('shown.bs.tab', () =>
-                        ValidationPage.showCategory(tableBody, this.data[c]));
+                    }).on('shown.bs.tab', () => {
+                        this.tabs.addClass('in');
+                        ValidationPage.showCategory(tableBody, this.data[c]);
+                    });
                 if (count > 0) {
                     tab.append(' ').append($('<span class="badge">').text(count));
                 }
                 return $('<li>').prop('role', 'presentation').append(tab);
-            })).replaceAll(this.validationTable.prev());
+            })).append($('<li>').prop('role', 'presentation').append(
+                $('<a href="#">').html(ValidationPage.tabTitle('REFRESH')).click(e => this.refresh(e))
+            )).insertAfter(this.validationTable.prevAll('.dataTables_processing').removeClass('in'));
         this.tabs.find('a:first').tab('show');
     }
 
+};
+
+ValidationPage.prototype.refresh = function (event) {
+    event.preventDefault();
+    this.tabs.add(this.validationTable).removeClass('in')
+        .prevAll('.dataTables_processing').addClass('in');
+    this.loaded = false;
+    this.onPageShow();
+};
+
+ValidationPage.tabTitle = function (category) {
+    const icon = {
+        SUPERCHARGER: 'road',
+        ADDRESS: 'globe',
+        CHANGE_LOG: 'tasks',
+        USER_CONFIG: 'user',
+        REFRESH: 'refresh'
+    }[category] || 'asterisk';
+    const text = category.replace('_',' ').replace(/(\w)(\w+)/g, (a,s,r) => s + r.toLowerCase());
+    return `<span class="glyphicon glyphicon-${ icon }"></span> ${ text }`;
 };
 
 ValidationPage.showCategory = function (tableBody, data) {

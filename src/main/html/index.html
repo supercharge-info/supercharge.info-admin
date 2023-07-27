@@ -41,9 +41,11 @@
                     <a id="username-link" class="dropdown-toggle" data-toggle="dropdown" role="button"
                        aria-haspopup="true" aria-expanded="false" style="display: none"></a>
                     <ul class="dropdown-menu">
-                        <li><a class="page dropdown-item" id="page-link-account" href="#account">Account History</a></li>
+                        <li><a class="page dropdown-item" id="page-link-account" href="#account"><span
+                            class="glyphicon glyphicon-stats"></span> Account History</a></li>
                         <li class="divider"></li>
-                        <li><a id="logout-link" class="dropdown-item" href="#">Log Out</a></li>
+                        <li><a id="logout-link" class="dropdown-item" href="#"><span
+                            class="glyphicon glyphicon-log-out"></span> Log Out</a></li>
                     </ul>
 
                 </li>
@@ -178,10 +180,10 @@
     = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = -->
     <div id="page-comparison" class="page" style="display: none">
         <ul class="nav nav-pills" style="margin-bottom: 15px">
-            <li role="presentation" class="active"><a href="/service/supercharge/validation/webscrape" data-target="#validation-web-scrape-report">Worldwide</a></li>
-            <li role="presentation"><a href="/service/supercharge/validation/webscrape-china" data-target="#validation-web-scrape-china-report">China</a></li>
+            <li role="presentation" class="active"><a href="/service/supercharge/validation/webscrape" data-target="#validation-web-scrape-report"><span class="glyphicon glyphicon-globe"></span> Worldwide</a></li>
+            <li role="presentation"><a href="/service/supercharge/validation/webscrape-china" data-target="#validation-web-scrape-china-report"><span class="glyphicon glyphicon-plane"></span> China</a></li>
             <li role="presentation" class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button">Json Sources <span class="caret" /></a>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"><span class="glyphicon glyphicon-cloud-download"></span> Json Sources <span class="caret" /></a>
                 <ul class="dropdown-menu">
                     <li><a href="/service/supercharge/validation/tesla-source" target="_blank">Raw Worldwide Locations</a></li>
                     <li><a href="/service/supercharge/validation/china-source" target="_blank">Raw China Loations</a></li>
@@ -190,6 +192,7 @@
                     <li><a href="/service/supercharge/validation/processed-china-source" target="_blank">Processed China Locations</a></li>
                 </ul>
             </li>
+            <li role="presentation"><a href="#refresh"><span class="glyphicon glyphicon-refresh"></span> Refresh</a></li>
         </ul>
         <div id="validation-web-scrape-report" class="fade active in">
             <div class="dataTables_processing">
@@ -201,7 +204,7 @@
                 </div>
             </div>
         </div>
-        <div id="validation-web-scrape-china-report" class="fade" style="display: none">
+        <div id="validation-web-scrape-china-report" class="fade">
             <div class="dataTables_processing">
                 <div>
                     <div></div>
@@ -217,7 +220,7 @@
     PAGE: Validation
     = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = -->
     <div id="page-validation" class="page" style="display: none">
-        <div class="dataTables_processing">
+        <div class="dataTables_processing fade in">
             <div>
                 <div></div>
                 <div></div>
@@ -472,15 +475,20 @@
 
         </form>
 
-        <table id="edit-site-detail-table" class="table table-condensed table-hover table-bordered">
-            <thead></thead>
-            <tbody></tbody>
-        </table>
+        <div class="collapse">
+            <table id="edit-site-detail-table" class="table table-condensed table-hover table-bordered">
+                <thead></thead>
+                <tbody></tbody>
+            </table>
+        </div>
 
-        <table id="edit-change-detail-table" class="table table-condensed table-hover table-bordered">
-            <thead></thead>
-            <tbody></tbody>
-        </table>
+        <div class="collapse">
+            <table id="edit-site-detail-table" class="table table-condensed table-hover table-bordered">
+            <table id="edit-change-detail-table" class="table table-condensed table-hover table-bordered">
+                <thead></thead>
+                <tbody></tbody>
+            </table>
+        </div>
 
         <table id="edit-sites-list-table" class="table table-condensed table-hover table-bordered" style="width:100%">
             <thead></thead>

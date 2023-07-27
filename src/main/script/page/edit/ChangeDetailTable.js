@@ -6,6 +6,8 @@ import { sanitize } from 'dompurify';
 export default class ChangeDetailView {
     constructor() {
         this.table = $("#edit-site-detail-table");
+        this.table.parent().on("hidden.bs.collapse", () => this.table.find("tbody, thead").html(""));
+
         EventBus.addListener(EditEvents.load_history_trigger, this.loadHistory, this);
         EventBus.addListener(EditEvents.clear_panels, this.clearTable, this);
     }
@@ -46,11 +48,12 @@ export default class ChangeDetailView {
             </tr>`);
         });
 
+        this.table.parent().collapse('show');
         EventBus.dispatch(EditEvents.load_history_complete, true);
     }
 
     clearTable() {
-        this.table.find("tbody, thead").html("");
+        this.table.parent().collapse('hide');
         EventBus.dispatch(EditEvents.load_history_complete, false);
     }
 }

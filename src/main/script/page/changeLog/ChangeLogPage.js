@@ -20,10 +20,10 @@ export default class ChangeLogPage {
     }
 
     loadChangeLogList() {
-        $.getJSON(URL.change.list, $.proxy(this.populateChanges, this));
+        this.populateChanges();
     }
 
-    populateChanges(changeLogs) {
+    populateChanges() {
         if (!this.dataTable) {
             this.changeLogListTable.on("click", "a.change-log-delete-trigger", ChangeLogPage.handleDeleteClick);
 
@@ -38,7 +38,8 @@ export default class ChangeLogPage {
                 <th>Site Status</th>
             </tr>`);
             this.dataTable = this.changeLogListTable.DataTable({
-                data: changeLogs,
+                processing: true,
+                ajax: { url: URL.change.list, dataSrc: '' },
                 order: [[1, 'desc']],
                 lengthMenu: [25, 100, 1000, 20000],
                 columns: [
@@ -73,7 +74,7 @@ export default class ChangeLogPage {
             $(this.dataTable.table().container()).find('.row:first > div:eq(1)').text('All Changes');
             $(window).keydown($.proxy(this.handleFindShortcut, this));
         } else {
-            this.dataTable.clear().rows.add(changeLogs).draw();
+            this.dataTable.ajax.reload(null, false);
         }
     }
 
@@ -82,8 +83,17 @@ export default class ChangeLogPage {
             event.preventDefault();
 
             const navHeight = $('.navbar-header').height() || $('.navbar').height();
+            const position = $(window).scrollTop();
             const input = $(this.dataTable.table().container()).find('input');
-            $('html').animate({ scrollTop: input.offset().top - navHeight - 10 }, { complete: () => input.focus() });
+            const options = {};
+
+            // Perform scroll
+            if (position + navHeight <= input.offset().top && position + $(window).height() >= input.offset().top + input.height()) {
+                input.focus().select();
+            } else {
+                options.complete = () => input.focus().select();
+            }
+            $('html').animate({ scrollTop: input.offset().top - navHeight - 10 }, options);
         }
     }
 

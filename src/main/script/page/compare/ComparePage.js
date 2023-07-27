@@ -39,7 +39,7 @@ class ComparePage {
     }
 
     populateWebScrapeReport(reportHtml) {
-        this.validationWebScrapeDiv.html(reportHtml);
+        this.validationWebScrapeDiv.children('.dataTables_processing').hide().after(reportHtml);
 
         this.missingLocalSitesTable = $(`#missing-local-sites-table${this.suffix}`);
         this.missingTeslaSitesTable = $(`#missing-tesla-sites-table${this.suffix}`);
@@ -124,16 +124,25 @@ class ComparePage {
     }
 
     handleTabChange(e) {
-        const elem = $(e.target);
+        const elem = $(e.target).closest('a');
         if (elem.attr('href') == '#') {
             return;
         }
-        e.preventDefault();
-        elem.tab('show').closest('.nav').nextAll().hide();
 
-        $(elem.data('target')).show();
-        if (!this.other) {
-            this.other = new ComparePage(true);
+        e.preventDefault();
+        if (elem.attr('href') == '#refresh') {
+            const scope = this.validationWebScrapeDiv.is(':visible') ? this : this.other;
+            const load = scope.validationWebScrapeDiv.children('.dataTables_processing');
+            if (!load.is(':visible')) {
+                scope.loaded = false;
+                load.show().nextAll().remove();
+            }
+        } else {
+            elem.tab('show').closest('.nav').nextAll().hide();
+            $(elem.data('target')).show();
+            if (!this.other) {
+                this.other = new ComparePage(true);
+            }
         }
         this.onPageShow();
     }
@@ -229,14 +238,22 @@ class ComparePage {
             const midTableHeight = $(this.missingTeslaSitesTable.table().container()).height();
             const topTablePosition = $(this.missingLocalSitesTable.table().container()).offset().top;
             const topTableHeight = $(this.missingLocalSitesTable.table().container()).height();
+            const options = {};
 
             // Determine best search box
             const input = Math.abs(position - bottomTablePosition) <= Math.abs(position - midTablePosition - midTableHeight)
-                ? $(this.fieldMismatchesTable.table().container()).find('input').focus()
+                ? $(this.fieldMismatchesTable.table().container()).find('input')
                 : Math.abs(position - midTablePosition) <= Math.abs(position - topTablePosition - topTableHeight)
                 ? $(this.missingTeslaSitesTable.table().container()).find('input')
                 : $(this.missingLocalSitesTable.table().container()).find('input');
-            $('html').animate({ scrollTop: input.offset().top - navHeight - 10 }, { complete: () => input.focus() });
+
+            // Perform scroll
+            if ($(window).scrollTop() + navHeight <= input.offset().top && position + 200 >= input.offset().top + input.height()) {
+                input.focus().select();
+            } else {
+                options.complete = () => input.focus().select();
+            }
+            $('html').animate({ scrollTop: input.offset().top - navHeight - 10 }, options);
         }
     }
 

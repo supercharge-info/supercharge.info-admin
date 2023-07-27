@@ -1,3 +1,18 @@
+/* Tables */
+.table-bordered th, .view-table th {
+    position: sticky;
+    top: 50px;
+    /* To prevent relative children from appearing above: */
+    z-index: 1;
+}
+.collapsing .table-bordered th, .collapsing .view-table th {
+    position: static;
+}
+.table-bordered th {
+    background-color: #fff;
+    box-shadow: inset 0px -1px 0px 0px #ddd;
+    border-bottom-width: 1px !important;
+}
 /* DataTables */
 div.dataTables_wrapper div.dataTables_middle {
     display: flex;

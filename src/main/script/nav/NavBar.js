@@ -15,32 +15,24 @@ export default class NavBar {
         this.login = new LoginDialog();
         this.loginLink = $("#login-link");
         this.usernameLink = $("#username-link");
-
-        $("#logout-link").click(NavBar.handleLogoutClick);
-        EventBus.addListener("change-page", this.changePage, this);
-        EventBus.addListener("login-response", this.handleLoginCheckResponse, this);
-
+        this.currentPage = 'api';
         this.pageMap = {
             api: {page: new ApiPage()}
         };
+
         this.loading = true;
-        import('./DeferredPages').then(({ default: getPages }) => {
-            this.pageMap = { ...this.pageMap, ...getPages() };
-            if (this.loading !== true) {
-                $('#loading').modal('hide').on('hidden.bs.modal', e => $(e.target).remove());
-                EventBus.dispatch("change-page", this.loading);
-            }
+        $.when(import('./DeferredPages').then(({ default: getPages }) => {
+                this.pageMap = { ...this.pageMap, ...getPages() };
+            }), $.getJSON(URL.login.check, r => {
+                EventBus.dispatch("login-response", r);
+            })
+        ).always(() => {
+            const newPage = this.loading;
             this.loading = false;
-        });
-    }
-
-    setInitialPage() {
-        EventBus.dispatch("change-page", "api");
-
-        $.getJSON(URL.login.check, r => {
-            EventBus.dispatch("login-response", r);
-
-            if (currentUser.hasRole('editor')) {
+            if (newPage !== true) {
+                $('#loading').modal('hide').on('hidden.bs.modal', e => $(e.target).remove());
+                EventBus.dispatch("change-page", newPage);
+            } else if (currentUser.hasRole('editor')) {
                 EventBus.dispatch("change-page", "edit");
             } else if (currentUser.isAuthenticated()) {
                 EventBus.dispatch("change-page", "account");
@@ -51,6 +43,10 @@ export default class NavBar {
     initListeners() {
         $("#navbar-menu-item-list").find("a[href]").click(NavBar.handlePageChangeClick);
         $("body").click(NavBar.autoCloseCollapsedNavBar);
+
+        $("#logout-link").click(NavBar.handleLogoutClick);
+        EventBus.addListener("change-page", this.changePage, this);
+        EventBus.addListener("login-response", this.handleLoginCheckResponse, this);
     }
 
     /**
@@ -75,6 +71,17 @@ export default class NavBar {
         const { role, page } = this.pageMap[newPageName] || {};
         if (newPageName === this.currentPage) {
             return;
+        } else if (this.loading) {
+            this.loading = newPageName;
+            setTimeout(() => {
+                if(this.loading && !$('#loading').length) {
+                    $('<div class="modal fade" id="loading" tabindex="-1" role="dialog">').append(
+                        $('<div class="modal-dialog modal-dialog-centered modal-sm">').append(
+                            $('<div class="modal-content">').html('<div class="modal-body">Loading, please wait...</div>')
+                        )
+                    ).appendTo('body').on('hidden.bs.modal', e => $(e).remove()).modal({ backdrop: 'static', keyboard: false });
+                }
+            }, 500);
         } else if (page) {
             if (role && !currentUser.isAuthenticated()) {
                 this.login.show(newPageName);
@@ -90,14 +97,6 @@ export default class NavBar {
             this.currentPage = newPageName;
             this.showCurrentPage();
             page.onPageShow();
-        } else if (this.loading) {
-            this.loading = newPageName;
-            setTimeout(() => {
-                if(this.loading && !$('#loading').length) {
-                    $('<div class="modal fade" id="loading" tabindex="-1" role="dialog"><div class="modal-dialog modal-dialog-centered modal-sm"><div class="modal-content"><div class="modal-body">Loading, please wait...</div></div></div></div>').appendTo('body')
-                    .on('hidden.bs.modal', e => $(e).remove()).modal({ backdrop: 'static', keyboard: false });
-                }
-            }, 500);
         }
     }
 

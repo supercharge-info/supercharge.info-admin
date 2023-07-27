@@ -11,14 +11,3 @@ body {
 .navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {
     background-color: #ddd;
 }
-.table-bordered th, .view-table th {
-    position: sticky;
-    top: 50px;
-    /* To prevent relative children from appearing above: */
-    z-index: 1;
-}
-.table-bordered th {
-    background-color: #fff;
-    box-shadow: inset 0px -1px 0px 0px #ddd;
-    border-bottom-width: 1px !important;
-}

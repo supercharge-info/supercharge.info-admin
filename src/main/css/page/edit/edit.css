@@ -29,3 +29,23 @@ table.edit-table td {
 .dropdown-menu-links {
     min-width: auto;
 }
+.counts {
+    margin-left: 8px;
+    font-size: smaller;
+}
+.counts th {
+    background-color: #bdf;
+    padding: 8px;
+}
+.counts td {
+    background-color: #def;
+}
+.gray {
+    background-color: #ddd !important;
+}
+.editing td {
+    background-color: #ff0;
+}
+.separator {
+    border-top: 1px solid #000;
+}

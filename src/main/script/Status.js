@@ -23,7 +23,22 @@ const Status = {
         value: 'OPEN',
         displayName: "Open",
         className: "label label-success"
-	}
+	},
+    VOTING: {
+        value: 'VOTING',
+        displayName: "Voting",
+        className: "label label-info"
+    },
+    PLAN: {
+        value: 'PLAN',
+        displayName: "Plan",
+        className: "label label-info"
+    },
+    EXPANDING: {
+        value: 'EXPANDING',
+        displayName: "Expanding",
+        className: "label label-success"
+    }
 };
 
 export default Status;

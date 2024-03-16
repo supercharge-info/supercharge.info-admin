@@ -6,6 +6,11 @@ const EditEvents = {
     site_list_changed: "site_list_changed",
 
     /**
+     * Indicates a site has been selected or the table has been redrawn, and highlighting on the list should be updated.
+     */
+    site_list_highlight: "site_list_highlight",
+
+    /**
      * Indicates that the current site has been deleted, and that the form should be reset/list reloaded.
      */
     site_deleted: "site_deleted",

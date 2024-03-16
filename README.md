@@ -24,7 +24,7 @@ http://mydevsite:9393/ or http://mydevsite.dev.supercharge.info:9393/
 
 ### Package
 
-`npm run build`
+`npm run prodbuild`
 
 ### Release version and push to origin/master
 

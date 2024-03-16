@@ -14,7 +14,6 @@ module.exports = env => {
         devServer: {
             // Adjusting parameters can be done by adding args to "npm run start" -- for example:
             // npm run start -- --env port=9393 --env open --env hosts=subdomain1.www.dev.supercharge.info,subdomain2.www.dev.supercharge.info
-            compress: false,
             port: env.port ?? 9292,
             host: env.open ? "0.0.0.0" : "localhost",
             allowedHosts: env.hosts?.split(",") ?? ["localhost"],
@@ -31,7 +30,7 @@ module.exports = env => {
         },
         entry: './src/main/script/main.js',
         infrastructureLogging: {
-            debug: env.api && [name => name.includes('webpack-dev-server')]
+            debug: !env.api && [name => name.includes('webpack-dev-server')]
         },
         module: {
             rules: [
@@ -57,8 +56,19 @@ module.exports = env => {
                 // This is here only so that webpack doesn't try to process font files referenced by bootstrap css.
                 //
                 {
-                    test: /\.(woff2?|ttf|eot|svg)$/i,
+                    test: /\.(woff2?|ttf|eot)$/i,
                     type: 'asset/resource'
+                },
+                //
+                // Make images available to import/reference from JS.
+                //
+                // https://webpack.js.org/guides/asset-modules/
+                {
+                    test: /\.(gif|png|svg)$/,
+                    type: 'asset/resource',
+                    generator: {
+                        filename: 'images/[name][ext]'
+                    }
                 }
             ]
         },
@@ -116,7 +126,7 @@ module.exports = env => {
             })
         ]
     };
-    if (env.WEBPACK_SERVE) {
+    if (process.env.NODE_ENV === 'development') {
         console.log("Using config:");
         console.log(config.devServer);
     }

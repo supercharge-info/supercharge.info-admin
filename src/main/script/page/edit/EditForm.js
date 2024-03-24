@@ -12,6 +12,9 @@ export default class EditForm {
         this.siteEditForm = $('#site-edit-form');
         this.messageBox = $("#edit-site-message-div");
 
+        $.getJSON(URL.data.country, $.proxy(this.populateCountryOptions, this));
+        $.getJSON(URL.data.parking, $.proxy(this.populateParkingOptions, this));
+
         EventBus.addListener(EditEvents.site_loaded, this.loadNewSite, this);
         EventBus.addListener(EditEvents.site_reset, this.resetForm, this);
         EventBus.addListener(EditEvents.site_deleted, this.handleDeleteResponse, this);
@@ -19,12 +22,11 @@ export default class EditForm {
         EventBus.addListener(EditEvents.load_change_log_complete, this.changeLogButtonUpdate, this);
 
         this.siteEditForm.find('select[name="status"]').on('change', () => this.handleStatusChange());
+        this.siteEditForm.find('select[name="address[countryId]"]').on('change', () => this.handleCountryChange());
         this.latitudeInput = $("#latitude-input");
         this.latitudeInput.on('paste', $.proxy(this.handleLatitudeChange, this));
         this.longitudeInput = $("#longitude-input");
         this.longitudeInput.on('paste', $.proxy(this.handleLongitudeChange, this));
-
-        $.getJSON(URL.data.country, $.proxy(this.populateCountryOptions, this));
 
         this.initButtons();
     }
@@ -101,7 +103,7 @@ export default class EditForm {
 
     loadNewSite(event, site) {
         if (!this.isReload) {
-            /* clear any existing message*/
+            /* clear any existing message */
             this.siteEditForm.trigger('reset');
             this.messageBox.html("").removeClass('alert alert-danger alert-success');
             EventBus.dispatch(EditEvents.clear_panels);
@@ -113,14 +115,18 @@ export default class EditForm {
         /* populate form */
         FormFiller.populateForm(this.siteEditForm, site);
         this.handleStatusChange(true);
+        this.handleCountryChange();
         const date = this.siteEditForm.find('input[name="dateModified"]');
         date.val(new Date(date.val()).toLocaleString());
         this.siteEditForm.find('input[name="notify"][value="yes"]').closest('.btn').button('toggle');
         this.enableButtons(true);
         $('html').animate({ scrollTop: 0, scrollLeft: 0 });
+
+        EventBus.dispatch(EditEvents.site_list_highlight, site.id);
     }
 
     populateCountryOptions(countries) {
+        this.countries = Object.fromEntries(countries.map(c => [c.id, c]));
         $("#address-country-select").append(
             countries.sort((a,b) =>
                 // Sort USA, then China, then alphabetic
@@ -128,10 +134,18 @@ export default class EditForm {
                 : a.name == 'China' ? -1 : b.name == 'China' ? 1
                 : a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1
             ).map(
-                country => $("<option value='" + country.id + "'>" + country.name + "</option>")
+                c => $("<option value='" + c.id + "'>" + c.name + "</option>")
             )
         );
+    }
 
+    populateParkingOptions(parking) {
+        this.parking = Object.fromEntries(parking.map(p => [p.parkingId, p]));
+        $("#parking-select").append(
+            parking.map(
+                p => $(`<option value='${p.parkingId}' title='${p.description}'>${p.name}</option>`)
+            )
+        );
     }
 
     handleResetButton(event) {
@@ -141,9 +155,11 @@ export default class EditForm {
     }
 
     resetForm() {
+        EventBus.dispatch(EditEvents.site_list_highlight, 0);
         EventBus.dispatch(EditEvents.clear_panels);
         this.siteEditForm.trigger('reset');
         this.handleStatusChange(true);
+        this.handleCountryChange();
         this.enableButtons(false);
     }
 
@@ -151,6 +167,7 @@ export default class EditForm {
         this.siteEditForm.find("input[name='id']").val("");
         this.siteEditForm.find("input[name='dateModified']").val("");
         this.siteEditForm.find("input[name='version']").val("");
+        EventBus.dispatch(EditEvents.site_list_highlight, 0);
         EventBus.dispatch(EditEvents.clear_panels);
         this.enableButtons(false);
         this.handleStatusChange(true);
@@ -167,6 +184,30 @@ export default class EditForm {
         }
         this.siteEditForm.find('input[name="notify"]').closest('.btn-group')
             .children()[this.status == newStatus ? 'addClass' : 'removeClass']('disabled');
+    }
+
+    handleCountryChange() {
+        if (!this.countries) return;
+        const PLUG_MAP = {
+            "plugTPC"       : "plugs[tpc]",
+            "plugNACS"      : "plugs[nacs]",
+            "plugCCS1"      : "plugs[ccs1]",
+            "plugCCS2"      : "plugs[ccs2]",
+            "plugType2"     : "plugs[type2]",
+            "plugGBT"       : "plugs[gbt]"
+        };
+        const newCountry = this.countries[this.siteEditForm.find('select[name="address[countryId]"]').val()];
+        for (var x in PLUG_MAP) {
+            var plugField = this.siteEditForm.find(`input[name="${PLUG_MAP[x]}"]`);
+            if (newCountry && newCountry[x]) {
+                plugField[0].removeAttribute('readonly');
+                plugField.removeClass('gray');
+            } else {
+                plugField[0].setAttribute('readonly', true);
+                plugField[0].value = '';
+                plugField.addClass('gray');
+            }
+        }
     }
 
     handleElevationLookupButton(event) {

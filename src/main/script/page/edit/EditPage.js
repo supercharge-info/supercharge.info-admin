@@ -21,6 +21,7 @@ export default class EditPage {
         }
 
         this.editList.loadSiteList();
+        this.editForm.resetForm();
         this.editForm.toggleDeleteButton(currentUser.hasRole('admin'));
     }
 

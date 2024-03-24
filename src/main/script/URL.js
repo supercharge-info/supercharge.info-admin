@@ -47,7 +47,8 @@ U.feature = {
 };
 
 U.data = {
-    country: mvc + "/countryAll"
+    country: mvc + "/countryAll",
+    parking: mvc + "/parking"
 };
 
 

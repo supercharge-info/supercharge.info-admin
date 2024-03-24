@@ -14,11 +14,13 @@ export default class EditList {
     constructor() {
         this.siteListTable = $("#edit-sites-list-table");
         this.siteEditForm = $('#site-edit-form');
+        this.currentSiteId = null;
         new SiteDeleteAction();
         new SiteLoadAction();
 
         EventBus.addListener(EditEvents.site_list_changed, this.loadSiteList, this);
         EventBus.addListener(EditEvents.site_deleted, this.deleteSite, this);
+        EventBus.addListener(EditEvents.site_list_highlight, this.handleSiteListHighlight, this);
     }
 
     loadSiteList() {
@@ -32,6 +34,7 @@ export default class EditList {
     populateEditSiteTable() {
         if (!this.dataTable) {
             this.siteListTable.on("click", "tbody tr", e => this.handleEditClick(e));
+            this.siteListTable.on("draw.dt", e => this.handleSiteListHighlight(e));
             const today = new Date();
             today.setHours(0, 0, 0, 0);
 
@@ -51,7 +54,7 @@ export default class EditList {
                 processing: true,
                 ajax: { url: URL.site.loadAll, dataSrc: '' },
                 order: [[8, 'desc']],
-                lengthMenu: [10, 25, 100, 1000, 10000],
+                lengthMenu: [10, 25, 100, 1000],
                 columns: [
                     { data: 'id', responsivePriority: 2 },
                     { data: 'name', render: sanitize, className: 'all' },
@@ -131,6 +134,18 @@ export default class EditList {
         }
     }
 
+    handleSiteListHighlight(event, siteId) {
+        if (siteId >= 0) this.currentSiteId = siteId;
+        /* highlight table row */
+        const rows = this.siteListTable.find('tr');
+        rows.each(row => {
+            if (rows[row].firstElementChild.innerHTML == this.currentSiteId) {
+                rows[row].classList.add("editing");
+            } else {
+                rows[row].classList.remove("editing");
+            }
+        });
+    }
 }
 
 

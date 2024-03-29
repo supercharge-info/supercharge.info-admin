@@ -27,12 +27,12 @@ const Status = {
     VOTING: {
         value: 'VOTING',
         displayName: "Voting",
-        className: "label label-info"
+        className: "label label-plan"
     },
     PLAN: {
         value: 'PLAN',
         displayName: "Plan",
-        className: "label label-info"
+        className: "label label-plan"
     },
     EXPANDING: {
         value: 'EXPANDING',

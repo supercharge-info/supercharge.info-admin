@@ -42,8 +42,8 @@ export default class EditList {
                 <th>Id</th>
                 <th>Name</th>
                 <th>Status</th>
-                <th>Date Opened</th>
-                <th>Power (kW)</th>
+                <th>Opened</th>
+                <th title="Max power (kW)">Power</th>
                 <th>Stalls</th>
                 <th>Other EVs</th>
                 <th>Version</th>
@@ -63,11 +63,11 @@ export default class EditList {
                         render: d => `<span class="${ Status[d].className }">${ d }</span>`,
                         className: 'all'
                     },
-                    { data: 'dateOpened', defaultContent: '', searchable: false, responsivePriority: 2 },
-                    { data: 'powerKiloWatt', searchable: false, className: 'all' },
-                    { data: 'stallCount', searchable: false, className: 'all' },
+                    { data: 'dateOpened', defaultContent: '', responsivePriority: 2 },
+                    { data: 'powerKiloWatt', className: 'number' },
+                    { data: 'stallCount', className: 'number' },
                     { data: 'otherEVs', searchable: false, responsivePriority: 3 },
-                    { data: 'version', searchable: false, responsivePriority: 4 },
+                    { data: 'version', searchable: false, responsivePriority: 4, className: 'number' },
                     {
                         data: 'dateModified',
                         searchable: false,
@@ -78,19 +78,22 @@ export default class EditList {
                     {
                         data: null,
                         searchable: false,
-                        render: (d,t,r) =>
-                            `<div class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Links <span class="caret"/></a>
-                                <ul class="dropdown-menu dropdown-menu-right dropdown-menu-links">
-                                    <li><a href="/map?center=${r.gps.latitude},${r.gps.longitude}&zoom=15" target="_blank">map</a>
-                                    <li><a href="https://www.google.com/maps/search/?api=1&query=${
-                                        encodeURI(`${r.address.street||''} ${r.address.city||''} ${r.address.state||''} ${r.address.zip||''} ${r.address.country||''}`)
-                                    }" target="_blank">gmap</a></li>
-                                    ${r.urlDiscuss ? `<li><a href="${r.urlDiscuss}" target="_blank">forum</a></li>` : ''}
-                                    ${r.locationId ? `<li><a href="https://www.tesla.c${r.address.country=='China' && !['Hong Kong', 'Macau'].includes(r.address.state) ? 'n' : 'om'}/findus/location/supercharger/${r.locationId}" target="_blank">tesla.c${r.address.country=='China' && !['Hong Kong', 'Macau'].includes(r.address.state) ? 'n' : 'om'}</a></li>` : ''}
-                                </ul>
-                            </div>`,
-                            className: 'all'
+                        orderable: false,
+                        render: (d,t,r) => {
+                            const gmapQuery = encodeURI(`${r.address.street||''} ${r.address.city||''} ${r.address.state||''} ${r.address.zip||''} ${r.address.country||''}`);
+                            const teslaSuffix = r.address.country == 'China' && !['Hong Kong', 'Macau'].includes(r.address.state) ? 'n' : 'om';
+                            const psLink = "https://api.plugshare.com/view/" + (r.plugshareId ? `location/${r.plugshareId}` : `map?latitude=${r.gps.latitude}&longitude=${r.gps.longitude}&spanLat=0.05&spanLng=0.05`);
+                            const osmLink = "https://www.openstreetmap.org/" + (r.osmId ? `node/${r.osmId}` : `#map=18/${r.gps.latitude}/${r.gps.longitude}`);
+                            return `<div style="white-space: nowrap;">
+                                <a title="sc.info map" href="/map?siteID=${r.id}" target="_blank"><img src="../images/logo.svg"/></a>
+                                <a title="Google Map" href="https://www.google.com/maps/search/?api=1&query=${gmapQuery}" target="_blank"><img src="../images/gmap.svg"/></a>
+                                <a title="PlugShare" href="${psLink}" target="_blank"><img src="https://developer.plugshare.com/logo.svg"${r.plugshareId ? '' : ' class="faded"'}/></a>
+                                <a title="OpenStreetMap" href="${osmLink}" target="_blank"><img src="../images/osm.svg"${r.osmId ? '' : ' class="faded"'}/></a>
+                                ${r.urlDiscuss ? `<a title="Forum" href="${r.urlDiscuss}" target="_blank"><img src="../images/forum.svg"/></a>` : ''}
+                                ${r.locationId ? `<a title="tesla.c${teslaSuffix}" href="https://www.tesla.c${teslaSuffix}/findus/location/supercharger/${r.locationId}" target="_blank"><img src="../images/red_dot_t.svg"/></a>` : ''}
+                            </div>`;
+                        },
+                        className: 'links'
                     }
                 ],
                 dom: "<'row'<'col-sm-4'f><'col-sm-4 dataTables_middle dataTables_title'><'col-sm-4'l>>"
@@ -127,7 +130,7 @@ export default class EditList {
 
     handleEditClick(event) {
         const target = $(event.target);
-        if (!target.is('a, dropdown-menu *')) {
+        if (!target.is('a, img, dropdown-menu *')) {
             event.preventDefault();
             const data = this.dataTable.row(target.closest('tr')).data();
             EventBus.dispatch(EditEvents.site_edit_selection, data.id);

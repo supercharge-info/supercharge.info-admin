@@ -250,8 +250,8 @@
 
 
         <form id="site-edit-form" action="" method="post" class="clearfix">
-
-            <div class="col-md-4 col-sm-12">
+            <div style="display: flex; flex-direction: row; justify-content: space-between; flex-wrap: wrap;">
+            <div>
                 <table class="edit-table">
                     <tbody>
                     <tr>
@@ -342,10 +342,11 @@
                         <td>
                             <input name="stallCount" inputmode="numeric" size="4"/>
                             &nbsp;
-                            <b title="Accessible"># <img src="./images/accessible_sign.svg" width="22" height="22" style="margin-top: -2px;"/>:</b>
+                            <b title="Accessible"># <img src="./images/accessible.svg" width="22" height="22" style="margin-top: -2px;"/>:</b>
                             <input name="stalls[accessible]" inputmode="numeric" size="4"/>
                             &nbsp;
-                            <b># Trailer-friendly:</b> <input name="stalls[trailerFriendly]" inputmode="numeric" size="4"/>
+                            <b title="Trailer-friendly"># <img src="./images/trailer.svg" width="22" height="22" style="margin-top: -2px;"/>:</b>
+                            <input name="stalls[trailerFriendly]" inputmode="numeric" size="4"/>
                         </td>
                     </tr>
                     <tr>
@@ -389,7 +390,7 @@
                     </tbody>
                 </table>
             </div>
-            <div class="col-md-2 col-sm-12">
+            <div>
                 <table class="edit-table">
                     <tbody>
                     <tr>
@@ -442,12 +443,12 @@
                     </tr>
                     <tr title='Navigate to the charger on OpenStreetMap.org, right-click or long-press and select "Query features," then select the supercharger to get the Node ID in parentheses'>
                         <th>OSM Node ID</th>
-                        <td><input name="osmId" size="10" inputmode="numeric"/></td>
+                        <td><input name="osmId" size="15" inputmode="numeric"/></td>
                     </tr>
                     </tbody>
                 </table>
             </div>
-            <div class="col-md-6 col-sm-12">
+            <div>
                 <table class="edit-table">
                     <tbody>
                     <tr>
@@ -514,7 +515,7 @@
                     </tbody>
                 </table>
             </div>
-
+            </div>
             <div class="col-xs-12">
                 <div id="edit-site-message-div"></div>
                 <div class="btn-group">

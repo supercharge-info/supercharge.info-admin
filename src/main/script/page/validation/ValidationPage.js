@@ -117,7 +117,8 @@ ValidationPage.showCategory = function (tableBody, data) {
         const index = e.index();
         e.closest("table").find(`td:nth-child(${index+1})`).each((i, elem) => {
             if (elem.innerText && elem.innerText != "null") {
-                elem.innerHTML = `<a target='_blank' href='https://www.tesla.com/findus/location/supercharger/${elem.innerText}'>${elem.innerText}</a>`;
+                // TODO: fix .com vs .cn if possible
+                elem.innerHTML = `<a target='_blank' href='https://www.tesla.com/findus?location=${elem.innerText}'>${elem.innerText}</a>`;
             }
         });
     });

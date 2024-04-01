@@ -140,8 +140,9 @@ export default class ChangeLogTable {
         const tds = link.closest("tr").find("td");
         const date = tds.eq(2).text();
         const status = tds.eq(4).text();
+        const stalls = tds.eq(5).text();
 
-        if (confirm(`Delete change log ${status} on ${date}?`)) {
+        if (confirm(`Delete change log ${status} (${stalls} stalls) on ${date}?`)) {
             const changeLogId = link.data("id");
             EventBus.dispatch("change-log-selected-for-delete-event", changeLogId);
         }

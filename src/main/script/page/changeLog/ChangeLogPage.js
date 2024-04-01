@@ -62,7 +62,7 @@ export default class ChangeLogPage {
                     { data: 'country', className: 'all' },
                     {
                         data: 'siteStatus',
-                        render: d => `<span class="${ Status[d].className }">${ d }</span>`,
+                        render: (d,t,r) => `<span class="${ Status[d].className }">${ d }${d==='OPEN' && r.site?.hours ? ' - limited' : ''}</span>`,
                         className: 'all'
                     },
                     { data: 'stallCount', className: 'number' }

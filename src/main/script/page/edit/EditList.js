@@ -60,7 +60,7 @@ export default class EditList {
                     { data: 'name', render: sanitize, className: 'all' },
                     {
                         data: 'status',
-                        render: d => `<span class="${ Status[d].className }">${ d }</span>`,
+                        render: (d,t,r) => `<span class="${ Status[d].className }">${ d }${d==='OPEN' && r.hours ? ' - limited' : ''}</span>`,
                         className: 'all'
                     },
                     { data: 'dateOpened', defaultContent: '', responsivePriority: 2 },
@@ -90,7 +90,7 @@ export default class EditList {
                                 <a title="PlugShare" href="${psLink}" target="_blank"><img src="https://developer.plugshare.com/logo.svg"${r.plugshareId ? '' : ' class="faded"'}/></a>
                                 <a title="OpenStreetMap" href="${osmLink}" target="_blank"><img src="../images/osm.svg"${r.osmId ? '' : ' class="faded"'}/></a>
                                 ${r.urlDiscuss ? `<a title="Forum" href="${r.urlDiscuss}" target="_blank"><img src="../images/forum.svg"/></a>` : ''}
-                                ${r.locationId ? `<a title="tesla.c${teslaSuffix}" href="https://www.tesla.c${teslaSuffix}/findus/location/supercharger/${r.locationId}" target="_blank"><img src="../images/red_dot_t.svg"/></a>` : ''}
+                                ${r.locationId ? `<a title="tesla.c${teslaSuffix}" href="https://www.tesla.c${teslaSuffix}/findus?location=${r.locationId}" target="_blank"><img src="../images/red_dot_t.svg"/></a>` : ''}
                             </div>`;
                         },
                         className: 'links'

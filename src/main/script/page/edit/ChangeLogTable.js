@@ -45,6 +45,7 @@ export default class ChangeLogTable {
             <th>change date</th>
             <th>change type</th>
             <th>status</th>
+            <th>stalls</th>
             <th>notify</th>
             <th>date modified</th>
             <th>user modified</th>
@@ -82,6 +83,7 @@ export default class ChangeLogTable {
                    <td>${new Date(y, m - 1, d).toLocaleDateString()}</td>
                    <td>${changeLog.changeType}</td>
                    <td><span class="${ Status[status].className }">${status}</span></td>
+                   <td>${changeLog.stallCount}</td>
                    <td>${changeLog.notify ? 'Yes' : 'No'}</td>
                    <td><span title="${new Date(t * 1000).toLocaleString()}">${new Date(t * 1000)[
                        today.getTime() > t * 1000 ? 'toLocaleDateString' : 'toLocaleTimeString'
@@ -125,6 +127,7 @@ export default class ChangeLogTable {
             <td><input type="date"></td>
             <td>NEW</td>
             <td>${ $('<div>').append(status).html() }</td>
+            <td><input type="number"></td>
             <td>${ $('<div>').append(notify).html() }</td>
             <td>NOW</td>
             <td>YOU</td>
@@ -137,8 +140,9 @@ export default class ChangeLogTable {
         const tds = link.closest("tr").find("td");
         const date = tds.eq(2).text();
         const status = tds.eq(4).text();
+        const stalls = tds.eq(5).text();
 
-        if (confirm(`Delete change log ${status} on ${date}?`)) {
+        if (confirm(`Delete change log ${status} (${stalls} stalls) on ${date}?`)) {
             const changeLogId = link.data("id");
             EventBus.dispatch("change-log-selected-for-delete-event", changeLogId);
         }
@@ -150,10 +154,12 @@ export default class ChangeLogTable {
         const tds = link.closest("tr").find("td");
         const date = tds.eq(2);
         const status = tds.eq(4);
-        const notify = tds.eq(5);
+        const stalls = tds.eq(5);
+        const notify = tds.eq(6);
 
         date.html($('<input type="date">').val(new Date(date.text()).toISOString().split('T')[0]).data('original', date.text()));
         status.html($('#site-edit-form select[name="status"]').clone().removeProp('name').val(status.text()).data('original', status.text()));
+        stalls.html($('<input type="number" size=4>').val(stalls.text()).data('original', stalls.text()));
         notify.html(ChangeLogTable.buildNotifyButton(notify.text() == 'Yes').data('original', notify.text()));
         link.attr('class', 'save-change-log').addClass('btn btn-primary btn-xs').text('save').next()
             .attr('class', 'cancel-edit-change-log').addClass('btn btn-danger btn-xs').text('cancel');
@@ -180,11 +186,12 @@ export default class ChangeLogTable {
         const link = $(event.target);
         const date = link.closest("tr").find("input[type='date']");
         const status = link.closest("tr").find("select");
+        const stalls = link.closest("tr").find("input[type='number']");
         const notify = link.closest("tr").find(".btn.active input");
 
         // Validation
-        if (!status.val() || !date.val()) {
-            return alert('Please select both date and status for this change log.');
+        if (!status.val() || !date.val() || !stalls.val()) {
+            return alert('Please select date, status, and number of stalls for this change log.');
         }
 
         const [y, m, d] = date.val().split('-');
@@ -194,11 +201,12 @@ export default class ChangeLogTable {
 
         // Submit changelog
         const changeLogId = link.data("id");
-        if (confirm(`${changeLogId ? 'Update' : 'Add'} change log ${changeLogId ? 'to' : 'of'} ${status.val()} on ${date.val()}?`)) {
+        if (confirm(`${changeLogId ? 'Update' : 'Add'} change log ${changeLogId ? 'to' : 'of'} ${status.val()} (${stalls.val()} stalls) on ${date.val()}?`)) {
             $.post(changeLogId ? URL.site.changeEdit : URL.site.changeAdd, {
                 [changeLogId ? 'changeId' : 'siteId']: changeLogId || this.siteId,
                 changeDate: date.val(),
                 siteStatus: status.val(),
+                stallCount: stalls.val(),
                 notify: notify.val()
             }, d => {
                 // Just the updated row
@@ -230,7 +238,7 @@ export default class ChangeLogTable {
         event.preventDefault();
         const link = $(event.target);
         const id = link.data('id');
-        const inputs = link.closest("tr").find("input[type='date'], select, .btn-group");
+        const inputs = link.closest("tr").find("input[type='date'], input[type='number'], select, .btn-group");
 
         if (id) {
             link.closest('tr').children(':first').replaceWith(`<td>

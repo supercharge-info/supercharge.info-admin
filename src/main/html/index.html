@@ -16,7 +16,7 @@
 <div class="navbar navbar-default navbar-fixed-top" role="navigation">
     <div class="container-fluid">
         <div class="logo">
-            <img src="/images/logo.svg" />
+            <a href="/"><img src="../images/logo.svg" /></a>
         </div>
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -250,8 +250,8 @@
 
 
         <form id="site-edit-form" action="" method="post" class="clearfix">
-
-            <div class="col-md-4 col-sm-12">
+            <div style="display: flex; flex-direction: row; justify-content: space-between; flex-wrap: wrap;">
+            <div>
                 <table class="edit-table">
                     <tbody>
                     <tr>
@@ -340,12 +340,17 @@
                     <tr>
                         <th>Stall Count</th>
                         <td>
-                            <input name="stallCount" inputmode="numeric" size="4"/>
+                            <input name="stallCount" inputmode="numeric" size="4" title="Total # of stalls (enter 0 if unknown)"/>
                             &nbsp;
-                            <b title="Accessible"># <img src="./images/accessible_sign.svg" width="22" height="22" style="margin-top: -2px;"/>:</b>
-                            <input name="stalls[accessible]" inputmode="numeric" size="4"/>
+                            <span title="# Accessible (enter 0 if certain there are none)">
+                                <b># <img src="./images/accessible.svg" width="22" height="22" style="margin-top: -2px;"/>:</b>
+                                <input name="stalls[accessible]" inputmode="numeric" size="4"/>
+                            </span>
                             &nbsp;
-                            <b># Trailer-friendly:</b> <input name="stalls[trailerFriendly]" inputmode="numeric" size="4"/>
+                            <span title="# Trailer-friendly (enter 0 if certain there are none)">
+                                <b># <img src="./images/trailer.svg" width="22" height="22" style="margin-top: -2px;"/>:</b>
+                                <input name="stalls[trailerFriendly]" inputmode="numeric" size="4"/>
+                            </span>
                         </td>
                     </tr>
                     <tr>
@@ -389,7 +394,7 @@
                     </tbody>
                 </table>
             </div>
-            <div class="col-md-2 col-sm-12">
+            <div>
                 <table class="edit-table">
                     <tbody>
                     <tr>
@@ -427,7 +432,7 @@
                             </select>
                         </td>
                     </tr>
-                    <tr>
+                    <tr title="Set this to true if the site is open to NACS or other EVs">
                         <th>Other EVs</th>
                         <td>
                             <select name="otherEVs">
@@ -442,12 +447,12 @@
                     </tr>
                     <tr title='Navigate to the charger on OpenStreetMap.org, right-click or long-press and select "Query features," then select the supercharger to get the Node ID in parentheses'>
                         <th>OSM Node ID</th>
-                        <td><input name="osmId" size="10" inputmode="numeric"/></td>
+                        <td><input name="osmId" size="15" inputmode="numeric"/></td>
                     </tr>
                     </tbody>
                 </table>
             </div>
-            <div class="col-md-6 col-sm-12">
+            <div>
                 <table class="edit-table">
                     <tbody>
                     <tr>
@@ -514,7 +519,7 @@
                     </tbody>
                 </table>
             </div>
-
+            </div>
             <div class="col-xs-12">
                 <div id="edit-site-message-div"></div>
                 <div class="btn-group">

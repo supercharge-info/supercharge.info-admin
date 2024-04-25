@@ -66,3 +66,18 @@ table.view-table tr.fail-row a {
 table.view-table td.fixed {
     font-family: monospace,"Courier New";
 }
+
+.links a {
+    white-space: nowrap;
+}
+.links a:hover, .links a:focus {
+    outline: 4px groove rgba(102, 175, 233, 0.6);
+    outline-offset: 2px;
+}
+.links img {
+    width: 20px;
+    height: 20px;
+}
+img.faded {
+    filter: grayscale(0.9) brightness(0.8) opacity(0.5) contrast(1.2);
+}

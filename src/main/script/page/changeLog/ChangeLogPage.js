@@ -33,9 +33,10 @@ export default class ChangeLogPage {
                 <th>Date</th>
                 <th>Change Type</th>
                 <th>Site Name</th>
-                <th>Site Region</th>
-                <th>Site Country</th>
-                <th>Site Status</th>
+                <th>Region</th>
+                <th>Country</th>
+                <th>Status</th>
+                <th>Stalls</th>
             </tr>`);
             this.dataTable = this.changeLogListTable.DataTable({
                 processing: true,
@@ -61,9 +62,10 @@ export default class ChangeLogPage {
                     { data: 'country', className: 'all' },
                     {
                         data: 'siteStatus',
-                        render: d => `<span class="${ Status[d].className }">${ d }</span>`,
+                        render: (d,t,r) => `<span class="${ Status[d].className }">${ d }${d==='OPEN' && r.site?.hours ? ' - limited' : ''}</span>`,
                         className: 'all'
-                    }
+                    },
+                    { data: 'stallCount', className: 'number' }
                 ],
                 dom: "<'row'<'col-sm-4'f><'col-sm-4 dataTables_middle dataTables_title'><'col-sm-4'l>>"
                     + "<'row'<'col-sm-12'tr>><'row'<'col-sm-5'i><'col-sm-7'p>>",

@@ -21,7 +21,8 @@ export default class EditForm {
         EventBus.addListener(EditEvents.load_history_complete, this.historyButtonUpdate, this);
         EventBus.addListener(EditEvents.load_change_log_complete, this.changeLogButtonUpdate, this);
 
-        this.siteEditForm.find('select[name="status"]').on('change', () => this.handleStatusChange());
+        this.siteEditForm.find('select[name="status"]').on('change', () => this.handleLoggable());
+        this.siteEditForm.find('input[name="stallCount"]').on('change', () => this.handleLoggable());
         this.siteEditForm.find('select[name="address[countryId]"]').on('change', () => this.handleCountryChange());
         this.latitudeInput = $("#latitude-input");
         this.latitudeInput.on('paste', $.proxy(this.handleLatitudeChange, this));
@@ -114,7 +115,7 @@ export default class EditForm {
 
         /* populate form */
         FormFiller.populateForm(this.siteEditForm, site);
-        this.handleStatusChange(true);
+        this.handleLoggable(true);
         this.handleCountryChange();
         const date = this.siteEditForm.find('input[name="dateModified"]');
         date.val(new Date(date.val()).toLocaleString());
@@ -158,7 +159,7 @@ export default class EditForm {
         EventBus.dispatch(EditEvents.site_list_highlight, 0);
         EventBus.dispatch(EditEvents.clear_panels);
         this.siteEditForm.trigger('reset');
-        this.handleStatusChange(true);
+        this.handleLoggable(true);
         this.handleCountryChange();
         this.enableButtons(false);
     }
@@ -170,20 +171,24 @@ export default class EditForm {
         EventBus.dispatch(EditEvents.site_list_highlight, 0);
         EventBus.dispatch(EditEvents.clear_panels);
         this.enableButtons(false);
-        this.handleStatusChange(true);
+        this.handleLoggable(true);
     }
 
-    handleStatusChange(reset) {
+    handleLoggable(reset) {
         const newStatus = this.siteEditForm.find('select[name="status"]').val();
+        const newCount = this.siteEditForm.find('input[name="stallCount"]').val();
         if (reset) {
             if (this.siteEditForm.find("input[name='id']").val()) {
                 this.status = newStatus;
+                this.stallCount = newCount;
             } else {
                 this.status = null;
+                this.stallCount = null;
             }
         }
+        const disableLogging = (this.status == newStatus && this.stallCount == newCount);
         this.siteEditForm.find('input[name="notify"]').closest('.btn-group')
-            .children()[this.status == newStatus ? 'addClass' : 'removeClass']('disabled');
+            .children()[disableLogging ? 'addClass' : 'removeClass']('disabled');
     }
 
     handleCountryChange() {

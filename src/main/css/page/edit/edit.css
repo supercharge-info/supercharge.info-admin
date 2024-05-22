@@ -44,8 +44,11 @@ table.edit-table td {
     background-color: #ddd !important;
 }
 .editing td {
-    background-color: #ff0;
+    background-color: #ff7;
 }
 .separator {
     border-top: 1px solid #000;
+}
+.loggable {
+    background-color: #eff;
 }

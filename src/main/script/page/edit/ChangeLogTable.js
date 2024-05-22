@@ -71,7 +71,6 @@ export default class ChangeLogTable {
     }
 
     static buildRow({ dateModified: { epochSecond: t }, siteStatus: status, ...changeLog }) {
-		const [y, m, d] = changeLog.changeDate.split('-');
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
@@ -80,7 +79,7 @@ export default class ChangeLogTable {
                        | <a href="#" class="delete-change-log" data-id="${changeLog.id}">delete</a>
                    </td>
                    <td>${changeLog.id}</td>
-                   <td>${new Date(y, m - 1, d).toLocaleDateString()}</td>
+                   <td>${changeLog.changeDate}</td>
                    <td>${changeLog.changeType}</td>
                    <td><span class="${ Status[status].className }">${status}</span></td>
                    <td>${changeLog.stallCount}</td>

@@ -276,6 +276,10 @@
                         <td><input name="name" size="40"/></td>
                     </tr>
                     <tr>
+                        <th>Open Date</th>
+                        <td><input name="dateOpened" type="date" size="40"/></td>
+                    </tr>
+                    <tr class="loggable" title="Changing Status or Stall Count can trigger a ChangeLog entry and notification - use the Notify/Log/Skip buttons to control what happens on Save">
                         <th>Status</th>
                         <td>
                             <select name="status">
@@ -288,6 +292,13 @@
                                 <option name="plan" value="PLAN">PLAN</option>
                                 <option name="expanding" value="EXPANDING">EXPANDING</option>
                             </select>
+                        </td>
+                    </tr>
+                    <tr class="loggable" title="Changing Status or Stall Count can trigger a ChangeLog entry and notification - use the Notify/Log/Skip buttons to control what happens on Save">
+                        <th>Stall Count</th>
+                        <td>
+                            <input name="stallCount" inputmode="numeric" size="4" title="Total # of stalls (enter 0 if unknown)"/>
+                            &nbsp;
                             <span class="notify-buttons btn-group" data-toggle="buttons">
                                 <label class="btn btn-default btn-xs active" title="publish to social media"
                                        style="vertical-align: top; padding: 0 5px;">
@@ -307,49 +318,7 @@
                                     <span class="glyphicon glyphicon-minus-sign"></span>
                                     <strong>Skip</strong>
                                 </label>
-                            </span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Open Date</th>
-                        <td><input name="dateOpened" type="date" size="40"/></td>
-                    </tr>
-                    <tr title="Blank indicates always open (24/7)">
-                        <th>Hours</th>
-                        <td><input name="hours" size="40"/></td>
-                    </tr>
-                    <tr>
-                        <th>GPS (lat,lng)</th>
-                        <td>
-                            <input name="gps[latitude]" size="12" maxlength="35" id="latitude-input"/>
-                            <strong>°N,</strong>
-                            <input name="gps[longitude]" size="12" maxlength="35" id="longitude-input"/>
-                            <strong>°E</strong>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Elevation (m)</th>
-                        <td>
-                            <input name="elevationMeters" type="number" size="9" maxlength="9"/> &nbsp;
-                            <button id="elevation-lookup-button" class="btn btn-sm btn-default">auto lookup</button>
-                            &nbsp;&nbsp;
-                            <a href="http://www.gpsvisualizer.com/elevation" target="_blank">gpsvisualizer</a>
-                            &nbsp;
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Stall Count</th>
-                        <td>
-                            <input name="stallCount" inputmode="numeric" size="4" title="Total # of stalls (enter 0 if unknown)"/>
-                            &nbsp;
-                            <span title="# Accessible (enter 0 if certain there are none)">
-                                <b># <img src="./images/accessible.svg" width="22" height="22" style="margin-top: -2px;"/>:</b>
-                                <input name="stalls[accessible]" inputmode="numeric" size="4"/>
-                            </span>
-                            &nbsp;
-                            <span title="# Trailer-friendly (enter 0 if certain there are none)">
-                                <b># <img src="./images/trailer.svg" width="22" height="22" style="margin-top: -2px;"/>:</b>
-                                <input name="stalls[trailerFriendly]" inputmode="numeric" size="4"/>
+                                &nbsp;
                             </span>
                         </td>
                     </tr>
@@ -359,6 +328,8 @@
                                 <tr>
                                     <th rowspan="2">Stalls</th>
                                     <td>Urban</td><td>V2</td><td>V3</td><td>V4</td><td title="Other/Unknown/TBD">??</td>
+                                    <td title="# Accessible (enter 0 if certain there are none)" class="gray"><img src="./images/accessible.svg" width="20" height="20" style="margin-left: 2px;"/></td>
+                                    <td title="# Trailer-friendly (enter 0 if certain there are none)" class="gray"><img src="./images/trailer.svg" width="20" height="20" style="margin-left: 2px;"/></td>
                                 </tr>
                                 <tr>
                                     <td><input name="stalls[urban]" inputmode="numeric" size="4"/></td>
@@ -366,6 +337,8 @@
                                     <td><input name="stalls[v3]" inputmode="numeric" size="4"/></td>
                                     <td><input name="stalls[v4]" inputmode="numeric" size="4"/></td>
                                     <td title="Other/Unknown/TBD"><input name="stalls[other]" inputmode="numeric" size="4"/></td>
+                                    <td title="# Accessible (enter 0 if certain there are none)" class="gray"><input name="stalls[accessible]" inputmode="numeric" size="4"/></td>
+                                    <td title="# Trailer-friendly (enter 0 if certain there are none)" class="gray"><input name="stalls[trailerFriendly]" inputmode="numeric" size="4"/></td>
                                 </tr>
                                 <tr class="separator">
                                     <th rowspan="2">Plugs</th>
@@ -389,6 +362,29 @@
                                     <td title="Number of stalls with multiple plugs" class="gray">&nbsp;<input name="plugs[multi]" inputmode="numeric" size="4"/></td>
                                 </tr>
                             </table>
+                        </td>
+                    </tr>
+                    <tr title="Blank indicates always open (24/7)">
+                        <th>Hours</th>
+                        <td><input name="hours" size="40"/></td>
+                    </tr>
+                    <tr>
+                        <th>GPS (lat,lng)</th>
+                        <td>
+                            <input name="gps[latitude]" size="12" maxlength="35" id="latitude-input"/>
+                            <strong>°N,</strong>
+                            <input name="gps[longitude]" size="12" maxlength="35" id="longitude-input"/>
+                            <strong>°E</strong>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Elevation (m)</th>
+                        <td>
+                            <input name="elevationMeters" type="number" size="9" maxlength="9"/> &nbsp;
+                            <button id="elevation-lookup-button" class="btn btn-sm btn-default">auto lookup</button>
+                            &nbsp;&nbsp;
+                            <a href="http://www.gpsvisualizer.com/elevation" target="_blank">gpsvisualizer</a>
+                            &nbsp;
                         </td>
                     </tr>
                     </tbody>

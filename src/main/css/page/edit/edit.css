@@ -52,3 +52,8 @@ table.edit-table td {
 .loggable {
     background-color: #eff;
 }
+
+.typeahead .dropdown-item strong {
+    color: #00c;
+    background-color: #bdf;
+}

@@ -1,4 +1,5 @@
 import "jquery-serializejson";
+import "@universityofwarwick/bootstrap-3-typeahead";
 import URL from "../../URL";
 import FormFiller from "../../util/FormFiller";
 import EventBus from "../../util/EventBus";
@@ -24,10 +25,19 @@ export default class EditForm {
         this.siteEditForm.find('select[name="status"]').on('change', () => this.handleLoggable());
         this.siteEditForm.find('input[name="stallCount"]').on('change', () => this.handleLoggable());
         this.siteEditForm.find('select[name="address[countryId]"]').on('change', () => this.handleCountryChange());
+
         this.latitudeInput = $("#latitude-input");
         this.latitudeInput.on('paste', $.proxy(this.handleLatitudeChange, this));
         this.longitudeInput = $("#longitude-input");
         this.longitudeInput.on('paste', $.proxy(this.handleLongitudeChange, this));
+
+        $.getJSON('/service/supercharge/siteadmin/allHosts', (data) => {
+            this.siteEditForm.find('input[name="facilityName"]').typeahead({
+                source: data,
+                appendTo: $('#facilityNameTypeahead'),
+                autoSelect: false
+            });
+        });
 
         this.initButtons();
     }

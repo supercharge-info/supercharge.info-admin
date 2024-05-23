@@ -484,7 +484,8 @@
                     <tr title="Name and hours of the supercharger's host or nearest facility, e.g. Wawa">
                         <th>Primary Facility</th>
                         <td title='Blank for "Hours" indicates unknown hours'>
-                            <b>- Name:</b> <input name="facilityName" size="40"/><br/>
+                            <b>- Name:</b> <input name="facilityName" size="40" placeholder="Search or enter facility name" autocomplete="off"/><br/>
+                            <div id="facilityNameTypeahead" style="position: absolute;"></div>
                             <b>- Hours:</b> <input name="facilityHours" size="40"/>
                         </td>
                     </tr>

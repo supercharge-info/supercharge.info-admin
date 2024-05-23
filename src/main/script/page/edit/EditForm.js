@@ -1,5 +1,7 @@
 import "jquery-serializejson";
-import "@universityofwarwick/bootstrap-3-typeahead";
+//import "bootstrap-3-typeahead";
+//import Autocomplete from "bootstrap5-autocomplete";
+import accessibleAutocomplete from "accessible-autocomplete";
 import URL from "../../URL";
 import FormFiller from "../../util/FormFiller";
 import EventBus from "../../util/EventBus";
@@ -31,14 +33,44 @@ export default class EditForm {
         this.longitudeInput = $("#longitude-input");
         this.longitudeInput.on('paste', $.proxy(this.handleLongitudeChange, this));
 
-        $.getJSON('/service/supercharge/siteadmin/allHosts', (data) => {
+        /* bootstrap-3-typeahead */
+        /*$.getJSON('/service/supercharge/siteadmin/allHosts', (data) => {
             this.siteEditForm.find('input[name="facilityName"]').typeahead({
                 source: data,
                 appendTo: $('#facilityNameTypeahead'),
-                autoSelect: false
+                autoSelect: false,
+                items: 10
+            });
+        });*/
+        /* bootstrap5-autocomplete
+        $.getJSON('/service/supercharge/siteadmin/allHosts', (data) => {
+            Autocomplete.init('input[name="facilityName"]', {
+                items: data,
+                highlightTyped: true
             });
         });
+        */
 
+        /* accessible-autocomplete */
+        $.getJSON('/service/supercharge/siteadmin/allHosts', (data) => {
+            accessibleAutocomplete({
+                element: document.querySelector('#facilityNameContainer'),
+                id: 'facilityName',
+                name: 'facilityName',
+                source: data,
+                placeholder: 'Autocomplete enabled but not enforced',
+                showNoOptionsFound: false,
+                displayMenu: 'overlay',
+                templates: {
+                    suggestion: (s) => {
+                        const v = $('input[name="facilityName"]').val();
+                        const r = new RegExp(`(${v})`, "gi");
+                        return s.replace(r, '<b>$1</b>');
+                    }
+                }
+            });
+            //$('input[name="facilityName"]').width = $('input[name="facilityHours"]').width;
+        });
         this.initButtons();
     }
 

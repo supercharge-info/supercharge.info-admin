@@ -45,7 +45,7 @@
     "webpack-dev-server": "^4.15.1"
   },
   "dependencies": {
-    "@universityofwarwick/bootstrap-3-typeahead": "^4.1.1",
+    "accessible-autocomplete": "^3.0.0",
     "bootstrap": "^3.4.1",
     "core-js": "^3.31.1",
     "datatables.net": "^1.13.5",

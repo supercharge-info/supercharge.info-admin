@@ -163,9 +163,20 @@ export default class EditForm {
         date.val(new Date(date.val()).toLocaleString());
         this.siteEditForm.find('input[name="notify"][value="yes"]').closest('.btn').button('toggle');
         this.enableButtons(true);
-        $('html').animate({ scrollTop: 0, scrollLeft: 0 });
 
+        // this prevents the autocomplete suggestions from appearing (and covering the Hours field) when loading an existing site
+        const facilityName = this.siteEditForm.find('input[name="facilityName"]');
+        const locationId = this.siteEditForm.find('input[name="locationId"]');
+        if (facilityName.val() !== '') {
+            facilityName.trigger("click");
+            facilityName.trigger("focus");
+            facilityName.trigger("blur");
+        }
+        
+        $('html').animate({ scrollTop: 0, scrollLeft: 0 });
         EventBus.dispatch(EditEvents.site_list_highlight, site.id);
+        locationId.trigger("focus");
+        locationId.trigger("blur");
     }
 
     populateCountryOptions(countries) {

@@ -11,6 +11,21 @@ table.edit-table td {
     margin: 0;
     vertical-align: top;
 }
+.notify-buttons .btn {
+    background-color: #aff;
+}
+.notify-buttons .btn.disabled {
+    background-color: #eee !important;
+}
+.notify-buttons .btn.active {
+    background-color: #9ee;
+}
+.notify-buttons .btn.active.focus {
+    background-color: #7cc;
+}
+.notify-buttons .btn:hover, .notify-buttons .btn.active:hover {
+    background-color: #8dd;
+}
 #delete-container {
     display: inline-block;
 }
@@ -51,7 +66,7 @@ table.edit-table td {
 }
 tr.loggable {
     background-color: #eff;
-    border-right: 2px solid #7cc;
+    border-right: 3px solid #7cc;
 }
 tr.loggable td {
     padding: 4px 0px;

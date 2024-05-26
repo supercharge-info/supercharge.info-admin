@@ -52,10 +52,7 @@ export default class ChangeLogPage {
                         className: 'all'
                     },
                     { data: 'id' },
-                    { data: 'date', searchable: false, render: (d, t) => {
-                        const [ y, m, day ] = d.split('-');
-                        return t == 'sort' ? d : new Date(y, m - 1, day).toLocaleDateString();
-                    }, className: 'all' },
+                    { data: 'date', searchable: false, className: 'all' },
                     { data: 'changeType', searchable: false },
                     { data: 'siteName', render: sanitize, className: 'all' },
                     { data: 'region' },

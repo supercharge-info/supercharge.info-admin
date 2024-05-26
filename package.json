@@ -1,6 +1,6 @@
 {
   "name": "supercharge.info-admin",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Administration pages for supercharge.info",
   "main": "index.js",
   "scripts": {
@@ -45,6 +45,7 @@
     "webpack-dev-server": "^4.15.1"
   },
   "dependencies": {
+    "accessible-autocomplete": "^3.0.0",
     "bootstrap": "^3.4.1",
     "core-js": "^3.31.1",
     "datatables.net": "^1.13.5",

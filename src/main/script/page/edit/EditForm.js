@@ -1,4 +1,7 @@
 import "jquery-serializejson";
+//import "bootstrap-3-typeahead";
+//import Autocomplete from "bootstrap5-autocomplete";
+import accessibleAutocomplete from "accessible-autocomplete";
 import URL from "../../URL";
 import FormFiller from "../../util/FormFiller";
 import EventBus from "../../util/EventBus";
@@ -21,13 +24,53 @@ export default class EditForm {
         EventBus.addListener(EditEvents.load_history_complete, this.historyButtonUpdate, this);
         EventBus.addListener(EditEvents.load_change_log_complete, this.changeLogButtonUpdate, this);
 
-        this.siteEditForm.find('select[name="status"]').on('change', () => this.handleStatusChange());
+        this.siteEditForm.find('select[name="status"]').on('change', () => this.handleLoggable());
+        this.siteEditForm.find('input[name="stallCount"]').on('change', () => this.handleLoggable());
         this.siteEditForm.find('select[name="address[countryId]"]').on('change', () => this.handleCountryChange());
+
         this.latitudeInput = $("#latitude-input");
         this.latitudeInput.on('paste', $.proxy(this.handleLatitudeChange, this));
         this.longitudeInput = $("#longitude-input");
         this.longitudeInput.on('paste', $.proxy(this.handleLongitudeChange, this));
 
+        /* bootstrap-3-typeahead */
+        /*$.getJSON('/service/supercharge/siteadmin/allHosts', (data) => {
+            this.siteEditForm.find('input[name="facilityName"]').typeahead({
+                source: data,
+                appendTo: $('#facilityNameTypeahead'),
+                autoSelect: false,
+                items: 10
+            });
+        });*/
+        /* bootstrap5-autocomplete
+        $.getJSON('/service/supercharge/siteadmin/allHosts', (data) => {
+            Autocomplete.init('input[name="facilityName"]', {
+                items: data,
+                highlightTyped: true
+            });
+        });
+        */
+
+        /* accessible-autocomplete */
+        $.getJSON('/service/supercharge/siteadmin/allHosts', (data) => {
+            accessibleAutocomplete({
+                element: document.querySelector('#facilityNameContainer'),
+                id: 'facilityName',
+                name: 'facilityName',
+                source: data,
+                placeholder: 'Autocomplete enabled but not enforced',
+                showNoOptionsFound: false,
+                displayMenu: 'overlay',
+                templates: {
+                    suggestion: (s) => {
+                        const v = $('input[name="facilityName"]').val();
+                        const r = new RegExp(`(${v})`, "gi");
+                        return s.replace(r, '<b>$1</b>');
+                    }
+                }
+            });
+            //$('input[name="facilityName"]').width = $('input[name="facilityHours"]').width;
+        });
         this.initButtons();
     }
 
@@ -114,15 +157,26 @@ export default class EditForm {
 
         /* populate form */
         FormFiller.populateForm(this.siteEditForm, site);
-        this.handleStatusChange(true);
+        this.handleLoggable(true);
         this.handleCountryChange();
         const date = this.siteEditForm.find('input[name="dateModified"]');
         date.val(new Date(date.val()).toLocaleString());
         this.siteEditForm.find('input[name="notify"][value="yes"]').closest('.btn').button('toggle');
         this.enableButtons(true);
-        $('html').animate({ scrollTop: 0, scrollLeft: 0 });
 
+        // this prevents the autocomplete suggestions from appearing (and covering the Hours field) when loading an existing site
+        const facilityName = this.siteEditForm.find('input[name="facilityName"]');
+        const locationId = this.siteEditForm.find('input[name="locationId"]');
+        if (facilityName.val() !== '') {
+            facilityName.trigger("click");
+            facilityName.trigger("focus");
+            facilityName.trigger("blur");
+        }
+        
+        $('html').animate({ scrollTop: 0, scrollLeft: 0 });
         EventBus.dispatch(EditEvents.site_list_highlight, site.id);
+        locationId.trigger("focus");
+        locationId.trigger("blur");
     }
 
     populateCountryOptions(countries) {
@@ -158,7 +212,7 @@ export default class EditForm {
         EventBus.dispatch(EditEvents.site_list_highlight, 0);
         EventBus.dispatch(EditEvents.clear_panels);
         this.siteEditForm.trigger('reset');
-        this.handleStatusChange(true);
+        this.handleLoggable(true);
         this.handleCountryChange();
         this.enableButtons(false);
     }
@@ -170,20 +224,24 @@ export default class EditForm {
         EventBus.dispatch(EditEvents.site_list_highlight, 0);
         EventBus.dispatch(EditEvents.clear_panels);
         this.enableButtons(false);
-        this.handleStatusChange(true);
+        this.handleLoggable(true);
     }
 
-    handleStatusChange(reset) {
+    handleLoggable(reset) {
         const newStatus = this.siteEditForm.find('select[name="status"]').val();
+        const newCount = this.siteEditForm.find('input[name="stallCount"]').val();
         if (reset) {
             if (this.siteEditForm.find("input[name='id']").val()) {
                 this.status = newStatus;
+                this.stallCount = newCount;
             } else {
                 this.status = null;
+                this.stallCount = null;
             }
         }
+        const disableLogging = (this.status == newStatus && this.stallCount == newCount);
         this.siteEditForm.find('input[name="notify"]').closest('.btn-group')
-            .children()[this.status == newStatus ? 'addClass' : 'removeClass']('disabled');
+            .children()[disableLogging ? 'addClass' : 'removeClass']('disabled');
     }
 
     handleCountryChange() {

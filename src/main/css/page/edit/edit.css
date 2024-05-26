@@ -11,6 +11,21 @@ table.edit-table td {
     margin: 0;
     vertical-align: top;
 }
+.notify-buttons .btn {
+    background-color: #aff;
+}
+.notify-buttons .btn.disabled {
+    background-color: #eee !important;
+}
+.notify-buttons .btn.active {
+    background-color: #9ee;
+}
+.notify-buttons .btn.active.focus {
+    background-color: #7cc;
+}
+.notify-buttons .btn:hover, .notify-buttons .btn.active:hover {
+    background-color: #8dd;
+}
 #delete-container {
     display: inline-block;
 }
@@ -30,7 +45,7 @@ table.edit-table td {
     min-width: auto;
 }
 .counts {
-    margin-left: 8px;
+    margin-left: 4px;
     font-size: smaller;
 }
 .counts th {
@@ -44,8 +59,63 @@ table.edit-table td {
     background-color: #ddd !important;
 }
 .editing td {
-    background-color: #ff0;
+    background-color: #ff7;
 }
 .separator {
     border-top: 1px solid #000;
+}
+tr.loggable {
+    background-color: #eff;
+    border-right: 3px solid #7cc;
+}
+tr.loggable td {
+    padding: 4px 0px;
+}
+
+table.facility th, table.facility td {
+    padding: 1px 3px;
+}
+table.facility label {
+    margin-bottom: 0px;
+}
+
+#facilityNameContainer {
+    position: relative;
+}
+.autocomplete__wrapper {
+    position: relative;
+}
+.autocomplete__input {
+    width: 100%;
+}
+
+.autocomplete__menu {
+    position: absolute;
+    background-color: #ffffff;
+    border: 2px solid #0b0c0c;
+    border-top: 0;
+    color: #0b0c0c;
+    margin: 0;
+    max-height: 200px;
+    overflow-x: hidden;
+    padding: 0;
+    width: 100%;
+    width: calc(100% - 4px);
+}
+.autocomplete__menu--hidden {
+    display: none;
+}
+.autocomplete__option--odd {
+    background-color: #f3f2f1;
+}
+.autocomplete__option--focused,
+.autocomplete__option:hover {
+    background-color: #bdf;
+    border-color: #27c;
+    color: blue;
+    outline: none;
+}
+.autocomplete__option b {
+    color: #00c;
+    background-color: #def;
 }
